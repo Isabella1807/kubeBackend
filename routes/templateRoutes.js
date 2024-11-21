@@ -1,10 +1,12 @@
 import express from "express";
-import {templateController} from "../controllers/templateController.js";
+import { showAllTemplate } from "../controllers/templateController.js";
+
+
 
 
 const router = express.Router();
-router.get("/", templateController.getAll)
-router.get("/:id", templateController.getByID)
-router.post("/", templateController.create)
-router.delete("/:id", templateController.delete)
+router.get("/", showAllTemplate.getAll);  // Brug getAll metoden
+router.get("/:id", showAllTemplate.getByID);  // Brug getByID metoden
+router.post("/", showAllTemplate.create);  // Brug create metoden
+router.delete("/:id", showAllTemplate.delete);  // Brug delete metoden
 export default router;

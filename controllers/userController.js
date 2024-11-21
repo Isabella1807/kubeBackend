@@ -1,27 +1,46 @@
-import { createUser } from "../models/userModel.js";
+import { createUser, fetchUserById } from "../models/userModel.js";
 
-// Controller to handle creating a user with hardcoded data
+// Controller to handle creating a user
 export const addUser = (req, res) => {
-    // Hardcoded user data for testing
     const userData = {
-        uclMail: "test@example.com",
-        password: "testpassword",
-        firstName: "John",
-        lastName: "Doe",
-        roleId: 1,  // Make sure this exists in the `roles` table
-        teamId: 1,  // Make sure this exists in the `teams` table
+        uclMail: "testuser@example.com",   // Hardcoded email
+        password: "securepassword",        // Hardcoded password
+        firstName: "John",                 // Hardcoded first name
+        lastName: "Doe",                   // Hardcoded last name
+        roleId: 1,                         // Assuming roleId exists
+        teamId: 1                          // Assuming teamId exists
     };
 
-    // Call the model function
     createUser(userData, (err, result) => {
         if (err) {
-            console.error(err);
-            res.status(500).json({ error: "Failed to create user. Check database connection and table setup." });
+            console.error("Error while creating user:", err);
+            res.status(500).json({ error: "Failed to create user." });
         } else {
             res.status(201).json({
                 message: "Hardcoded user created successfully.",
-                userId: result.insertId,
+                userId: result.insertId  // Return the created user ID
             });
+        }
+    });
+};
+
+// Controller to fetch user by ID
+export const getUserById = (req, res) => {
+    const userId = 17;  // Hardcoded user ID for testing
+
+    fetchUserById(userId, (err, result) => {
+        if (err) {
+            console.error("Error while fetching user:", err);
+            res.status(500).json({ error: "Failed to fetch user." });
+        } else {
+            if (result.length > 0) {
+                res.status(200).json({
+                    message: "User data retrieved successfully.",
+                    user: result[0],  // Return the first matching user
+                });
+            } else {
+                res.status(404).json({ message: "User not found." });
+            }
         }
     });
 };

@@ -1,30 +1,17 @@
 import kubeDB from "../Database.js";
 
-/*
-export const createProject
-export const getAllProjects
-export const getProjectByID = (id) =>
-}
-export const updateProjectByID
-export const deleteProjectByID
 
-*/
-
-
-//METODE 1//
-export const getAllProducts = (result) => {
-    shopDB.query("SELECT * FROM products", (err, results) => {
-        if (err) {
-            console.log(err);
-            result(err, null);
+export const getAllProjects = () => new Promise((resolve, reject) => {
+    kubeDB.query('SELECT * FROM project', (error, results) => {
+        if(error){
+            reject("Model fejl")
         } else {
-            result(null, results);
+            resolve(results)
         }
-    });
-};
+    })
+})
 
-
-//METODE 2//
+/*
 export const getProductByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
@@ -41,3 +28,14 @@ export const getProductByID = (id) => new Promise((resolve, reject) => {
     })
 });
 
+*/
+
+/*
+export const createProject
+export const getAllProjects
+export const getProjectByID = (id) =>
+}
+export const updateProjectByID
+export const deleteProjectByID
+
+*/

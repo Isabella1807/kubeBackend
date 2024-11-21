@@ -37,3 +37,34 @@ export const fetchUserById = (userId, callback) => {
         }
     });
 };
+
+// Function to fetch all users from the database
+export const fetchAllUsers = (callback) => {
+    const sql = "SELECT * FROM users"; // Query to select all users
+
+    // Execute the query to fetch all users
+    kubeDB.query(sql, (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            callback(err, null);
+        } else {
+            callback(null, result); // Return all users
+        }
+    });
+};
+
+export const updateUserPasswordById = (userId, newPassword, callback) => {
+    const sql = `
+        UPDATE users
+        SET password = ?
+        WHERE userId = ?
+    `;
+    kubeDB.query(sql, [newPassword, userId], (err, result) => {
+        if (err) {
+            console.error("Error updating password:", err);
+            callback(err, null);
+        } else {
+            callback(null, result); // Return the result of the update
+        }
+    });
+};

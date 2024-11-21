@@ -1,4 +1,4 @@
-import { createUser, fetchUserById } from "../models/userModel.js";
+import { updateUserPasswordById, fetchUserById, fetchAllUsers } from "../models/userModel.js";
 
 // Controller to handle creating a user
 export const addUser = (req, res) => {
@@ -40,6 +40,49 @@ export const getUserById = (req, res) => {
                 });
             } else {
                 res.status(404).json({ message: "User not found." });
+            }
+        }
+    });
+};
+
+export const getAllUsers = (req, res) => {
+    fetchAllUsers((err, result) => {
+        if (err) {
+            console.error("Error while fetching users:", err);
+            res.status(500).json({ error: "Failed to fetch users." });
+        } else {
+            if (result.length > 0) {
+                res.status(200).json({
+                    message: "All users retrieved successfully.",
+                    users: result,  // Return the array of users
+                });
+            } else {
+                res.status(404).json({ message: "No users found." });
+            }
+        }
+    });
+};
+
+export const updatePassword = (req, res) => {
+    const userId = req.params.id; // Get the userId from the route parameters
+    const newPassword = req.body.password; // Get the new password from the request body
+
+    if (!newPassword) {
+        return res.status(400).json({ message: "Password is required." });
+    }
+
+    // Update the password in the database
+    updateUserPasswordById(userId, newPassword, (err, result) => {
+        if (err) {
+            console.error("Error updating password:", err);
+            res.status(500).json({ error: "Failed to update password." });
+        } else {
+            if (result.affectedRows > 0) {
+                res.status(200).json({
+                    message: "Password updated successfully.",
+                });
+            } else {
+                res.status(404).json({ message: "User not found or no changes made." });
             }
         }
     });

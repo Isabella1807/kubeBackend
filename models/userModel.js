@@ -68,3 +68,16 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
         }
     });
 };
+
+// Function to delete a user by ID from the database
+export const deleteUserById = (userId, callback) => {
+    const sql = `DELETE FROM users WHERE userId = ?`;
+
+    kubeDB.query(sql, [userId], (err, result) => {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result);
+        }
+    });
+};

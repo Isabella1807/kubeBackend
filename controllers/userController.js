@@ -1,4 +1,4 @@
-import { updateUserPasswordById, fetchUserById, fetchAllUsers } from "../models/userModel.js";
+import { updateUserPasswordById, fetchUserById, fetchAllUsers, deleteUserById } from "../models/userModel.js";
 
 // Controller to handle creating a user
 export const addUser = (req, res) => {
@@ -85,5 +85,28 @@ export const updatePassword = (req, res) => {
                 res.status(404).json({ message: "User not found or no changes made." });
             }
         }
+    });
+};
+
+
+// Controller to delete a user by ID
+export const deleteUserByIdController = (req, res) => {
+    const userId = req.params.id;
+
+    fetchUserById(userId, (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: "Error checking user existence" });
+        }
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Call the model function to delete the user
+        deleteUserById(userId, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: "Failed to delete user" });
+            }
+            res.status(200).json({ message: "User deleted successfully" });
+        });
     });
 };

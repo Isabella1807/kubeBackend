@@ -3,7 +3,7 @@ import cors from 'cors';
 import Router from './routes/routes.js'
 
 const app = express();
-const port = 3001;
+const port = 3306;
 
 app.use(express.json());
 app.use(cors());

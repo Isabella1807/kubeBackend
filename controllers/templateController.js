@@ -1,11 +1,21 @@
-import {getAllTemplate} from "../models/teamModel.js";
+import {getAllTemplate, getTemplateByID} from "../models/templateModel.js";
 
-export const showAllTemplate = (req, res) => {
-    getAllTemplate((err, results) => {
-        if (err) {
-            res.send(err);
-        } else {
-            res.json(results);
+export const templateController = {
+    getAll: async (req, res) => {
+        try {
+            const template = await getAllTemplate()
+            res.json(template)
+        } catch (error) {
+            res.status(500).send(error);
         }
-    });
-};
+    },
+    getByID: async (req, res) => {
+        try {
+            const template = await getTemplateByID(req.params.id)
+            res.json(template)
+        } catch (error) {
+            res.status(500).send(error);
+        }
+    }
+
+}

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import Router from './routes/routes.js'
+import {getProjectByID} from "./models/projectModel.js";
 
 const app = express();
 const port = 3000;
@@ -12,3 +13,9 @@ app.use(Router);
 app.listen(port, () => {
     console.log("server is running");
 })
+
+getProjectByID(5).then((result)=>{
+    console.log(result)
+}).catch((error) => {
+    console.log(error)
+});

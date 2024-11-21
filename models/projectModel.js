@@ -1,43 +1,54 @@
 import kubeDB from "../Database.js";
 
-/*
-export const createProject
-export const getAllProjects
-export const getProjectByID = (id) =>
-}
-export const updateProjectByID
-export const deleteProjectByID
 
-*/
-
-
-//METODE 1//
-export const getAllProducts = (result) => {
-    shopDB.query("SELECT * FROM products", (err, results) => {
-        if (err) {
-            console.log(err);
-            result(err, null);
+export const getAllProjects = () => new Promise((resolve, reject) => {
+    kubeDB.query('SELECT * FROM project', (error, result) => {
+        if (error) {
+            reject("Model get all error")
         } else {
-            result(null, results);
+            resolve(result)
         }
-    });
-};
+    })
+})
 
-
-//METODE 2//
-export const getProductByID = (id) => new Promise((resolve, reject) => {
+export const getProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`SELECT * FROM products WHERE productID = ${id}`, (err, results) => {
-        if (err) {
-            reject(err);
+    kubeDB.query(`SELECT * FROM project WHERE projectId = ${id}`, (error, result) => {
+        if (error) {
+            reject("Model get by ID error");
         } else {
-            if (results[0]) {
-                resolve(results[0]);
+            if (result.length === 0) {
+                reject(`No project with ID ${id}`);
             } else {
-                reject();
+                resolve(result);
             }
         }
     })
-});
+})
 
+export const createProject = (templateid, userid, projectname, subdomainname) => new Promise((resolve, reject) => {
+    kubeDB.query(`INSERT INTO project (templateId, userId, projectName, subdomainName) VALUES (${templateid}, ${userid}, "${projectname}", "${subdomainname}")`, (error, result) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve(result);
+        }
+    })
+})
+
+export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
+    if (!id) reject();
+
+    kubeDB.query(`DELETE FROM project WHERE projectId = ${id}`, (error, result) => {
+        if (error) {
+            reject("Model delete by ID error");
+        } else {
+            if (result.affectedRows === 0) {
+                reject(`Project with id ${id} does not exist`);
+            } else {
+                resolve(result)
+            }
+        }
+    })
+})

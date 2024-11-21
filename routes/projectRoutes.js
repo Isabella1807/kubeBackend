@@ -1,9 +1,10 @@
 import express from "express";
-import {projectController} from "../controllers/projectController.js";
+import {templateController} from "../controllers/teamController.js";
+
 
 const router = express.Router();
-router.get("/", projectController.getAll)
-router.get("/:id", projectController.getByID)
-router.post("/", projectController.create)
-router.delete("/:id", projectController.delete)
+router.get("/", templateController.getAll)
+router.get("/:id", templateController.getByID)
+router.post("/", templateController.create)
+router.delete("/:id", templateController.delete)
 export default router;

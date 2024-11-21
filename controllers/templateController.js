@@ -1,3 +1,5 @@
+import {getAllTemplate} from "../models/templateModel.js";
+
 export const showAllTemplate = {
     getAll: async (req, res) => {
         try {
@@ -22,14 +24,6 @@ export const showAllTemplate = {
         // Din logik for at slette en template
     }
 };
-
-
-
-
-
-
-
-
 
 
 // export const showAllTemplate= {

@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import Router from './routes/routes.js'
-import {deleteProjectByID} from "./models/projectModel.js";
 
 const app = express();
 const port = 3000;

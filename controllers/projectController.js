@@ -1,8 +1,26 @@
 import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "../models/projectModel.js";
+import axios from "axios";
+import dotenv from "dotenv";
+
+//Makes it possible to use .env variables to hide login data
+dotenv.config()
 
 export const projectController = {
     getAll: async (req, res) => {
         try {
+            const {data} = await axios.post(`${process.env.PORTAINER_BASEURL}/auth`, {
+                username: process.env.PORTAINER_USERNAME,
+                password: process.env.PORTAINER_PASSWORD
+            })
+
+
+            console.log("Noghet unitk", data);
+
+
+
+
+
+
             const projects = await getAllProjects()
             res.json(projects)
         } catch (error) {

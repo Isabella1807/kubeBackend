@@ -1,5 +1,5 @@
 import express from "express";
-import { showAllTemplate } from "../controllers/templateController.js";
+import {projectController} from "../controllers/projectController.js";
 
 const router = express.Router();
 router.get("/", projectController.getAll)

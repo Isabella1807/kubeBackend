@@ -1,5 +1,6 @@
 import kubeDB from "../Database.js";
 
+// create user model som virker med hardcoded data 
 export const createUser = (userData, callback) => {
     const sql = `INSERT INTO users (uclMail, password, firstName, lastName, roleId, teamId) VALUES (?, ?, ?, ?, ?, ?)`;
     const values = [
@@ -11,7 +12,7 @@ export const createUser = (userData, callback) => {
         userData.teamId
     ];
 
-    // Execute the query to insert user data
+    // insæt ny brugerdata 
     kubeDB.query(sql, values, (err, result) => {
         if (err) {
             console.error("Database error:", err);
@@ -22,12 +23,12 @@ export const createUser = (userData, callback) => {
     });
 };
 
-// Function to fetch a user by ID from the database
+// funktionen til at finde en bruger via userid
 export const fetchUserById = (userId, callback) => {
     const sql = `SELECT * FROM users WHERE userId = ?`;
-    const values = [userId];  // Use the provided userId
+    const values = [userId];  
 
-    // Execute the query to fetch the user
+    
     kubeDB.query(sql, values, (err, result) => {
         if (err) {
             console.error("Database error:", err);
@@ -38,21 +39,23 @@ export const fetchUserById = (userId, callback) => {
     });
 };
 
-// Function to fetch all users from the database
+// Funktionen til at finde af brugerer på siden 
 export const fetchAllUsers = (callback) => {
-    const sql = "SELECT * FROM users"; // Query to select all users
+    const sql = "SELECT * FROM users"; 
 
-    // Execute the query to fetch all users
+ 
     kubeDB.query(sql, (err, result) => {
         if (err) {
             console.error("Database error:", err);
             callback(err, null);
         } else {
-            callback(null, result); // Return all users
+            callback(null, result); 
         }
     });
 };
 
+
+// funktionen til at kunne UPDATE password 
 export const updateUserPasswordById = (userId, newPassword, callback) => {
     const sql = `
         UPDATE users
@@ -64,12 +67,12 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
             console.error("Error updating password:", err);
             callback(err, null);
         } else {
-            callback(null, result); // Return the result of the update
+            callback(null, result); 
         }
     });
 };
 
-// Function to delete a user by ID from the database
+// Funktionen til at kunne slette en bruger via deres uiserID 
 export const deleteUserById = (userId, callback) => {
     const sql = `DELETE FROM users WHERE userId = ?`;
 

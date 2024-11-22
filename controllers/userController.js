@@ -2,13 +2,14 @@ import { updateUserPasswordById, fetchUserById, fetchAllUsers, deleteUserById } 
 
 // Controller to handle creating a user
 export const addUser = (req, res) => {
+   //Hardcoded data ved create user - siden at jeg ikke kan få det shit til at virke 
     const userData = {
-        uclMail: "testuser@example.com",   // Hardcoded email
-        password: "securepassword",        // Hardcoded password
-        firstName: "John",                 // Hardcoded first name
-        lastName: "Doe",                   // Hardcoded last name
-        roleId: 1,                         // Assuming roleId exists
-        teamId: 1                          // Assuming teamId exists
+        uclMail: "testuser@example.com",  
+        password: "securepassword",        
+        firstName: "John",                 
+        lastName: "Doe",                   
+        roleId: 1,                        
+        teamId: 1                          
     };
 
     createUser(userData, (err, result) => {
@@ -18,15 +19,19 @@ export const addUser = (req, res) => {
         } else {
             res.status(201).json({
                 message: "Hardcoded user created successfully.",
-                userId: result.insertId  // Return the created user ID
+                userId: result.insertId  // giver userid tilbage 
             });
         }
     });
 };
 
-// Controller to fetch user by ID
+
+
+
+
+// Controller til hente user med ID Igen hardcoded 
 export const getUserById = (req, res) => {
-    const userId = 17;  // Hardcoded user ID for testing
+    const userId = 20;  
 
     fetchUserById(userId, (err, result) => {
         if (err) {
@@ -36,7 +41,7 @@ export const getUserById = (req, res) => {
             if (result.length > 0) {
                 res.status(200).json({
                     message: "User data retrieved successfully.",
-                    user: result[0],  // Return the first matching user
+                    user: result[0], 
                 });
             } else {
                 res.status(404).json({ message: "User not found." });
@@ -45,6 +50,7 @@ export const getUserById = (req, res) => {
     });
 };
 
+// får alle bruger på siden 
 export const getAllUsers = (req, res) => {
     fetchAllUsers((err, result) => {
         if (err) {
@@ -54,7 +60,7 @@ export const getAllUsers = (req, res) => {
             if (result.length > 0) {
                 res.status(200).json({
                     message: "All users retrieved successfully.",
-                    users: result,  // Return the array of users
+                    users: result,  // viser et array af alle user på siden
                 });
             } else {
                 res.status(404).json({ message: "No users found." });
@@ -63,15 +69,17 @@ export const getAllUsers = (req, res) => {
     });
 };
 
+
+// UPDATE PASSWORD 
 export const updatePassword = (req, res) => {
-    const userId = req.params.id; // Get the userId from the route parameters
-    const newPassword = req.body.password; // Get the new password from the request body
+    const userId = req.params.id; 
+    const newPassword = req.body.password; // får det nye password fra req body 
 
     if (!newPassword) {
         return res.status(400).json({ message: "Password is required." });
     }
 
-    // Update the password in the database
+    // Updater password i databasen
     updateUserPasswordById(userId, newPassword, (err, result) => {
         if (err) {
             console.error("Error updating password:", err);
@@ -89,7 +97,7 @@ export const updatePassword = (req, res) => {
 };
 
 
-// Controller to delete a user by ID
+// Hvordan man kan slette en bruger via ID
 export const deleteUserByIdController = (req, res) => {
     const userId = req.params.id;
 
@@ -101,7 +109,7 @@ export const deleteUserByIdController = (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
         
-        // Call the model function to delete the user
+        // kalder til model funktionen til at slette en bruger 
         deleteUserById(userId, (err, result) => {
             if (err) {
                 return res.status(500).json({ error: "Failed to delete user" });

@@ -3,11 +3,11 @@ import { addUser, getUserById, getAllUsers, updatePassword, deleteUserByIdContro
 
 const userRouter = express.Router();
 
-// Route to create a user
+
 userRouter.post("/", addUser);
 userRouter.get("/:id", getUserById);
 userRouter.get("/", getAllUsers);
 userRouter.put("/:id/password", updatePassword);
-userRouter.delete("/:id", deleteUserByIdController);  // Corrected controller function name
+userRouter.delete("/:id", deleteUserByIdController);  
 
 export default userRouter;

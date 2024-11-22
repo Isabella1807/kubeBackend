@@ -2,7 +2,7 @@ import express from "express";
 import {showAllRoles} from "../controllers/roleController.js";
 import {showAllTemplate} from "../controllers/templateController.js";
 
-import projectRoutes from "./templateRoutes.js";
+import projectRoutes from "./projetesRoutes.js";
 
 const router = express.Router();
 router.get("/roles", showAllRoles);

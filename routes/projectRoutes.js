@@ -1,9 +1,9 @@
 import express from "express";
-import { showAllTemplate } from "../controllers/templateController.js";
+import {projectController} from "../controllers/projectController.js";
 
 const router = express.Router();
-router.get("/", showAllTemplate.getAll);  // Brug getAll metoden
-router.get("/:id", showAllTemplate.getByID);  // Brug getByID metoden
-router.post("/", showAllTemplate.create);  // Brug create metoden
-router.delete("/:id", showAllTemplate.delete);  // Brug delete metoden
+router.get("/", projectController.getAll)
+router.get("/:id", projectController.getByID)
+router.post("/", projectController.create)
+router.delete("/:id", projectController.delete)
 export default router;

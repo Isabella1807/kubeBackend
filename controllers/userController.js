@@ -1,4 +1,4 @@
-import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById } from "../models/userModel.js";
+import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from "../models/userModel.js";
 
 // kontroller til lav ny bruger
 export const addUser = (req, res) => {
@@ -83,5 +83,27 @@ export const updateUserPassword = (req, res) => {
         }
 
         res.status(200).json({ message: "Password updated successfully." });
+    });
+};
+
+//delete user via id
+export const deleteUser = (req, res) => {
+    const userId = parseInt(req.params.id, 10); 
+
+    if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID." });
+    }
+
+    deleteUserById(userId, (err, result) => {
+        if (err) {
+            console.error("Error deleting user:", err);
+            return res.status(500).json({ error: "Failed to delete user." });
+        }
+
+        if (result.message) {
+            return res.status(404).json({ message: result.message });
+        }
+
+        res.status(200).json({ message: "User deleted successfully." });
     });
 };

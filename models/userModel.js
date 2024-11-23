@@ -76,3 +76,24 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
         callback(null, result);
     });
 };
+
+// delete user funktion
+export const deleteUserById = (userId, callback) => {
+    const sql = `
+        DELETE FROM users
+        WHERE userId = ?
+    `;
+
+    kubeDB.query(sql, [userId], (err, result) => {
+        if (err) {
+            console.error("Error deleting user:", err);
+            return callback(err, null);
+        }
+
+        if (result.affectedRows === 0) {
+            return callback(null, { message: "User not found." });
+        }
+
+        callback(null, result);
+    });
+};

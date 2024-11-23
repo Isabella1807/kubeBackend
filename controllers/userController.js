@@ -1,52 +1,51 @@
-import { updateUserPasswordById, fetchUserById, fetchAllUsers, deleteUserById } from "../models/userModel.js";
+import { createUser, updateUserPasswordById, fetchUserById, fetchAllUsers, deleteUserById } from "../models/userModel.js";
 
-// Controller to handle creating a user
+// Controller to add a new user
 export const addUser = (req, res) => {
-   //Hardcoded data ved create user - siden at jeg ikke kan få det shit til at virke 
-    const userData = {
-        uclMail: "testuser@example.com",  
-        password: "securepassword",        
-        firstName: "John",                 
-        lastName: "Doe",                   
-        roleId: 1,                        
-        teamId: 1                          
-    };
+    // Extract data from the request body
+    const { uclMail, password, firstName, lastName, roleId, teamId } = req.body;
 
-    createUser(userData, (err, result) => {
-        if (err) {
-            console.error("Error while creating user:", err);
-            res.status(500).json({ error: "Failed to create user." });
-        } else {
+    // Validate required fields
+    if (!uclMail || !password || !firstName || !lastName || !roleId || !teamId) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
+
+    // Call the model to create the user
+    createUser(
+        { uclMail, password, firstName, lastName, roleId, teamId },
+        (err, result) => {
+            if (err) {
+                console.error("Error creating user:", err);
+                return res.status(500).json({ error: "Failed to create user." });
+            }
+
             res.status(201).json({
-                message: "Hardcoded user created successfully.",
-                userId: result.insertId  // giver userid tilbage 
+                message: "User created successfully.",
+                userId: result.insertId, // Returning the ID of the newly created user
             });
         }
-    });
+    );
 };
-
-
-
-
-
-// Controller til hente user med ID Igen hardcoded 
+// Controller to get a user by ID
 export const getUserById = (req, res) => {
-    const userId = 20;  
+    const userId = parseInt(req.params.id, 10); // Extract userId from URL params
 
-    fetchUserById(userId, (err, result) => {
+    if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID." });
+    }
+
+    // Call the model to fetch the user
+    fetchUserById(userId, (err, user) => {
         if (err) {
-            console.error("Error while fetching user:", err);
-            res.status(500).json({ error: "Failed to fetch user." });
-        } else {
-            if (result.length > 0) {
-                res.status(200).json({
-                    message: "User data retrieved successfully.",
-                    user: result[0], 
-                });
-            } else {
-                res.status(404).json({ message: "User not found." });
-            }
+            console.error("Error fetching user:", err);
+            return res.status(500).json({ error: "Failed to fetch user." });
         }
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.status(200).json(user);
     });
 };
 

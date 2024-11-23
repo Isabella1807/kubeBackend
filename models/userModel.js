@@ -1,41 +1,46 @@
 import kubeDB from "../Database.js";
 
-// create user model som virker med hardcoded data 
+// funktionen til at create user (lave en bruger)
 export const createUser = (userData, callback) => {
-    const sql = `INSERT INTO users (uclMail, password, firstName, lastName, roleId, teamId) VALUES (?, ?, ?, ?, ?, ?)`;
-    const values = [
-        userData.uclMail,
-        userData.password,
-        userData.firstName,
-        userData.lastName,
-        userData.roleId,
-        userData.teamId
-    ];
+    const { uclMail, password, firstName, lastName, roleId, teamId } = userData;
 
-    // insæt ny brugerdata 
-    kubeDB.query(sql, values, (err, result) => {
-        if (err) {
-            console.error("Database error:", err);
-            callback(err, null);
-        } else {
+    const sql = `
+        INSERT INTO users (uclMail, password, firstName, lastName, roleId, teamId)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    kubeDB.query(
+        sql,
+        [uclMail, password, firstName, lastName, roleId, teamId],
+        (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
             callback(null, result);
         }
-    });
+    );
 };
 
-// funktionen til at finde en bruger via userid
-export const fetchUserById = (userId, callback) => {
-    const sql = `SELECT * FROM users WHERE userId = ?`;
-    const values = [userId];  
 
-    
-    kubeDB.query(sql, values, (err, result) => {
+// funktionen til at finde en bruger via ID
+export const fetchUserById = (userId, callback) => {
+    const sql = `
+        SELECT userId, uclMail, firstName, lastName, roleId, teamId
+        FROM users
+        WHERE userId = ?
+    `;
+
+    kubeDB.query(sql, [userId], (err, results) => {
         if (err) {
-            console.error("Database error:", err);
-            callback(err, null);
-        } else {
-            callback(null, result);
+            return callback(err, null);
         }
+
+        // hvis ingen bruger er fundet med det id, så returer med en fejl besked
+        if (results.length === 0) {
+            return callback(null, null);
+        }
+
+        // kommer med det første result med det brugerid
+        callback(null, results[0]);
     });
 };
 

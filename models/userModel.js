@@ -41,3 +41,20 @@ export const fetchUserById = (userId, callback) => {
         callback(null, results[0]);
     });
 };
+
+// få alle bruger
+export const fetchAllUsers = (callback) => {
+    const sql = `
+        SELECT userId, uclMail, firstName, lastName, roleId, teamId
+        FROM users
+    `;
+
+    kubeDB.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error fetching users:", err);
+            return callback(err, null);
+        }
+
+        callback(null, results);
+    });
+};

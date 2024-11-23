@@ -1,4 +1,4 @@
-import { createUser, fetchUserById } from "../models/userModel.js";
+import { createUser, fetchUserById, fetchAllUsers } from "../models/userModel.js";
 
 // kontroller til lav ny bruger
 export const addUser = (req, res) => {
@@ -44,5 +44,17 @@ export const getUserById = (req, res) => {
         }
 
         res.status(200).json(user);
+    });
+};
+
+// kontroller til at få alle brugerer
+export const getAllUsers = (req, res) => {
+    fetchAllUsers((err, users) => {
+        if (err) {
+            console.error("Error fetching all users:", err);
+            return res.status(500).json({ error: "Failed to fetch users." });
+        }
+
+        res.status(200).json(users);
     });
 };

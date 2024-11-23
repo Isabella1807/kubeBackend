@@ -58,3 +58,21 @@ export const fetchAllUsers = (callback) => {
         callback(null, results);
     });
 };
+
+//update Password 
+export const updateUserPasswordById = (userId, newPassword, callback) => {
+    const sql = `
+        UPDATE users
+        SET password = ?
+        WHERE userId = ?
+    `;
+
+    kubeDB.query(sql, [newPassword, userId], (err, result) => {
+        if (err) {
+            console.error("Error updating password:", err);
+            return callback(err, null);
+        }
+
+        callback(null, result);
+    });
+};

@@ -6,7 +6,7 @@ import templateRoutes from "./templateRoutes.js";
 
 const router = express.Router();
 router.get("/roles", showAllRoles);
-router.get("/template", templateRoutes);
+router.use("/template", templateRoutes);
 // router.use("/projects", projectRoutes);
 router.use("/users", userRoutes);
 

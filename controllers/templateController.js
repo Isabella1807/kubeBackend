@@ -1,47 +1,39 @@
-import {getAllTemplate} from "../models/templateModel.js";
+import { getAllTemplate } from "../models/templateModel.js";
 
 export const showAllTemplate = {
     getAll: async (req, res) => {
         try {
-            const template = await getAllTemplate();  // Din logik for at hente templates
+            const templates = await getAllTemplate();
+            res.json(templates);
+        } catch (error) {
+            console.error("Error fetching templates:", error);
+            res.status(500).send("Failed to fetch templates");
+        }
+    },
+
+    getByID: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const template = await getTemplateByID(id);
             res.json(template);
         } catch (error) {
+            console.error(`Error fetching template with ID:`, error);
             res.status(500).send(error);
         }
     },
-    getByID: async (req, res) => {
-        try {
-                            const template = await getTemplateByID(req.params.id)
-                            res.json(template)
-                        } catch (error) {
-                            res.status(500).send(error);
-                        }
-    },
+
     create: async (req, res) => {
-        // Din logik for at oprette en template
+        try {
+            const { name, description } = req.body;  // Data fra klienten
+            const result = await createTemplate({ name, description });
+            res.status(201).json({ message: "Template created", id: result.insertId });
+        } catch (error) {
+            console.error("Error creating template:", error);
+            res.status(500).send("Failed to create template");
+        }
     },
+
     delete: async (req, res) => {
-        // Din logik for at slette en template
-    }
+        res.status(501).send("Delete functionality not implemented");
+    },
 };
-
-
-// export const showAllTemplate= {
-//     getAll: async (req, res) => {
-//         try {
-//             const template = await getAllTemplate()
-//             res.json(template)
-//         } catch (error) {
-//             res.status(500).send(error);
-//         }
-//     },
-//     getByID: async (req, res) => {
-//         try {
-//             const template = await getTemplateByID(req.params.id)
-//             res.json(template)
-//         } catch (error) {
-//             res.status(500).send(error);
-//         }
-//     }
-
-// }

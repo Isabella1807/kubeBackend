@@ -1,4 +1,4 @@
-import { getAllTemplate } from "../models/templateModel.js";
+import { getAllTemplate, getTemplateByID, createTemplate, deleteTemplate, updateTemplate } from "../models/templateModel.js";
 
 export const showAllTemplate = {
     getAll: async (req, res) => {
@@ -34,6 +34,25 @@ export const showAllTemplate = {
     },
 
     delete: async (req, res) => {
-        res.status(501).send("Delete functionality not implemented");
-    },
+        try {
+            const id = req.params.id;
+            const result = await deleteTemplate(id);
+            res.status(200).json({ message: "Template deleted", result });
+        } catch (error) {
+            console.error("Error deleting template:", error);
+            res.status(500).send("Failed to delete template");
+        }
+    },    
+
+    update: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const data = req.body;
+            const result = await updateTemplate(id, data);
+            res.status(200).json({ message: "Template updated", result });
+        } catch (error) {
+            console.error("Error updating template:", error);
+            res.status(500).send("Failed to update template");
+        }
+    },    
 };

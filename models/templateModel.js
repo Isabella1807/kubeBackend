@@ -36,7 +36,7 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
 
 //CREATE
 export const createTemplate = (data) => new Promise((resolve, reject) => {
-    kubeDB.query('INSERT INTO template SET ?', data, (error, result) => {
+    kubeDB.query('INSERT INTO template SET (templateText, templateName) VALUES ?', data, (error, result) => {
         if (error) {
             reject(error);
         } else {
@@ -44,3 +44,31 @@ export const createTemplate = (data) => new Promise((resolve, reject) => {
         }
     });
 });
+
+//UPDATE
+export const updateTemplate = (id, data) => new Promise((resolve, reject) => {
+    kubeDB.query('UPDATE template SET ? WHERE templateId = ?', [data, id], (error, result) => {
+        if (error) {
+            console.error("Error updating template:", error);
+            reject(error);
+        } else {
+            resolve(result);
+        }
+    });
+});
+
+
+//DELETE
+export const deleteTemplate = (id) => new Promise((resolve, reject) => {
+    kubeDB.query('DELETE FROM template WHERE templateId = ?', [id], (error, result) => {
+        if (error) {
+            console.error("Error deleting template:", error);
+            reject(error);
+        } else {
+            resolve(result);
+        }
+    });
+});
+
+
+

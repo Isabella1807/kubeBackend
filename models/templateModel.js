@@ -36,13 +36,18 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
 
 //CREATE
 export const createTemplate = (data) => new Promise((resolve, reject) => {
-    kubeDB.query('INSERT INTO template SET (templateText, templateName) VALUES ?', data, (error, result) => {
-        if (error) {
-            reject(error);
-        } else {
-            resolve(result);
+    kubeDB.query(
+        'INSERT INTO template (templateText, templateName) VALUES (?, ?)',
+        [data.templateText, data.templateName],
+        (error, result) => {
+            if (error) {
+                console.error("Error creating template:", error);
+                reject(error);
+            } else {
+                resolve(result);
+            }
         }
-    });
+    );
 });
 
 //UPDATE

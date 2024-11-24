@@ -3,8 +3,8 @@ import { getAllTemplate, getTemplateByID, createTemplate, deleteTemplate, update
 export const showAllTemplate = {
     getAll: async (req, res) => {
         try {
-            const templates = await getAllTemplate();
-            res.json(templates);
+            const templates = await getAllTemplate();  // Hent data fra modellen
+            res.json(templates);  // Returnér data som JSON
         } catch (error) {
             console.error("Error fetching templates:", error);
             res.status(500).send("Failed to fetch templates");
@@ -22,16 +22,16 @@ export const showAllTemplate = {
         }
     },
 
-    create: async (req, res) => {
-        try {
-            const { name, description } = req.body;  // Data fra klienten
-            const result = await createTemplate({ name, description });
-            res.status(201).json({ message: "Template created", id: result.insertId });
-        } catch (error) {
-            console.error("Error creating template:", error);
-            res.status(500).send("Failed to create template");
-        }
-    },
+        create: async (req, res) => {
+            try {
+                const { templateText, templateName } = req.body;  // Data fra klienten
+                const result = await createTemplate({ templateText, templateName });
+                res.status(201).json({ message: "Template created", id: result.insertId });
+            } catch (error) {
+                console.error("Error creating template:", error);
+                res.status(500).send("Failed to create template");
+            }
+        },
 
     delete: async (req, res) => {
         try {

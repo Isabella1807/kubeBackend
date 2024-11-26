@@ -1,10 +1,10 @@
 import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "../models/projectModel.js";
-import axios from "axios";
-import dotenv from "dotenv";
-import portainer from "../Portainer.js"
+//import axios from "axios";
+//import dotenv from "dotenv";
+//import portainer from "../Portainer.js"
 
 //Makes it possible to use .env variables to hide login data
-dotenv.config()
+//dotenv.config()
 
 export const projectController = {
     getAll: async (req, res) => {

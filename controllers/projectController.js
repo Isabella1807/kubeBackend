@@ -1,5 +1,5 @@
 import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "../models/projectModel.js";
-import axios from "axios";
+//import axios from "axios";
 import dotenv from "dotenv";
 import portainer from "../Portainer.js"
 
@@ -17,7 +17,11 @@ export const projectController = {
             //how often does token change?
             const token = data.jwt;
 
-            const stacks = await portainer.get(`/stacks`)
+            const stacks = await portainer.get(`/stacks`, {
+                headers: {
+                    Authorization: token
+                }
+            })
 
             /*console.log("Noghet unitk", data);*/
             console.log(stacks.data);
@@ -59,6 +63,29 @@ export const projectController = {
         // get teplate bny id. if no template, send error
 
         try {
+            const {data} = await portainer.post('/auth', {
+                username: process.env.PORTAINER_USERNAME,
+                password: process.env.PORTAINER_PASSWORD
+            })
+
+            //how often does token change?
+            const token = data.jwt;
+
+            const response = await portainer.post(`/stacks`, {
+                body: {
+                    name: 'blabla',
+                    template: 'asdasdasd'
+                },
+                headers: {
+                    Authorization: token
+                }
+            })
+
+
+
+
+
+
             await createProject(templateId, 1, projectName,subdomainName)
             res.sendStatus(200)
         } catch (error) {

@@ -5,6 +5,7 @@ import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "
 
 //Makes it possible to use .env variables to hide login data
 //dotenv.config()
+const axios = require('axios');
 
 export const projectController = {
     getAll: async (req, res) => {
@@ -40,6 +41,9 @@ export const projectController = {
     },
     create: async (req, res) => {
         const { templateId, projectName, subdomainName } = req.body;
+
+            // Log for at kontrollere hvad der bliver sendt
+    console.log("Request body:", req.body);
 
         if(typeof projectName !== 'string' ||  projectName.length === 0){
             res.status(400).send("no project name")

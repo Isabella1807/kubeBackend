@@ -1,8 +1,5 @@
-import dotenv from "dotenv";
 import {generateToken} from "../utils/jwt.js";
 import {getUserByMail} from "../models/userModel.js";
-
-dotenv.config();
 
 export const loginController = {
     loginUser: async (req, res) => {
@@ -11,17 +8,17 @@ export const loginController = {
             const userMail = req.body.uclMail;
             const userPassword = req.body.password.toString();
 
-            const user = await getUserByMail(userMail);
+            const userData = await getUserByMail(userMail);
 
-            if (!user) {
+            if (!userData) {
                 return res.status(400).send("Wrong mail or password");
             }
 
-            if (userPassword !== user.password) {
+            if (userPassword !== userData.password) {
                 return res.status(400).send("Wrong mail or password");
             }
 
-            const token = generateToken(user);
+            const token = generateToken({userId: userData.userId});
             res.json({token: token});
 
         } catch (error) {

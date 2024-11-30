@@ -1,7 +1,4 @@
 import jwt from 'jsonwebtoken';
-import dotenv from "dotenv";
-
-dotenv.config()
 
 export const generateToken = (payload) => {
     //.sign takes an object with data, a string that's secret and any options, in this case an expiration time.

@@ -1,6 +1,6 @@
 import express from "express";
 import {projectController} from "../controllers/projectController.js";
-import {mustBeLoggedIn} from "../middleware/authToken.js";
+import {mustBeLoggedIn} from "../middleware/authenticate.js";
 
 const router = express.Router();
 router.get("/", mustBeLoggedIn, projectController.getAll)

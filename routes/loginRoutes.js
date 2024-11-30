@@ -1,3 +1,4 @@
+/*
 import express from "express";
 import {loginController} from "../controllers/loginController.js";
 
@@ -9,3 +10,4 @@ userRouter.get("/", loginController.authToken, (req, res) => {
 });
 
 export default userRouter;
+*/

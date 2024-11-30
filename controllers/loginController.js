@@ -1,4 +1,4 @@
-import {generateToken, verifyToken} from '../utils/jwt.js'
+/*import {generateToken, verifyToken} from '../utils/jwt.js'
 import jwt from "jsonwebtoken";
 
 
@@ -32,4 +32,4 @@ export const loginController = {
             next()
         })
     }
-}
+}*/

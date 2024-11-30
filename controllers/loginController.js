@@ -11,18 +11,18 @@ export const loginController = {
             const userMail = req.body.uclMail;
             const userPassword = req.body.password.toString();
 
-            try {
-                const user = await getUserByMail(userMail);
-                if (userPassword === user.password) {
-                    const token = generateToken(user);
-                    res.json({token: token});
-                } else {
-                    return res.status(400).send("Wrong mail or password");
-                }
+            const user = await getUserByMail(userMail);
 
-            } catch (error) {
+            if (!user) {
                 return res.status(400).send("Wrong mail or password");
             }
+
+            if (userPassword !== user.password) {
+                return res.status(400).send("Wrong mail or password");
+            }
+
+            const token = generateToken(user);
+            res.json({token: token});
 
         } catch (error) {
             res.sendStatus(500).send(error);

@@ -47,11 +47,7 @@ export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
         if (error) {
             reject("Model get by ucl mail error");
         } else {
-            if (result.length === 0) {
-                reject(`No user with uclmail: ${userMail}`);
-            } else {
-                resolve(result[0]);
-            }
+            resolve(result[0]);
         }
     })
 })

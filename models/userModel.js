@@ -39,6 +39,7 @@ export const fetchUserById = (userId, callback) => {
     });
 };
 
+//Used in loginController
 export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
     if (!userMail) reject();
 
@@ -49,7 +50,7 @@ export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No user with uclmail: ${userMail}`);
             } else {
-                resolve(result);
+                resolve(result[0]);
             }
         }
     })

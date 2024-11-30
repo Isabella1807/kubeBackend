@@ -9,6 +9,9 @@ router.get("/roles", showAllRoles);
 router.use("/template", templateRoutes);
 router.use("/projects", projectRoutes);
 router.use("/users", userRoutes);
+router.use('/api', projectRoutes);
+
+
 
 router.use((req, res) => {res.status(404).send("route not found")})
 

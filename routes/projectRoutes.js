@@ -6,4 +6,6 @@ router.get("/", projectController.getAll)
 router.get("/:id", projectController.getByID)
 router.post("/", projectController.create)
 router.delete("/:id", projectController.delete)
+router.post("/login", projectController.login);
 export default router;
+

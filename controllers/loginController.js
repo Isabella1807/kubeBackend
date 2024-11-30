@@ -1,35 +1,23 @@
-/*import {generateToken, verifyToken} from '../utils/jwt.js'
-import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import {generateToken} from "../utils/jwt.js";
 
+dotenv.config()
 
 export const loginController = {
     loginUser: async (req, res) => {
+
         try {
             const username = req.body.username;
 
             const user = {
                 name: username
             }
+            const token = generateToken(user);
 
-            const token = generateToken(user)
-            res.json({token: token})
+            res.json({token: token});
 
-
-            console.log("hejsa");
-            console.log(req.body);
-        } catch {
+        } catch (e) {
 
         }
-    },
-    authToken: (req, res, next) => {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
-        if (token == null) return res.sendStatus(401)
-
-        jwt.verify(token, process.env.TOKEN_SECRET, (error, user) => {
-            if (error) return res.sendStatus(403)
-            req.user = user
-            next()
-        })
     }
-}*/
+}

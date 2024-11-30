@@ -1,13 +1,14 @@
-/*
 import express from "express";
 import {loginController} from "../controllers/loginController.js";
+import {mustBeLoggedIn} from "../middleware/authToken.js";
 
-const userRouter = express.Router();
 
-userRouter.post("/", loginController.loginUser);
-userRouter.get("/", loginController.authToken, (req, res) => {
-    res.json()
+const router = express.Router();
+
+router.post("/", loginController.loginUser);
+router.get("/teest", mustBeLoggedIn, (req, res) => {
+    res.send('goddag')
 });
 
-export default userRouter;
-*/
+export default router;
+

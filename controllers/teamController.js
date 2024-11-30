@@ -13,7 +13,7 @@ export const teamController = {
   getByID: async (request, response) => {
     try {
       const team = await getTeamById(request.params.id);
-      response.json(team);
+      response.json(team); 
     } catch (error) {
       response.status(500).send(error);
     }

@@ -23,7 +23,7 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
         return;
     }
 
-    // Brug parameteriseret forespørgsel for at undgå SQL-injektion
+    // Brug parameteriseret forespørgsel for at undgå SQL-injektion "?" erstattes med den rigtige værdi.
     kubeDB.query('SELECT * FROM template WHERE templateId = ?', [id], (error, result) => {
         if (error) {
             console.error(`Error fetching template with ID ${id}:`, error);  // Log fejlen for debugging

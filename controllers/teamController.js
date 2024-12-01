@@ -18,7 +18,7 @@ export const teamController = {
       response.status(500).send(error);
     }
   },
-  create: async (req, res) => {
+  create: async (req, res) => { 
     const { teamName } = req.body;
 
     if (typeof teamName !== "string" || teamName.length === 0) {

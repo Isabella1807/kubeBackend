@@ -5,11 +5,11 @@ import kubeDB from "../Database.js";
 
 
 // Funktion for at hente alle templates
-export const getAllTemplate = () => new Promise((resolve, reject) => {
+export const getAllTemplates = () => new Promise((resolve, reject) => {
     kubeDB.query('SELECT * FROM template', (error, result) => {
         if (error) {
             console.error("Error fetching all templates:", error);  // Log fejlen for debugging
-            reject("Failed to fetch all templates");
+            reject(error);
         } else {
             resolve(result);
         }

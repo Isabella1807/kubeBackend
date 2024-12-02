@@ -21,7 +21,7 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No project with ID ${id}`);
             } else {
-                resolve(result);
+                resolve(result[0]);
             }
         }
     })

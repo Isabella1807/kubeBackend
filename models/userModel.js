@@ -39,6 +39,20 @@ export const fetchUserById = (userId, callback) => {
     });
 };
 
+//Used in loginController
+export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
+    if (!userMail) reject();
+
+    kubeDB.query(`SELECT password, userId FROM users WHERE uclMail = '${userMail}'`, (error, result) => {
+        if (error) {
+            reject("Model get by ucl mail error");
+        } else {
+            resolve(result[0]);
+        }
+    })
+})
+
+
 // Funktionen til at finde af brugerer på siden 
 export const fetchAllUsers = (callback) => {
     const sql = "SELECT * FROM users"; 

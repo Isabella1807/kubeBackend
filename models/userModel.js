@@ -12,7 +12,7 @@ export const createUser = (userData, callback) => {
         userData.teamId
     ];
 
-    // insæt ny brugerdata 
+    //  create new user data
     kubeDB.query(sql, values, (err, result) => {
         if (err) {
             console.error("Database error:", err);
@@ -23,7 +23,7 @@ export const createUser = (userData, callback) => {
     });
 };
 
-// funktionen til at finde en bruger via userid
+// function find user by id
 export const fetchUserById = (userId, callback) => {
     const sql = `SELECT * FROM users WHERE userId = ?`;
     const values = [userId];  
@@ -39,7 +39,7 @@ export const fetchUserById = (userId, callback) => {
     });
 };
 
-// Funktionen til at finde af brugerer på siden 
+// find the user on the page 
 export const fetchAllUsers = (callback) => {
     const sql = "SELECT * FROM users"; 
 
@@ -55,7 +55,7 @@ export const fetchAllUsers = (callback) => {
 };
 
 
-// funktionen til at kunne UPDATE password 
+// function to update password
 export const updateUserPasswordById = (userId, newPassword, callback) => {
     const sql = `
         UPDATE users
@@ -72,7 +72,7 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
     });
 };
 
-// Funktionen til at kunne slette en bruger via deres uiserID 
+// function to delete user by their id 
 export const deleteUserById = (userId, callback) => {
     const sql = `DELETE FROM users WHERE userId = ?`;
 

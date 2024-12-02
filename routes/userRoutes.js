@@ -2,25 +2,25 @@ import express from 'express';
 import multer from 'multer';
 import { addUserFromCSV, getUserById, getAllUsers, updatePassword, deleteUserByIdController } from '../controllers/userController.js';
 
-// Set up multer to store files in memory
+// save files in multer memory
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const userRouter = express.Router();
 
-// Route for uploading CSV and adding users
+// the route for csv upload and add users
 userRouter.post('/upload', upload.single('file'), addUserFromCSV);
 
-// Route for fetching a user by ID
+// route to get user by ID
 userRouter.get('/:id', getUserById);
 
-// Route for fetching all users
+// route to get all users
 userRouter.get('/', getAllUsers);
 
-// Route for updating a user's password by ID
+// route to update users password
 userRouter.put('/:id/password', updatePassword);
 
-// Route for deleting a user by ID
+// rote for deleting the user by their id 
 userRouter.delete('/:id', deleteUserByIdController);
 
 export default userRouter;

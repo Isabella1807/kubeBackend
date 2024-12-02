@@ -13,7 +13,7 @@ export const addUserFromCSV = async (req, res) => {
             skip_empty_lines: true
         });
 
-        // Promise-based query function
+        // query function 
         const queryDB = (sql, params) => {
             return new Promise((resolve, reject) => {
                 kubeDB.query(sql, params, (err, result) => {
@@ -23,14 +23,14 @@ export const addUserFromCSV = async (req, res) => {
             });
         };
 
-        // Function to get or create team
+        // create team and getting it
         const getOrCreateTeam = async (teamName) => {
-            // Check if we've already processed this team
+            // see if there is alreay a team with same name
             if (processedTeams.has(teamName)) {
                 return processedTeams.get(teamName);
             }
 
-            // Check if team exists
+            // see if the team is existing
             const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
             
             if (teamResult.length > 0) {
@@ -39,7 +39,7 @@ export const addUserFromCSV = async (req, res) => {
                 return teamId;
             }
 
-            // Create new team if it doesn't exist
+            // if there isnt a team it will make one
             const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
             const newTeamId = newTeam.insertId;
             processedTeams.set(teamName, newTeamId);

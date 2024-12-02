@@ -3,67 +3,109 @@ import { Readable } from 'stream';
 import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from '../models/userModel.js';
 import kubeDB from '../Database.js';
 
-export const addUserFromCSV = (req, res) => {
-    const results = [];
+export const addUserFromCSV = async (req, res) => {
+    try {
+        const results = [];
+        const processedTeams = new Map();
 
-    const csvParser = parse({ 
-        columns: true, // Ensure columns are used as the headers
-        skip_empty_lines: true
-    });
+        const csvParser = parse({ 
+            columns: true,
+            skip_empty_lines: true
+        });
 
-    Readable.from(req.file.buffer.toString())
-        .pipe(csvParser)
-        .on('data', (row) => {
-            console.log('Parsed Row:', row);  // Log the parsed row to verify
+        // Promise-based query function
+        const queryDB = (sql, params) => {
+            return new Promise((resolve, reject) => {
+                kubeDB.query(sql, params, (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result);
+                });
+            });
+        };
 
-            const teamName = row.teamName; // Extract teamName from the CSV row
-            console.log('Team Name:', teamName);  // Log to check if it's being parsed correctly
-
-            // Check if all required fields are present in the row
-            if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !teamName || !row.roleId) {
-                console.error('Missing required field in row:', row);
-                return;
+        // Function to get or create team
+        const getOrCreateTeam = async (teamName) => {
+            // Check if we've already processed this team
+            if (processedTeams.has(teamName)) {
+                return processedTeams.get(teamName);
             }
 
-            // Query the database for the teamId based on the teamName
-            kubeDB.query('SELECT teamId FROM team WHERE teamName = ?', [teamName], (err, teamResult) => {
-                if (err) {
-                    console.error('Error retrieving team:', err);
-                    return;
+            // Check if team exists
+            const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
+            
+            if (teamResult.length > 0) {
+                const teamId = teamResult[0].teamId;
+                processedTeams.set(teamName, teamId);
+                return teamId;
+            }
+
+            // Create new team if it doesn't exist
+            const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+            const newTeamId = newTeam.insertId;
+            processedTeams.set(teamName, newTeamId);
+            return newTeamId;
+        };
+
+        // Function to create user
+        const createUser = async (userData) => {
+            try {
+                await queryDB('INSERT INTO users SET ?', userData);
+                results.push(userData);
+            } catch (err) {
+                console.error('Error creating user:', err);
+                throw err;
+            }
+        };
+
+        const rows = [];
+        csvParser.on('data', (row) => rows.push(row));
+
+        const processRows = async () => {
+            for (const row of rows) {
+                if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.teamName || !row.roleId) {
+                    console.error('Missing required field in row:', row);
+                    continue;
                 }
 
-                if (teamResult.length > 0) {
-                    const teamId = teamResult[0].teamId;
-
-                    const userData = {
+                try {
+                    const teamId = await getOrCreateTeam(row.teamName);
+                    await createUser({
                         uclMail: row.uclMail,
                         password: row.password,
                         firstName: row.firstName,
                         lastName: row.lastName,
                         roleId: row.roleId,
-                        teamId: teamId,
-                    };
-
-                    // Insert user data into the database
-                    kubeDB.query('INSERT INTO users SET ?', userData, (err, result) => {
-                        if (err) {
-                            console.error('Error inserting user:', err);
-                        } else {
-                            console.log('User inserted:', result);
-                        }
+                        teamId: teamId
                     });
-                } else {
-                    console.error(`Team ${teamName} not found.`);
+                } catch (err) {
+                    console.error('Error processing row:', err);
                 }
+            }
+        };
+
+        Readable.from(req.file.buffer.toString())
+            .pipe(csvParser)
+            .on('end', async () => {
+                try {
+                    await processRows();
+                    res.status(200).json({ 
+                        message: 'Users successfully added from CSV.',
+                        usersAdded: results.length
+                    });
+                } catch (err) {
+                    console.error('Error processing CSV:', err);
+                    res.status(500).json({ error: 'Error processing CSV file.' });
+                }
+            })
+            .on('error', (err) => {
+                console.error('CSV parsing error:', err);
+                res.status(500).json({ error: 'Error processing CSV file.' });
             });
-        })
-        .on('end', () => {
-            res.status(200).json({ message: 'Users successfully added from CSV.' });
-        })
-        .on('error', (err) => {
-            console.error('CSV parsing error:', err);
-            res.status(500).json({ error: 'Error processing CSV file.' });
-        });
+
+    } catch (err) {
+        console.error('Error in CSV upload:', err);
+        res.status(500).json({ error: 'Server error processing upload.' });
+    }
 };
 
 // Controller to fetch a user by ID

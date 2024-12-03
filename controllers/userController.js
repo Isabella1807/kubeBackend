@@ -1,88 +1,45 @@
 import { parse } from 'csv-parse';
 import { Readable } from 'stream'; 
-import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from '../models/userModel.js';
-import kubeDB from '../Database.js';
-
+import { getOrCreateTeam, createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from '../models/userModel.js';
+// this function takes the csv file and does that users can be added to the database
 export const addUserFromCSV = async (req, res) => {
     try {
         const results = [];
-        const processedTeams = new Map();
-
+        const rows = [];
         const csvParser = parse({ 
             columns: true,
             skip_empty_lines: true
         });
-
-        // query function 
-        const queryDB = (sql, params) => {
-            return new Promise((resolve, reject) => {
-                kubeDB.query(sql, params, (err, result) => {
-                    if (err) reject(err);
-                    else resolve(result);
-                });
-            });
-        };
-
-        // create team and getting it
-        const getOrCreateTeam = async (teamName) => {
-            // see if there is alreay a team with same name
-            if (processedTeams.has(teamName)) {
-                return processedTeams.get(teamName);
-            }
-
-            // see if the team is existing
-            const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
-            
-            if (teamResult.length > 0) {
-                const teamId = teamResult[0].teamId;
-                processedTeams.set(teamName, teamId);
-                return teamId;
-            }
-
-            // if there isnt a team it will make one
-            const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
-            const newTeamId = newTeam.insertId;
-            processedTeams.set(teamName, newTeamId);
-            return newTeamId;
-        };
-
-        // Function to create user
-        const createUser = async (userData) => {
-            try {
-                await queryDB('INSERT INTO users SET ?', userData);
-                results.push(userData);
-            } catch (err) {
-                console.error('Error creating user:', err);
-                throw err;
-            }
-        };
-
-        const rows = [];
+        // save the row in a array from the csv
         csvParser.on('data', (row) => rows.push(row));
-
+        // the function runs through the rows from the csv
         const processRows = async () => {
+            // check if all info is there 
             for (const row of rows) {
                 if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.teamName || !row.roleId) {
                     console.error('Missing required field in row:', row);
                     continue;
                 }
-
                 try {
+                    // finds the user or creates the team or user 
                     const teamId = await getOrCreateTeam(row.teamName);
-                    await createUser({
+                    const userData = {
                         uclMail: row.uclMail,
                         password: row.password,
                         firstName: row.firstName,
                         lastName: row.lastName,
                         roleId: row.roleId,
                         teamId: teamId
-                    });
+                    };
+                    // create the user in the database 
+                    await createUser(userData);
+                    results.push(userData);
                 } catch (err) {
                     console.error('Error processing row:', err);
                 }
             }
         };
-
+        // reads the file 
         Readable.from(req.file.buffer.toString())
             .pipe(csvParser)
             .on('end', async () => {

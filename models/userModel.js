@@ -1,26 +1,36 @@
 import kubeDB from "../Database.js";
 
-// function to create user 
-export const createUser = async (userData) => {
-    try {
-      const [result] = await db.query(
-        'INSERT INTO users (uclMail, password, firstName, lastName, roleId, teamId) VALUES (?, ?, ?, ?, ?, ?)',
-        [
-          userData.uclMail,
-          userData.password,
-          userData.firstName,
-          userData.lastName,
-          userData.roleId,
-          userData.teamId
-        ]
-      );
-  
-      return result.insertId;
-    } catch (error) {
-      console.error('Error creating user:', error);
-      throw error;
+// data queries
+const queryDB = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        kubeDB.query(sql, params, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+};
+
+// check if there is a team if not create a new team 
+const getOrCreateTeam = async (teamName) => {
+    const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName =?', [teamName]);
+    if (teamResult.length > 0) {
+        return teamResult[0].teamId;
     }
-  };
+    const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+    return newTeam.insertId; 
+};
+
+// makes a new user in the database
+const createUser = async (userData) => {
+    try {
+        return await queryDB('INSERT INTO users SET ?', userData);
+    } catch (err) {
+        console.error('Error with creating user:', err);
+        throw err;
+    }
+};
+
+export {queryDB, getOrCreateTeam, createUser};
 
 // function find user by id
 export const fetchUserById = (userId, callback) => {

@@ -3,6 +3,7 @@ import { showAllRoles } from "../controllers/roleController.js";
 import projectRoutes from "./projectRoutes.js";
 import userRoutes from "./userRoutes.js";
 import templateRoutes from "./templateRoutes.js";
+import kubeDB from "../Database.js";
 
 const router = express.Router();
 
@@ -10,20 +11,16 @@ router.get('/api/data', (req, res) => {
     res.json({ message: 'Hello from backend!' });
 });
 
-router.get('/api/projects', (req, res) => {
-    connection.query('SELECT * FROM project', (err, rows) => {
-      if (err) {
-        // Hvis der opstår fejl ved forespørgslen
-        console.error('Fejl ved hentning af projekter:', err.message);
-        return res.status(500).json({ 
-          error: 'Noget gik galt ved hentning af projekter', 
-          details: err.message 
-        });
-      }
-      // Hvis forespørgslen lykkes, returner resultaterne som JSON
-      res.json(rows);
-    });
-  });
+router.get('/api/projects', async (req, res) => {
+    try {
+        // Hent data fra MySQL
+        const [project] = await kubeDB.execute('SELECT * FROM project'); // Skift 'projects' til dit tabelnavn
+        res.json(project); // Send resultaterne som JSON
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Fejl i at hente data fra databasen' });
+    }
+});
 
 router.get("/roles", showAllRoles);
 router.use("/template", templateRoutes);

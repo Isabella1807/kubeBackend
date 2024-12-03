@@ -4,7 +4,7 @@ import Router from './routes/routes.js';
 import projectRoutes from './routes/projectRoutes.js';
 
 const app = express();
-const port = 3000;
+const port = 5173;
 
 app.use(express.json());
 app.use(cors());

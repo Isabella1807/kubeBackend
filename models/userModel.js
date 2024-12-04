@@ -1,29 +1,28 @@
 import kubeDB from "../Database.js";
 
-// create user model som virker med hardcoded data 
-export const createUser = (userData, callback) => {
-    const sql = `INSERT INTO users (uclMail, password, firstName, lastName, roleId, teamId) VALUES (?, ?, ?, ?, ?, ?)`;
-    const values = [
-        userData.uclMail,
-        userData.password,
-        userData.firstName,
-        userData.lastName,
-        userData.roleId,
-        userData.teamId
-    ];
+// function to create user 
+export const createUser = async (userData) => {
+    try {
+      const [result] = await db.query(
+        'INSERT INTO users (uclMail, password, firstName, lastName, roleId, teamId) VALUES (?, ?, ?, ?, ?, ?)',
+        [
+          userData.uclMail,
+          userData.password,
+          userData.firstName,
+          userData.lastName,
+          userData.roleId,
+          userData.teamId
+        ]
+      );
+  
+      return result.insertId;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
+  };
 
-    // insæt ny brugerdata 
-    kubeDB.query(sql, values, (err, result) => {
-        if (err) {
-            console.error("Database error:", err);
-            callback(err, null);
-        } else {
-            callback(null, result);
-        }
-    });
-};
-
-// funktionen til at finde en bruger via userid
+// function find user by id
 export const fetchUserById = (userId, callback) => {
     const sql = `SELECT * FROM users WHERE userId = ?`;
     const values = [userId];  
@@ -54,6 +53,7 @@ export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
 
 
 // Funktionen til at finde af brugerer på siden 
+// find the user on the page 
 export const fetchAllUsers = (callback) => {
     const sql = "SELECT * FROM users"; 
 
@@ -69,7 +69,7 @@ export const fetchAllUsers = (callback) => {
 };
 
 
-// funktionen til at kunne UPDATE password 
+// function to update password
 export const updateUserPasswordById = (userId, newPassword, callback) => {
     const sql = `
         UPDATE users
@@ -86,7 +86,7 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
     });
 };
 
-// Funktionen til at kunne slette en bruger via deres uiserID 
+// function to delete user by their id 
 export const deleteUserById = (userId, callback) => {
     const sql = `DELETE FROM users WHERE userId = ?`;
 

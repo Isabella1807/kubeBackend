@@ -29,11 +29,6 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
 
 export const createProject = (templateid, userid, projectname, subdomainname) => new Promise((resolve, reject) => {
 
-    //hvordan opretter jeg en ny stack, hvad er den der yaml fil, hvad skal sendes med når jeg opretter en ny stack..
-    //hvornår udløber token og hvordan ved vi den er udløbet 8 timer
-    //Yaml filen skal ændres PR ny stack! Så changeme01 og changeme02 skal ændres til noget UNIKT pr stack.
-    //CHANGEME01 og CHANGEME02 skal nok starte med et ord, fordi url's ikke må starte med et tal..
-
     kubeDB.query(`INSERT INTO project (templateId, userId, projectName, subdomainName) VALUES (${templateid}, ${userid}, "${projectname}", "${subdomainname}")`, (error, result) => {
         if (error) {
             reject(error);

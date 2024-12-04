@@ -1,4 +1,3 @@
-/*
 import dotenv from "dotenv";
 import axios from "axios";
 
@@ -13,5 +12,3 @@ const portainer = axios.create({
 });
 
 export default portainer;
-
-*/

@@ -1,29 +1,25 @@
 import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "../models/projectModel.js";
-//import axios from "axios";
-//import dotenv from "dotenv";
-//import portainer from "../Portainer.js"
+// import axios from 'axios';
+// import dotenv from "dotenv";
+// import portainer from "../Portainer.js"
 
-//Makes it possible to use .env variables to hide login data
-//dotenv.config()
-import axios from 'axios';
+// dotenv.config()
 
 export const projectController = {
     getAll: async (req, res) => {
         try {
-            const {data} = await portainer.post('/auth', {
-                username: process.env.PORTAINER_USERNAME,
-                password: process.env.PORTAINER_PASSWORD
-            })
+            // const {data} = await portainer.post('/auth', {
+            //     username: process.env.PORTAINER_USERNAME,
+            //     password: process.env.PORTAINER_PASSWORD
+            // })
 
-            //how often does token change?
-            const token = data.jwt;
+            // //how often does token change?
+            // const token = data.jwt;
 
-            const stacks = await portainer.get(`/stacks`)
+            // const stacks = await portainer.get(`/stacks`)
 
-            /*console.log("Noghet unitk", data);*/
-            console.log(stacks.data);
-
-
+            // /*console.log("Noghet unitk", data);*/
+            // console.log(stacks.data);
 
             const projects = await getAllProjects()
             res.json(projects)

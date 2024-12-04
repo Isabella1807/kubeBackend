@@ -2,7 +2,6 @@ import {getAllTemplate} from "../models/templateModel.js";
 
 export const showAllTemplate = {
     getAll: async (req, res) => {
-        console.log("HEJSA MULLER")
         try {
             const template = await getAllTemplate();  // Din logik for at hente templates
             console.log(template)

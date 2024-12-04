@@ -23,7 +23,6 @@ export const projectController = {
                 }
             })
 
-            /*console.log("Noghet unitk", data);*/
             console.log(stacks.data);
 
 
@@ -60,8 +59,6 @@ export const projectController = {
             return
         }
 
-        // get teplate bny id. if no template, send error
-
         try {
             const {data} = await portainer.post('/auth', {
                 username: process.env.PORTAINER_USERNAME,
@@ -80,9 +77,6 @@ export const projectController = {
                     Authorization: token
                 }
             })
-
-
-
 
 
 

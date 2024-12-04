@@ -1,37 +1,116 @@
-import { updateUserPasswordById, fetchUserById, fetchAllUsers, deleteUserById } from "../models/userModel.js";
+import { parse } from 'csv-parse';
+import { Readable } from 'stream'; 
+import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from '../models/userModel.js';
+import kubeDB from '../Database.js';
 
-// Controller to handle creating a user
-export const addUser = (req, res) => {
-   //Hardcoded data ved create user - siden at jeg ikke kan få det shit til at virke 
-    const userData = {
-        uclMail: "testuser@example.com",  
-        password: "securepassword",        
-        firstName: "John",                 
-        lastName: "Doe",                   
-        roleId: 1,                        
-        teamId: 1                          
-    };
+export const addUserFromCSV = async (req, res) => {
+    try {
+        const results = [];
+        const processedTeams = new Map();
 
-    createUser(userData, (err, result) => {
-        if (err) {
-            console.error("Error while creating user:", err);
-            res.status(500).json({ error: "Failed to create user." });
-        } else {
-            res.status(201).json({
-                message: "Hardcoded user created successfully.",
-                userId: result.insertId  // giver userid tilbage 
+        const csvParser = parse({ 
+            columns: true,
+            skip_empty_lines: true
+        });
+
+        // query function 
+        const queryDB = (sql, params) => {
+            return new Promise((resolve, reject) => {
+                kubeDB.query(sql, params, (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result);
+                });
             });
-        }
-    });
+        };
+
+        // create team and getting it
+        const getOrCreateTeam = async (teamName) => {
+            // see if there is alreay a team with same name
+            if (processedTeams.has(teamName)) {
+                return processedTeams.get(teamName);
+            }
+
+            // see if the team is existing
+            const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
+            
+            if (teamResult.length > 0) {
+                const teamId = teamResult[0].teamId;
+                processedTeams.set(teamName, teamId);
+                return teamId;
+            }
+
+            // if there isnt a team it will make one
+            const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+            const newTeamId = newTeam.insertId;
+            processedTeams.set(teamName, newTeamId);
+            return newTeamId;
+        };
+
+        // Function to create user
+        const createUser = async (userData) => {
+            try {
+                await queryDB('INSERT INTO users SET ?', userData);
+                results.push(userData);
+            } catch (err) {
+                console.error('Error creating user:', err);
+                throw err;
+            }
+        };
+
+        const rows = [];
+        csvParser.on('data', (row) => rows.push(row));
+
+        const processRows = async () => {
+            for (const row of rows) {
+                if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.teamName || !row.roleId) {
+                    console.error('Missing required field in row:', row);
+                    continue;
+                }
+
+                try {
+                    const teamId = await getOrCreateTeam(row.teamName);
+                    await createUser({
+                        uclMail: row.uclMail,
+                        password: row.password,
+                        firstName: row.firstName,
+                        lastName: row.lastName,
+                        roleId: row.roleId,
+                        teamId: teamId
+                    });
+                } catch (err) {
+                    console.error('Error processing row:', err);
+                }
+            }
+        };
+
+        Readable.from(req.file.buffer.toString())
+            .pipe(csvParser)
+            .on('end', async () => {
+                try {
+                    await processRows();
+                    res.status(200).json({ 
+                        message: 'Users successfully added from CSV.',
+                        usersAdded: results.length
+                    });
+                } catch (err) {
+                    console.error('Error processing CSV:', err);
+                    res.status(500).json({ error: 'Error processing CSV file.' });
+                }
+            })
+            .on('error', (err) => {
+                console.error('CSV parsing error:', err);
+                res.status(500).json({ error: 'Error processing CSV file.' });
+            });
+
+    } catch (err) {
+        console.error('Error in CSV upload:', err);
+        res.status(500).json({ error: 'Server error processing upload.' });
+    }
 };
 
-
-
-
-
-// Controller til hente user med ID Igen hardcoded 
+// Controller to fetch a user by ID
 export const getUserById = (req, res) => {
-    const userId = 20;  
+    const userId = req.params.id;
 
     fetchUserById(userId, (err, result) => {
         if (err) {
@@ -41,7 +120,7 @@ export const getUserById = (req, res) => {
             if (result.length > 0) {
                 res.status(200).json({
                     message: "User data retrieved successfully.",
-                    user: result[0], 
+                    user: result[0],
                 });
             } else {
                 res.status(404).json({ message: "User not found." });
@@ -50,7 +129,7 @@ export const getUserById = (req, res) => {
     });
 };
 
-// får alle bruger på siden 
+// Controller to fetch all users
 export const getAllUsers = (req, res) => {
     fetchAllUsers((err, result) => {
         if (err) {
@@ -60,7 +139,7 @@ export const getAllUsers = (req, res) => {
             if (result.length > 0) {
                 res.status(200).json({
                     message: "All users retrieved successfully.",
-                    users: result,  // viser et array af alle user på siden
+                    users: result,
                 });
             } else {
                 res.status(404).json({ message: "No users found." });
@@ -69,26 +148,22 @@ export const getAllUsers = (req, res) => {
     });
 };
 
-
-// UPDATE PASSWORD 
+// Controller to update user password
 export const updatePassword = (req, res) => {
-    const userId = req.params.id; 
-    const newPassword = req.body.password; // får det nye password fra req body 
+    const userId = req.params.id;
+    const newPassword = req.body.password;
 
     if (!newPassword) {
         return res.status(400).json({ message: "Password is required." });
     }
 
-    // Updater password i databasen
     updateUserPasswordById(userId, newPassword, (err, result) => {
         if (err) {
             console.error("Error updating password:", err);
             res.status(500).json({ error: "Failed to update password." });
         } else {
             if (result.affectedRows > 0) {
-                res.status(200).json({
-                    message: "Password updated successfully.",
-                });
+                res.status(200).json({ message: "Password updated successfully." });
             } else {
                 res.status(404).json({ message: "User not found or no changes made." });
             }
@@ -96,8 +171,7 @@ export const updatePassword = (req, res) => {
     });
 };
 
-
-// Hvordan man kan slette en bruger via ID
+// Controller to delete a user by ID
 export const deleteUserByIdController = (req, res) => {
     const userId = req.params.id;
 
@@ -108,8 +182,7 @@ export const deleteUserByIdController = (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        
-        // kalder til model funktionen til at slette en bruger 
+
         deleteUserById(userId, (err, result) => {
             if (err) {
                 return res.status(500).json({ error: "Failed to delete user" });

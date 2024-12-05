@@ -60,7 +60,6 @@ export const projectController = {
             return
         }
 
-        // name må ikke have mellemrum!
 
         try {
 
@@ -81,18 +80,69 @@ export const projectController = {
 
 
             // WEIRD STUFF FROM NOTES
-            /*const subDomainWp = 'wompwomp'; //Det vi gerne vil lægge ind i SUBDOMAIN01 i yaml filen, skal være unik!
+            const subDomainWp = 'wompwomp'; //Det vi gerne vil lægge ind i SUBDOMAIN01 i yaml filen, skal være unik!
             const subdomainPma = 'wompwomp-pma'; //SUBDOMAIN02 i yaml filen som er subdomænet for phpmyadmin
             const websiteId = Math.random().toString(36).substring(7); //CHANGEME01 i yaml filen, står 4 steder. Definerer routeren, hvis det ikk gøres ordentligt kommer vores side ikk på nettet.
-            const pmaId = Math.random().toString(36).substring(7); //CHANGEME02 i yaml filen, står 4 steder*/
+            const pmaId = Math.random().toString(36).substring(7); //CHANGEME02 i yaml filen, står 4 steder
 
-            //const body =`{\\"networks\\":{\\"traefik-proxy\\":{\\"external\\":true}},\\"services\\":{\\"test\\":{\\"image\\":\\"nginx:latest\\",\\"networks\\":[\\"traefik-proxy\\"],\\"deploy\\":{\\"labels\\":[\\"traefik.enable=true\\",\\"traefik.http.routers.CHANGEME.rule=Host(\`SUBDOMAIN.kubelab.dk\`)\\",\\"traefik.http.routers.CHANGEME.entrypoints=web,websecure\\",\\"traefik.http.routers.CHANGEME.tls.certresolver=letsencrypt\\",\\"traefik.http.services.CHANGEME.loadbalancer.server.port=80\\"]}}}}`
+            //ENGINX & WORDPRESS YAML WITH TEMPALTE LITERALS
+            const fileContent = `{\"networks\":{\"traefik-proxy\":{\"external\":true}},\"services\":{\"test\":{\"image\":\"nginx:latest\",\"networks\":[\"traefik-proxy\"],\"deploy\":{\"labels\":[\"traefik.enable=true\",\"traefik.http.routers.${websiteId}.rule=Host('${subDomainWp}.kubelab.dk')\",\"traefik.http.routers.${websiteId}.entrypoints=web,websecure\",\"traefik.http.routers.${websiteId}.tls.certresolver=letsencrypt\",\"traefik.http.services.${websiteId}.loadbalancer.server.port=80\"]}}}}`
+           /*const fileContent = `
+networks:
+  traefik-proxy:
+    external: true
+  wp-network:
+    driver: overlay
+services:
+  wordpress:
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_NAME: wpdatabase
+    networks:
+      - traefik-proxy
+      - wp-network
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.${websiteId}.rule=Host("${subDomainWp}.kubelab.dk")
+        - traefik.http.routers.${websiteId}.entrypoints=web,websecure
+        - traefik.http.routers.${websiteId}.tls.certresolver=letsencrypt
+        - traefik.http.services.${websiteId}.loadbalancer.server.port=80
+  db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wpdatabase
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppassword
+    networks:
+      - wp-network
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: wpuser
+      PMA_PASSWORD: wppassword
+    networks:
+      - traefik-proxy
+      - wp-network
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.${pmaId}.rule=Host("${subdomainPma}.kubelab.dk")
+        - traefik.http.routers.${pmaId}.entrypoints=web,websecure
+        - traefik.http.routers.${pmaId}.tls.certresolver=letsencrypt
+        - traefik.http.services.${pmaId}.loadbalancer.server.port=80
+`*/
 
-            const fileContent = "networks:\n  traefik-proxy:\n    external: true\n  wp-network:\n    driver: overlay\nservices:\n  wordpress:\n    image: wordpress:latest\n    environment:\n      WORDPRESS_DB_HOST: db\n      WORDPRESS_DB_USER: wpuser\n      WORDPRESS_DB_PASSWORD: wppassword\n      WORDPRESS_DB_NAME: wpdatabase\n    networks:\n      - traefik-proxy\n      - wp-network\n    deploy:\n      labels:\n        - traefik.enable=true\n        - traefik.http.routers.CHANGEME01.rule=Host(`SUBDOMAIN01.kubelab.dk`)\n        - traefik.http.routers.CHANGEME01.entrypoints=web,websecure\n        - traefik.http.routers.CHANGEME01.tls.certresolver=letsencrypt\n        - traefik.http.services.CHANGEME01.loadbalancer.server.port=80\n  db:\n    image: mariadb:latest\n    environment:\n      MYSQL_ROOT_PASSWORD: rootpassword\n      MYSQL_DATABASE: wpdatabase\n      MYSQL_USER: wpuser\n      MYSQL_PASSWORD: wppassword\n    networks:\n      - wp-network\n  phpmyadmin:\n    image: phpmyadmin:latest\n    environment:\n      PMA_HOST: db\n      PMA_USER: wpuser\n      PMA_PASSWORD: wppassword\n    networks:\n      - traefik-proxy\n      - wp-network\n    deploy:\n      labels:\n        - traefik.enable=true\n        - traefik.http.routers.CHANGEME02.rule=Host(`SUBDOMAIN02.kubelab.dk`)\n        - traefik.http.routers.CHANGEME02.entrypoints=web,websecure\n        - traefik.http.routers.CHANGEME02.tls.certresolver=letsencrypt\n        - traefik.http.services.CHANGEME02.loadbalancer.server.port=80"
-
+            // name cannot have a space
+            // name cannot be capitalized
             await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
-                "name": "enhjorning",
+                "name": "wowENGINX",
                 "stackFileContent": fileContent,
                 "swarmID": "v1pkdou24tzjtncewxhvpmjms"
             }).then((res) => {
@@ -102,43 +152,6 @@ export const projectController = {
                 console.log(err)
                 console.log('is ogs')
             })
-
-            /*await axios.post(`https://portainer.kubelab.dk/api/stacks/create/swarm/string?endpointId=5`, {
-                "fromAppTemplate": false,
-                "name": "peter pan",
-                "stackFileContent": fileContent,
-                "swarmID": "v1pkdou24tzjtncewxhvpmjms"
-            }, {
-                headers: {
-                    "Authorization": token
-                }
-            }).then((res) => {
-                console.log("hurra ");
-                console.log(res);
-            }).catch((error) => {
-                console.log("We got error");
-                console.log(error);
-                console.log("We got error");
-            })*/
-
-            // const response = await portainer.post(`/stacks`, {
-            /*await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
-                body: {
-                    "fromAppTemplate": false,
-                    "name": "test5_wordpress",
-                    "stackFileContent": "networks:\n  traefik-proxy:\n    external: true\n  wp-network:\n    driver: overlay\nservices:\n  wordpress:\n    image: wordpress:latest\n    environment:\n      WORDPRESS_DB_HOST: db\n      WORDPRESS_DB_USER: wpuser\n      WORDPRESS_DB_PASSWORD: wppassword\n      WORDPRESS_DB_NAME: wpdatabase\n    networks:\n      - traefik-proxy\n      - wp-network\n    deploy:\n      labels:\n        - traefik.enable=true\n        - traefik.http.routers.CHANGEME01.rule=Host(`SUBDOMAIN01.kubelab.dk`)\n        - traefik.http.routers.CHANGEME01.entrypoints=web,websecure\n        - traefik.http.routers.CHANGEME01.tls.certresolver=letsencrypt\n        - traefik.http.services.CHANGEME01.loadbalancer.server.port=80\n  db:\n    image: mariadb:latest\n    environment:\n      MYSQL_ROOT_PASSWORD: rootpassword\n      MYSQL_DATABASE: wpdatabase\n      MYSQL_USER: wpuser\n      MYSQL_PASSWORD: wppassword\n    networks:\n      - wp-network\n  phpmyadmin:\n    image: phpmyadmin:latest\n    environment:\n      PMA_HOST: db\n      PMA_USER: wpuser\n      PMA_PASSWORD: wppassword\n    networks:\n      - traefik-proxy\n      - wp-network\n    deploy:\n      labels:\n        - traefik.enable=true\n        - traefik.http.routers.CHANGEME02.rule=Host(`SUBDOMAIN02.kubelab.dk`)\n        - traefik.http.routers.CHANGEME02.entrypoints=web,websecure\n        - traefik.http.routers.CHANGEME02.tls.certresolver=letsencrypt\n        - traefik.http.services.CHANGEME02.loadbalancer.server.port=80",
-                    "swarmID": "v1pkdou24tzjtncewxhvpmjms"
-                }
-            }).then((res) => {
-                console.log("hurra ");
-                console.log(res);
-            }).catch((error) => {
-                console.log("We got error");
-                console.log(error);
-                console.log("We got error");
-            })*/
-
-            console.log("===========================================");
 
             // await createProject(templateId, 1, projectName,subdomainName)
             res.sendStatus(200)

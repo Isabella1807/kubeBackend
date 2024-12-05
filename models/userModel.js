@@ -10,15 +10,6 @@ const queryDB = (sql, params) => {
     });
 };
 
-// check if there is a team if not create a new team 
-const getOrCreateTeam = async (teamName) => {
-    const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName =?', [teamName]);
-    if (teamResult.length > 0) {
-        return teamResult[0].teamId;
-    }
-    const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
-    return newTeam.insertId; 
-};
 
 // makes a new user in the database
 const createUser = async (userData) => {
@@ -30,7 +21,7 @@ const createUser = async (userData) => {
     }
 };
 
-export {queryDB, getOrCreateTeam, createUser};
+export {queryDB, createUser};
 
 // function find user by id
 export const fetchUserById = (userId, callback) => {

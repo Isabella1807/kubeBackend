@@ -33,15 +33,17 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
     });
 });
 
-export const createTeam = (teamName) => new  Promise ((resolve, reject) => {
-    kubeDB.query(`INSERT INTO team (teamName) VALUES ("${teamName}")`, (error, result) => {
-        if (error) {
-            reject(error);
-        } else {
-            resolve(result);
-        }
-    })
-})
+// check if there is a team if not create a new team 
+const getOrCreateTeam = async (teamName) => {
+    const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName =?', [teamName]);
+    if (teamResult.length > 0) {
+        return teamResult[0].teamId;
+    }
+    const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+    return newTeam.insertId; 
+};
+
+export { getOrCreateTeam };
 
 export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();

@@ -1,4 +1,5 @@
 import kubeDB from "../Database.js"; // get the connection for the database
+import { queryDB } from './userModel.js';
 
 
 export const getAllTeams = () => new Promise((resolve, reject) => {

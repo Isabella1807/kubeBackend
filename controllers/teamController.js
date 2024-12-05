@@ -1,4 +1,4 @@
-import { getAllTeams, getTeamById, createTeam, deleteTeamByID } from "../models/teamModel.js";
+import { getAllTeams, getTeamById, deleteTeamByID } from "../models/teamModel.js";
 
 export const teamController = {
   getAll: async (request, response) => {

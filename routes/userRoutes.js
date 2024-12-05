@@ -1,6 +1,6 @@
     import express from 'express';
     import multer from 'multer';
-    import { addUserFromCSV, getUserById, getAllUsers, updatePassword, deleteUserByIdController,  getTeamMembers } from '../controllers/userController.js';
+    import { addUserFromCSV, getUserById, getAllUsers, updatePassword, deleteUserByIdController,  getTeamMembers, createSingleUser } from '../controllers/userController.js';
 
     // save files in multer memory
     const storage = multer.memoryStorage();
@@ -10,6 +10,9 @@
 
     // the route for csv upload and add users
     userRouter.post('/upload', upload.single('file'), addUserFromCSV);
+
+    // the route for creating a single user in edit group
+    userRouter.post('/new', createSingleUser);
 
     // route to get user by ID
     userRouter.get('/:id', getUserById);

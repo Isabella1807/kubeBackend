@@ -1,17 +1,15 @@
 import kubeDB from "../Database.js";
 
 // makes a new user in the database
-const createUser = async (userData) => {
+export const createUser = async (userData) => {
     try {
         const [result] = await kubeDB.promise().query('INSERT INTO users SET ?', userData);
         return result;
     } catch (err) {
-        console.error('Error with creating user:', err);
+        console.error('Error creating user:', err);
         throw err;
     }
 };
-
-export { createUser };
 
 // function find user by id
 export const fetchUserById = (userId, callback) => {
@@ -54,17 +52,16 @@ export const fetchAllUsers = (callback) => {
 // get all users by team id
 export const getUsersByTeamId = (teamId) => {
     return new Promise((resolve, reject) => {
-        const sql = `SELECT users.userId, 
-                            users.uclMail, 
-                            users.firstName, 
-                            users.lastName, 
-                            users.roleId 
-                     FROM users 
+        const sql = `SELECT users.userId,
+                            users.uclMail,
+                            users.firstName,
+                            users.lastName,
+                            users.roleId
+                     FROM users
                      WHERE users.teamId = ?`;
 
         kubeDB.query(sql, [teamId], (err, result) => {
             if (err) {
-                console.error("Error fetching team members:", err);
                 reject(err);
             } else {
                 resolve(result);
@@ -94,7 +91,6 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
 // function to delete user by their id 
 export const deleteUserById = (userId, callback) => {
     const sql = `DELETE FROM users WHERE userId = ?`;
-
     kubeDB.query(sql, [userId], (err, result) => {
         if (err) {
             callback(err, null);

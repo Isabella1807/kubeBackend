@@ -2,13 +2,7 @@ import kubeDB from "../Database.js"; // get the connection for the database
 
 // get all team
 export const getAllTeams = () => new Promise((resolve, reject) => {
-    const sql = `SELECT team.teamId, 
-                        team.teamName, 
-                        COUNT(users.userId) as memberCount 
-                 FROM team 
-                 LEFT JOIN users ON team.teamId = users.teamId 
-                 GROUP BY team.teamId, team.teamName`;
-
+    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount FROM team LEFT JOIN users ON team.teamId = users.teamId GROUP BY team.teamId, team.teamName`;
     kubeDB.query(sql, (error, result) => {
         if(error){
             console.error("Error fetching all teams", error);
@@ -25,15 +19,7 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
         reject("ID is required");
         return;
     }
-
-    const sql = `SELECT team.teamId, 
-                        team.teamName, 
-                        COUNT(users.userId) as memberCount 
-                 FROM team 
-                 LEFT JOIN users ON team.teamId = users.teamId 
-                 WHERE team.teamId = ? 
-                 GROUP BY team.teamId, team.teamName`;
-
+    const sql = `SELECT team.teamId,team.teamName, COUNT(users.userId) as memberCount  FROM team  LEFT JOIN users ON team.teamId = users.teamId  WHERE team.teamId = ?  GROUP BY team.teamId, team.teamName`;
     kubeDB.query(sql, [id], (error, result) => {
         if (error) {
             console.error(`Error fetching team with ID ${id}:`, error);
@@ -51,14 +37,11 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
 // check if there is a team if not create a new team 
 export const getOrCreateTeam = async (teamName) => {
     try {
-        // Use array destructuring to get the rows directly
         const [rows] = await kubeDB.promise().query('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
 
         if (rows.length > 0) {
             return rows[0].teamId;
         }
-
-        // For INSERT, we also need to destructure
         const [result] = await kubeDB.promise().query('INSERT INTO team (teamName) VALUES (?)', [teamName]);
         return result.insertId;
     } catch (err) {
@@ -67,6 +50,7 @@ export const getOrCreateTeam = async (teamName) => {
     }
 };
 
+// Delete Team by ID
 export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 

@@ -134,21 +134,11 @@ export const updatePassword = (req, res) => {
 // Controller to delete a user by ID
 export const deleteUserByIdController = (req, res) => {
     const userId = req.params.id;
-
-    fetchUserById(userId, (err, user) => {
+    deleteUserById(userId, (err, result) => {
         if (err) {
-            return res.status(500).json({ error: "Error checking user existence" });
+            return res.status(500).json({ error: "Failed to delete user" });
         }
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        deleteUserById(userId, (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: "Failed to delete user" });
-            }
-            res.status(200).json({ message: "User deleted successfully" });
-        });
+        res.status(200).json({ message: "User deleted successfully" });
     });
 };
 
@@ -164,5 +154,24 @@ export const getTeamMembers = async (req, res) => {
     } catch (error) {
         console.error("Error fetching team members:", error);
         res.status(500).json({ error: "Failed to fetch team members" });
+    }
+};
+
+// function to make a single user in edit group
+export const createSingleUser = async (req, res) => {
+    try {
+        const userData = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            uclMail: req.body.uclMail,
+            roleId: req.body.roleId,
+            teamId: req.body.teamId,
+            password: 'DefaultPassword123!'
+        };
+        await createUser(userData);
+        res.status(200).json({ message: "User created successfully" });
+    } catch (err) {
+        console.error("Error creating user:", err);
+        res.status(500).json({ error: "Failed to create user" });
     }
 };

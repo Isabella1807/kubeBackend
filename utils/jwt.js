@@ -19,4 +19,4 @@ export const verifyToken = (token) => {
         }
         return payload;
     })
-}
+};

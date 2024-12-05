@@ -141,7 +141,7 @@ services:
             // name cannot be capitalized
             await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
-                "name": "wowENGINX",
+                "name": `${projectName}`,
                 "stackFileContent": fileContent,
                 "swarmID": "v1pkdou24tzjtncewxhvpmjms"
             }).then(async (res) => {

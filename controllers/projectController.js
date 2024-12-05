@@ -62,7 +62,6 @@ export const projectController = {
 
 
         try {
-
             const {data} = await Portainer.post('/auth', {
                 username: process.env.PORTAINER_USERNAME,
                 password: process.env.PORTAINER_PASSWORD
@@ -145,15 +144,15 @@ services:
                 "name": "wowENGINX",
                 "stackFileContent": fileContent,
                 "swarmID": "v1pkdou24tzjtncewxhvpmjms"
-            }).then((res) => {
+            }).then(async (res) => {
                 console.log(res)
                 console.log('JA TAK')
+                //await createProject(templateId, 1, projectName,subdomainName)
             }).catch((err) => {
                 console.log(err)
                 console.log('is ogs')
             })
 
-            // await createProject(templateId, 1, projectName,subdomainName)
             res.sendStatus(200)
         } catch (error) {
             console.log(error)
@@ -162,7 +161,6 @@ services:
         }
     },
     delete: async (req, res) => {
-
         const id = parseInt(req.params.id)
 
         if (Number.isNaN(id)) {
@@ -171,7 +169,32 @@ services:
         }
 
         try {
-            await deleteProjectByID(id)
+
+            const {data} = await Portainer.post('/auth', {
+                username: process.env.PORTAINER_USERNAME,
+                password: process.env.PORTAINER_PASSWORD
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+
+            //how often does token change?
+            const token = data.jwt;
+            console.log(token)
+
+            setPortainerToken(token);
+
+            await Portainer.delete(`/stacks/${id}?endpointId=5`).then(async (res) => {
+                console.log(res)
+                console.log('JA TAK')
+                //await createProject(templateId, 1, projectName,subdomainName)
+            }).catch((err) => {
+                console.log(err)
+                console.log('is ogs')
+            })
+
+            //await deleteProjectByID(id)
             res.sendStatus(200)
         } catch (error) {
             res.status(500).send(error)

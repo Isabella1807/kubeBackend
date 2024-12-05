@@ -1,14 +1,22 @@
 import kubeDB from "../Database.js"; // get the connection for the database
 
+// get all team
 export const getAllTeams = () => new Promise((resolve, reject) => {
-    kubeDB.query('SELECT * FROM team', (error, result) => {
+    const sql = `SELECT team.teamId, 
+                        team.teamName, 
+                        COUNT(users.userId) as memberCount 
+                 FROM team 
+                 LEFT JOIN users ON team.teamId = users.teamId 
+                 GROUP BY team.teamId, team.teamName`;
+
+    kubeDB.query(sql, (error, result) => {
         if(error){
             console.error("Error fetching all teams", error);
             reject("Failed to fetch all teams");
-        }else{
+        } else {
             resolve(result);
         }
-    })
+    });
 });
 
 // get by id
@@ -18,7 +26,15 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
         return;
     }
 
-    kubeDB.query('SELECT * FROM team WHERE teamId = ?', [id], (error, result) => {
+    const sql = `SELECT team.teamId, 
+                        team.teamName, 
+                        COUNT(users.userId) as memberCount 
+                 FROM team 
+                 LEFT JOIN users ON team.teamId = users.teamId 
+                 WHERE team.teamId = ? 
+                 GROUP BY team.teamId, team.teamName`;
+
+    kubeDB.query(sql, [id], (error, result) => {
         if (error) {
             console.error(`Error fetching team with ID ${id}:`, error);
             reject("Failed to get team by Id");

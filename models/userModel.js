@@ -31,16 +31,45 @@ export const fetchUserById = (userId, callback) => {
 
 // find the user on the page 
 export const fetchAllUsers = (callback) => {
-    const sql = "SELECT * FROM users"; 
+    const sql = `SELECT users.userId, 
+                        users.uclMail, 
+                        users.firstName, 
+                        users.lastName, 
+                        users.roleId, 
+                        users.teamId,
+                        team.teamName 
+                 FROM users 
+                 LEFT JOIN team ON users.teamId = team.teamId`;
 
- 
     kubeDB.query(sql, (err, result) => {
         if (err) {
             console.error("Database error:", err);
             callback(err, null);
         } else {
-            callback(null, result); 
+            callback(null, result);
         }
+    });
+};
+
+// get all users by team id
+export const getUsersByTeamId = (teamId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT users.userId, 
+                            users.uclMail, 
+                            users.firstName, 
+                            users.lastName, 
+                            users.roleId 
+                     FROM users 
+                     WHERE users.teamId = ?`;
+
+        kubeDB.query(sql, [teamId], (err, result) => {
+            if (err) {
+                console.error("Error fetching team members:", err);
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
     });
 };
 

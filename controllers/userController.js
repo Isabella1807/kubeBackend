@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse';
 import { Readable } from 'stream';
 import { getOrCreateTeam } from '../models/teamModel.js';
-import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from '../models/userModel.js';
+import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById, getUsersByTeamId } from '../models/userModel.js';
 
 // this function takes the csv file and does that users can be added to the database
 export const addUserFromCSV = async (req, res) => {
@@ -66,6 +66,7 @@ export const addUserFromCSV = async (req, res) => {
         res.status(500).json({ error: 'Server error processing upload.' });
     }
 };
+
 
 // Controller to fetch a user by ID
 export const getUserById = (req, res) => {
@@ -149,4 +150,19 @@ export const deleteUserByIdController = (req, res) => {
             res.status(200).json({ message: "User deleted successfully" });
         });
     });
+};
+
+// retrive members in the database
+export const getTeamMembers = async (req, res) => {
+    const teamId = req.params.teamId;
+    try {
+        const users = await getUsersByTeamId(teamId);
+        res.status(200).json({
+            message: "Team members retrieved successfully",
+            users: users
+        });
+    } catch (error) {
+        console.error("Error fetching team members:", error);
+        res.status(500).json({ error: "Failed to fetch team members" });
+    }
 };

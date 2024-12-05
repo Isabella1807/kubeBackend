@@ -78,6 +78,15 @@ export const projectController = {
             setPortainerToken(token);
 
 
+
+
+
+            //FETCH TEMPLATE BY ID OG SÆT TEMPLATE TEXT IND I STACKFILECONTENT
+
+
+
+
+
             // WEIRD STUFF FROM NOTES
             const subDomainWp = 'wompwomp'; //Det vi gerne vil lægge ind i SUBDOMAIN01 i yaml filen, skal være unik!
             const subdomainPma = 'wompwomp-pma'; //SUBDOMAIN02 i yaml filen som er subdomænet for phpmyadmin

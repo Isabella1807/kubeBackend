@@ -60,9 +60,14 @@ export const projectController = {
         }
 
         try {
+
             const {data} = await Portainer.post('/auth', {
                 username: process.env.PORTAINER_USERNAME,
                 password: process.env.PORTAINER_PASSWORD
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             })
 
             //how often does token change?
@@ -101,9 +106,11 @@ export const projectController = {
             formData.append('stackFileContent', body);
             formData.append('swarmID', 'jpofkc0i9uo9wtx1zesuk649w');
 
-            Portainer.defaults.headers.common["Content-Type"] = 'multipart/form-data';
-
-            await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, formData).then((res) => {
+            await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            }).then((res) => {
                 console.log("hurra ");
                 console.log(res);
             }).catch((error) => {
@@ -136,6 +143,9 @@ export const projectController = {
             // await createProject(templateId, 1, projectName,subdomainName)
             res.sendStatus(200)
         } catch (error) {
+            console.log(error)
+            console.log('SOME OTHER ERROR!!!')
+
             res.status(500).send(error);
         }
     },

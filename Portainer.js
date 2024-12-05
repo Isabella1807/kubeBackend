@@ -6,13 +6,11 @@ dotenv.config()
 
 const Portainer = axios.create({
     baseURL: process.env.PORTAINER_BASEURL,
-    headers: {
-        'Content-Type': 'application/json',
-    }
 });
 
 export const setPortainerToken = (token) => {
     Portainer.defaults.headers.common["Authorization"] = token;
+    // Portainer.defaults.headers.common["Content-Type"] = 'multipart/form-data';
 };
 
 export default Portainer;

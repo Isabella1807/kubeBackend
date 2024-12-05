@@ -29,9 +29,11 @@ export const loginController = {
                 return res.status(400).send("Wrong mail or password");
             }
 
+            // Generer token
             const token = generateToken({ userId: userData.userId });
             console.log("Generated Token:", token);
 
+            // Returnér token som JSON-svar
             res.json({ token: token });
         } catch (error) {
             console.error("Error during login:", error);

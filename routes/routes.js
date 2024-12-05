@@ -8,6 +8,7 @@ import templateRoutes from "./templateRoutes.js";
 import teamRoutes from "./teamRoutes.js";
 
 const router = express.Router();
+
 router.use("/roles", showAllRoles);
 router.use("/templates", templateRoutes);
 router.use("/projects", projectRoutes);

@@ -6,9 +6,11 @@ import portainer from "../Portainer.js"
 //Makes it possible to use .env variables to hide login data
 dotenv.config()
 
+
 export const projectController = {
     getAll: async (req, res) => {
         try {
+
             const {data} = await portainer.post('/auth', {
                 username: process.env.PORTAINER_USERNAME,
                 password: process.env.PORTAINER_PASSWORD
@@ -43,6 +45,9 @@ export const projectController = {
     },
     create: async (req, res) => {
         const { templateId, projectName, subdomainName } = req.body;
+
+            // Log for at kontrollere hvad der bliver sendt
+    console.log("Request body:", req.body);
 
         if(typeof projectName !== 'string' ||  projectName.length === 0){
             res.status(400).send("no project name")
@@ -103,6 +108,27 @@ export const projectController = {
         }
 
 
-    }
+    },
+    login: async (req, res) => {
+        const { Username, Password } = req.body;
+        
+        if (!Username || !Password) {
+            return res.status(400).json({ message: "Username and Password are required" });
+        }
 
-}
+        try {
+            // Log ind i Portainer API
+            const response = await axios.post('http://localhost:3000/api/auth', {
+                username: Username,
+                password: Password
+            });
+
+            // Hvis login er succesfuldt, send JWT token til frontend
+            const token = response.data.jwt; // Antag, at du får et JWT-token tilbage
+            res.status(200).json({ token });
+        } catch (error) {
+            console.error("Login failed:", error);
+            res.status(500).json({ message: "Failed to authenticate with Portainer" });
+        }
+    }
+};

@@ -1,27 +1,17 @@
 import kubeDB from "../Database.js";
 
-// data queries
-const queryDB = (sql, params) => {
-    return new Promise((resolve, reject) => {
-        kubeDB.query(sql, params, (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
-        });
-    });
-};
-
-
 // makes a new user in the database
 const createUser = async (userData) => {
     try {
-        return await queryDB('INSERT INTO users SET ?', userData);
+        const [result] = await kubeDB.promise().query('INSERT INTO users SET ?', userData);
+        return result;
     } catch (err) {
         console.error('Error with creating user:', err);
         throw err;
     }
 };
 
-export {queryDB, createUser};
+export { createUser };
 
 // function find user by id
 export const fetchUserById = (userId, callback) => {

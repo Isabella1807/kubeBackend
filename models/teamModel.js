@@ -1,6 +1,4 @@
 import kubeDB from "../Database.js"; // get the connection for the database
-import { queryDB } from './userModel.js';
-
 
 export const getAllTeams = () => new Promise((resolve, reject) => {
     kubeDB.query('SELECT * FROM team', (error, result) => {
@@ -35,16 +33,23 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
 });
 
 // check if there is a team if not create a new team 
-const getOrCreateTeam = async (teamName) => {
-    const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName =?', [teamName]);
-    if (teamResult.length > 0) {
-        return teamResult[0].teamId;
-    }
-    const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
-    return newTeam.insertId; 
-};
+export const getOrCreateTeam = async (teamName) => {
+    try {
+        // Use array destructuring to get the rows directly
+        const [rows] = await kubeDB.promise().query('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
 
-export { getOrCreateTeam };
+        if (rows.length > 0) {
+            return rows[0].teamId;
+        }
+
+        // For INSERT, we also need to destructure
+        const [result] = await kubeDB.promise().query('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+        return result.insertId;
+    } catch (err) {
+        console.error('Error in getOrCreateTeam:', err);
+        throw err;
+    }
+};
 
 export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();

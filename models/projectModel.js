@@ -37,7 +37,7 @@ export const createProject = (templateid, userid, projectname, subdomainname) =>
             resolve(result);
 
         }
-    );
+    });
 });
 
 export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
@@ -54,4 +54,4 @@ export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
             }
         }
     })
-})
+});

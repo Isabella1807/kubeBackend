@@ -1,11 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import Router from './routes/routes.js'
-
 import {deserializeUser} from "./middleware/deserializeUser.js";
-import dotenv from "dotenv";
 
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
+console.log("TOKEN_SECRET:", process.env.TOKEN_SECRET);
 
 
 const app = express();
@@ -18,7 +18,6 @@ app.use(deserializeUser);
 
 // routes
 app.use(Router);
-app.use('/api', projectRoutes);
 
 // start server
 app.listen(port, () => {

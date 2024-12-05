@@ -1,10 +1,16 @@
 import jwt from 'jsonwebtoken';
 
 export const generateToken = (payload) => {
-    //.sign takes an object with data, a string that's secret and any options, in this case an expiration time.
-    const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '2h' })
+    // Kontroller, at TOKEN_SECRET er defineret
+    if (!process.env.TOKEN_SECRET) {
+        throw new Error('TOKEN_SECRET is not defined');
+    }
+    
+    // Opret JWT-token med payload og secret
+    const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '2h' });
     return token;
 }
+
 
 export const verifyToken = (token) => {
     //.verify takes a token, a secret key, any options(optional) and a callback function

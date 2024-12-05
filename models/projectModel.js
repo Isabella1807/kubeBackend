@@ -27,15 +27,21 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
     })
 })
 
-export const createProject = (templateid, userid, projectname, subdomainname) => new Promise((resolve, reject) => {
-    kubeDB.query(`INSERT INTO project (templateId, userId, projectName, subdomainName) VALUES (${templateid}, ${userid}, "${projectname}", "${subdomainname}")`, (error, result) => {
-        if (error) {
-            reject(error);
-        } else {
-            resolve(result);
+export const createProject = (templateId, userId, projectName, subdomainName) => new Promise((resolve, reject) => {
+    console.log("Data sent to SQL:", { templateId, userId, projectName, subdomainName });  // Log data
+    kubeDB.query(
+        'INSERT INTO project (templateId, userId, projectName, subdomainName, createdDate, LastChangeDate) VALUES (?, ?, ?, ?, NOW(), NOW())',
+        [templateId, userId, projectName, subdomainName],
+        (error, result) => {
+            if (error) {
+                console.error("Error creating project:", error);
+                reject(error);
+            } else {
+                resolve(result);
+            }
         }
-    })
-})
+    );
+});
 
 export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();

@@ -1,4 +1,4 @@
-import kubeDB from "../Database.js"; // get the connection for the database
+import kubeDB from "../Database.js"; 
 
 // get all team
 export const getAllTeams = () => new Promise((resolve, reject) => {

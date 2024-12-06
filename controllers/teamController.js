@@ -9,6 +9,7 @@ export const teamController = {
       response.status(500).send(error);
     }
   },
+  
   // getById
   getByID: async (request, response) => {
     try {

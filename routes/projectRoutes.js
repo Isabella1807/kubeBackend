@@ -5,6 +5,6 @@ import {mustBeLoggedIn} from "../middleware/authenticate.js";
 const router = express.Router();
 router.get("/", mustBeLoggedIn, projectController.getAll)
 router.get("/:id", projectController.getByID)
-router.post("/", projectController.create)
+router.post("/", mustBeLoggedIn, projectController.create)
 router.delete("/:id", projectController.delete)
 export default router;

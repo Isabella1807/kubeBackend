@@ -3,6 +3,7 @@ import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "
 import dotenv from "dotenv";
 import Portainer, {setPortainerToken} from "../Portainer.js"
 import axios from "axios";
+import {getTemplateByID} from "../models/templateModel.js";
 
 //Makes it possible to use .env variables to hide login data
 dotenv.config()
@@ -78,13 +79,11 @@ export const projectController = {
             setPortainerToken(token);
 
 
-
-
-
             //FETCH TEMPLATE BY ID OG SÆT TEMPLATE TEXT IND I STACKFILECONTENT
             // OG SÅ TEMPLATEID FRA POSTMAN SKAL HENTES SOM STACKFILECONTENT ISTEDET FOR ID
 
-
+            const {templateText} = await getTemplateByID(templateId);
+            let fileContent = templateText;
 
 
             // WEIRD STUFF FROM NOTES
@@ -93,9 +92,23 @@ export const projectController = {
             const websiteId = Math.random().toString(36).substring(7); //CHANGEME01 i yaml filen, står 4 steder. Definerer routeren, hvis det ikk gøres ordentligt kommer vores side ikk på nettet.
             const pmaId = Math.random().toString(36).substring(7); //CHANGEME02 i yaml filen, står 4 steder
 
-            //ENGINX & WORDPRESS YAML WITH TEMPALTE LITERALS
-            const fileContent = `{\"networks\":{\"traefik-proxy\":{\"external\":true}},\"services\":{\"test\":{\"image\":\"nginx:latest\",\"networks\":[\"traefik-proxy\"],\"deploy\":{\"labels\":[\"traefik.enable=true\",\"traefik.http.routers.${websiteId}.rule=Host('${subDomainWp}.kubelab.dk')\",\"traefik.http.routers.${websiteId}.entrypoints=web,websecure\",\"traefik.http.routers.${websiteId}.tls.certresolver=letsencrypt\",\"traefik.http.services.${websiteId}.loadbalancer.server.port=80\"]}}}}`
-           /*const fileContent = `
+            console.log(fileContent);
+            console.log("==================================================================================================================================================");
+            console.log("==================================================================================================================================================");
+
+            // Using regex to replace ${} values
+            fileContent=fileContent
+                .replace(/\$\{subDomainWp}/g, subDomainWp)
+                .replace(/\$\{subdomainPma}/g, subdomainPma)
+                .replace(/\$\{websiteId}/g, websiteId)
+                .replace(/\$\{pmaId}/g, pmaId);
+            console.log("==================================================================================================================================================");
+            console.log("==================================================================================================================================================");
+            console.log(fileContent);
+
+            //NGINX & WORDPRESS YAML WITH TEMPALTE LITERALS
+            //const nginx = `{\"networks\":{\"traefik-proxy\":{\"external\":true}},\"services\":{\"test\":{\"image\":\"nginx:latest\",\"networks\":[\"traefik-proxy\"],\"deploy\":{\"labels\":[\"traefik.enable=true\",\"traefik.http.routers.${websiteId}.rule=Host('${subDomainWp}.kubelab.dk')\",\"traefik.http.routers.${websiteId}.entrypoints=web,websecure\",\"traefik.http.routers.${websiteId}.tls.certresolver=letsencrypt\",\"traefik.http.services.${websiteId}.loadbalancer.server.port=80\"]}}}}`
+            /*const wordpress = `
 networks:
   traefik-proxy:
     external: true
@@ -148,19 +161,37 @@ services:
 
             // name cannot have a space
             // name cannot be capitalized
-            await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
+            const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
                 "name": `${projectName}`,
                 "stackFileContent": fileContent,
-                "swarmID": "v1pkdou24tzjtncewxhvpmjms"
-            }).then(async (res) => {
-                console.log(res)
+                "swarmID": "tester"
+            })/*.then(async (res) => {
+                //console.log(res)
                 console.log('JA TAK')
                 //await createProject(templateId, 1, projectName,subdomainName)
             }).catch((err) => {
                 console.log(err)
                 console.log('is ogs')
-            })
+            })*/
+
+            console.log(newStack)
+
+
+            /*
+            brug subdomain fra postman request
+            opret eget project når portainer stack er oprettet
+            - brug stack id fra newStack
+            - brug user id fra res.locals.user
+
+            slet portainer stacken først, og så projectet i egen db ved delete project request
+            - requested tager id på projectet i egen db - find derfra ud af hvilket stack id den hænger sammen med - slet stacked i portainer, og så slet eget project
+
+            i get all projects request - hvis res.locals.user er lærer, returnér ALLE projekter - hvis res.locals.user er student, returnér kun projecter lavet af dén student
+            ved get all projects OG get project by id requests, find først projektet i egen db, så hent hvilken portainer stack den hører sammen med - returnér som ét samlet object (kun med det data man skal bruge. F.eks. stack status, create date. F.eks. ikke swarm id, og hvad der ellers er af ligegyldig data)
+            */
+
+
 
             res.sendStatus(200)
         } catch (error) {

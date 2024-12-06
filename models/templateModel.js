@@ -28,7 +28,7 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No template found with ID ${id}`);
             } else {
-                resolve(result);
+                resolve(result[0]);
             }
         }
     });

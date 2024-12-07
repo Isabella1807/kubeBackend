@@ -53,16 +53,30 @@ export const getOrCreateTeam = async (teamName) => {
 // Delete Team by ID
 export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
-
-    kubeDB.query(`DELETE FROM team WHERE teamId = ${id}`, (error, result) => {
+    
+    kubeDB.query('DELETE FROM project WHERE userId IN (SELECT userId FROM users WHERE teamId = ?)', [id], (error) => {
         if (error) {
-            reject("Team delete by Id error");
-        } else {
-            if (result.affectedRows === 0) {
-                reject(`Team with id ${id} does not exist`);
-            } else {
-                resolve(result)
-            }
+            reject("Error deleting team projects");
+            return;
         }
-    })
-})
+
+        kubeDB.query('DELETE FROM users WHERE teamId = ?', [id], (error) => {
+            if (error) {
+                reject("Error deleting team users");
+                return;
+            }
+
+            kubeDB.query('DELETE FROM team WHERE teamId = ?', [id], (error, result) => {
+                if (error) {
+                    reject("Team delete by Id error");
+                } else {
+                    if (result.affectedRows === 0) {
+                        reject(`Team with id ${id} does not exist`);
+                    } else {
+                        resolve(result)
+                    }
+                }
+            });
+        });
+    });
+});

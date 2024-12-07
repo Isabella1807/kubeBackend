@@ -6,5 +6,5 @@ const router = express.Router();
 router.get("/", mustBeLoggedIn, projectController.getAll)
 router.get("/:id", projectController.getByID)
 router.post("/", mustBeLoggedIn, projectController.create)
-router.delete("/:id", projectController.delete)
+router.delete("/:id", mustBeLoggedIn, projectController.delete)
 export default router;

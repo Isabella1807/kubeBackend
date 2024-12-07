@@ -70,21 +70,22 @@ export const fetchAllUsers = (callback) => {
 
 
 // function to update password
-export const updateUserPasswordById = (userId, newPassword, callback) => {
-    const sql = `
-        UPDATE users
-        SET password = ?
-        WHERE userId = ?
-    `;
-    kubeDB.query(sql, [newPassword, userId], (err, result) => {
-        if (err) {
-            console.error("Error updating password:", err);
-            callback(err, null);
-        } else {
-            callback(null, result); 
-        }
+export const updateUserPasswordById = async (userId, newPassword) => {
+    return new Promise((resolve, reject) => {
+        const query = `UPDATE users SET password = ? WHERE userId = ?`;
+
+        kubeDB.query(query, [newPassword, userId], (error, results) => {
+            if (error) {
+                console.error("Error updating password:", error);
+                reject(error);
+            } else {
+                console.log("Password updated successfully for userId:", userId);
+                resolve(results);
+            }
+        });
     });
 };
+
 
 // function to delete user by their id 
 export const deleteUserById = (userId, callback) => {

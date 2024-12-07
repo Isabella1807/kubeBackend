@@ -12,11 +12,11 @@ export const generateToken = (payload) => {
 };
 
 export const verifyToken = (token) => {
-    //.verify takes a token, a secret key, any options(optional) and a callback function
-    return jwt.verify(token, process.env.TOKEN_SECRET, (error, payload) => {
-        if (error) {
-            return false;
-        }
-        return payload;
-    })
+    try {
+        // Verificer token synkront
+        return jwt.verify(token, process.env.TOKEN_SECRET);
+    } catch (error) {
+        console.error("Error verifying token:", error.message);
+        return false;
+    }
 };

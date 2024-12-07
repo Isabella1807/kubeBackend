@@ -1,5 +1,5 @@
-import {fetchUserById} from "../models/userModel.js";
-import {verifyToken} from "../utils/jwt.js";
+import { verifyToken } from "../utils/jwt.js";
+import { fetchUserById } from "../models/userModel.js";
 
 export const deserializeUser = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -16,13 +16,16 @@ export const deserializeUser = (req, res, next) => {
         return;
     }
 
-    const userData = verifyToken(token);
+    const userData = verifyToken(token); // Verify the token
     if (!userData) {
         console.log("Invalid or expired token");
-        next();
+        next(); // Proceed to the next middleware or route
         return;
     }
 
+    console.log("Decoded user data from token:", userData);  // Debugging log
+
+    // Fetch user from the database based on user ID stored in the token
     fetchUserById(userData.userId, (error, result) => {
         if (error) {
             console.error("Database error when fetching user:", error);
@@ -39,6 +42,6 @@ export const deserializeUser = (req, res, next) => {
         const userObj = result[0];
         res.locals.user = userObj;
         console.log("User deserialized:", res.locals.user);
-        next();
+        next();  // Proceed to the next middleware or route
     });
 };

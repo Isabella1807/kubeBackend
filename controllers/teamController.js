@@ -50,3 +50,21 @@ export const teamController = {
     }
   },
 };
+
+
+getAll: async (request, response) => {
+  try {
+      const sortDirection = request.query.sort;
+      let teams;
+      
+      if (sortDirection === 'desc') {
+          teams = await getAllTeamsSortedDesc();
+      } else {
+          teams = await getAllTeams();
+      }
+      
+      response.json(teams);
+  } catch (error) {
+      response.status(500).send(error);
+  }
+}

@@ -80,3 +80,20 @@ export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
         });
     });
 });
+
+
+export const getAllTeamsSortedDesc = () => new Promise((resolve, reject) => {
+    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount 
+                 FROM team 
+                 LEFT JOIN users ON team.teamId = users.teamId 
+                 GROUP BY team.teamId, team.teamName 
+                 ORDER BY teamName DESC`;
+    kubeDB.query(sql, (error, result) => {
+        if(error){
+            console.error("Error fetching sorted teams", error);
+            reject("Failed to fetch sorted teams");
+        } else {
+            resolve(result);
+        }
+    });
+});

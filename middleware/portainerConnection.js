@@ -1,6 +1,16 @@
 import Portainer, {setPortainerToken} from "../Portainer.js"
 
+let timestampLastTokenRefresh = 0;
+
 export const requirePortainerAuth = async (req, res, next) => {
+
+    const secondsSinceLastRefresh = (Date.now() - timestampLastTokenRefresh) / 1000;
+    // Don't refresh portainer token if it is less than 30 minutes since it was created.
+    // Just continue to controller / next middleware
+    if (secondsSinceLastRefresh < 60 * 30) {
+        next();
+        return;
+    }
 
     // Get authorization token
     const token = await Portainer.post('/auth', {
@@ -22,6 +32,7 @@ export const requirePortainerAuth = async (req, res, next) => {
     }
 
     setPortainerToken(token);
+    timestampLastTokenRefresh = Date.now();
 
     next();
 }

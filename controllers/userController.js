@@ -8,7 +8,7 @@ export const addUserFromCSV = async (req, res) => {
     try {
         const results = [];
         const rows = [];
-        const csvParser = parse({ 
+        const csvParser = parse({
             columns: true,
             skip_empty_lines: true
         });
@@ -47,7 +47,7 @@ export const addUserFromCSV = async (req, res) => {
             .on('end', async () => {
                 try {
                     await processRows();
-                    res.status(200).json({ 
+                    res.status(200).json({
                         message: 'Users successfully added from CSV.',
                         usersAdded: results.length
                     });

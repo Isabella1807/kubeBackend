@@ -14,9 +14,9 @@ export const createUser = async (userData) => {
 // function find user by id
 export const fetchUserById = (userId, callback) => {
     const sql = `SELECT * FROM users WHERE userId = ?`;
-    const values = [userId];  
+    const values = [userId];
 
-    
+
     kubeDB.query(sql, values, (err, result) => {
         if (err) {
             console.error("Database error:", err);
@@ -83,7 +83,7 @@ export const updateUserPasswordById = (userId, newPassword, callback) => {
             console.error("Error updating password:", err);
             callback(err, null);
         } else {
-            callback(null, result); 
+            callback(null, result);
         }
     });
 };

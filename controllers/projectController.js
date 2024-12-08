@@ -1,36 +1,16 @@
 import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "../models/projectModel.js";
-//import axios from "axios";
-import dotenv from "dotenv";
-import Portainer, {setPortainerToken} from "../Portainer.js"
-import axios from "axios";
+import Portainer from "../Portainer.js"
 import {getTemplateByID} from "../models/templateModel.js";
-
-//Makes it possible to use .env variables to hide login data
-dotenv.config()
 
 export const projectController = {
     getAll: async (req, res) => {
         try {
-
-            const {data} = await Portainer.post('/auth', {
-                username: process.env.PORTAINER_USERNAME,
-                password: process.env.PORTAINER_PASSWORD
-            })
-
-            //how often does token change?
-            const token = data.jwt;
-
-            const stacks = await Portainer.get(`/stacks`, {
-                headers: {
-                    Authorization: token
-                }
-            })
+            const stacks = await Portainer.get(`/stacks`);
 
             console.log(stacks.data);
 
-
-            const projects = await getAllProjects()
-            res.json(projects)
+            const projects = await getAllProjects();
+            res.json(projects);
         } catch (error) {
             res.status(500).send(error);
         }
@@ -62,25 +42,11 @@ export const projectController = {
         }
 
         try {
-            const {data} = await Portainer.post('/auth', {
-                username: process.env.PORTAINER_USERNAME,
-                password: process.env.PORTAINER_PASSWORD
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            //how often does token change?
-            const token = data.jwt;
-
-            setPortainerToken(token);
-
             //FETCH TEMPLATE BY ID OG SÆT TEMPLATE TEXT IND I STACKFILECONTENT
             // OG SÅ TEMPLATEID FRA POSTMAN SKAL HENTES SOM STACKFILECONTENT ISTEDET FOR ID
 
             // Get template from db using Id
-            const templateText = await getTemplateByID(templateId).then((template) => {
+            let templateText = await getTemplateByID(templateId).then((template) => {
                 return template['templateText'];
             }).catch(() => {
                 return null;
@@ -92,8 +58,6 @@ export const projectController = {
 
             // Her fra ved vi at vi har en template text fra db og alt er rart og dejligt!
 
-            let fileContent = templateText;
-
             // Values to create stack in portainer
             const subDomainWp = subdomainName;
             const subdomainPma = subdomainName + "-pma";
@@ -102,7 +66,7 @@ export const projectController = {
             const swarmId = "v1pkdou24tzjtncewxhvpmjms"
 
             // Using regex to replace values in fileContent, if they are there. 'SUBDOMAIN' and 'CHANGEME' must be AFTER the *01 and *02 replace attempts!
-            fileContent = fileContent
+            templateText = templateText
                 .replace(/SUBDOMAIN01/g, subDomainWp)
                 .replace(/SUBDOMAIN02/g, subdomainPma)
                 .replace(/SUBDOMAIN/g, subDomainWp)
@@ -114,7 +78,7 @@ export const projectController = {
             const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
                 "name": `${projectName}`,
-                "stackFileContent": fileContent,
+                "stackFileContent": templateText,
                 "swarmID": swarmId
             }).then((stack) => stack).catch(() => null);
 
@@ -144,22 +108,6 @@ export const projectController = {
         }
 
         try {
-            // Get authorization token
-            const {data} = await Portainer.post('/auth', {
-                username: process.env.PORTAINER_USERNAME,
-                password: process.env.PORTAINER_PASSWORD
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-
-            //how often does token change?
-            const token = data.jwt;
-            console.log(token)
-
-            setPortainerToken(token);
-
             const deletedStack = await Portainer.delete(`/stacks/${id}?endpointId=5`)
                 .then(async (res) => {
                     console.log(res)

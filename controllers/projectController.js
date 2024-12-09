@@ -131,8 +131,9 @@ export const projectController = {
 
 
     },
-    /*
-    Why is it in here? 
+    //////////////////////
+    /*Why is it in here?*/
+    //////////////////////
     login: async (req, res) => {
         const { Username, Password } = req.body;
         
@@ -154,5 +155,5 @@ export const projectController = {
             console.error("Login failed:", error);
             res.status(500).json({ message: "Failed to authenticate with Portainer" });
         }
-    }*/
+    }
 };

@@ -34,9 +34,10 @@ export const createProject = (templateid, userid, stackId, projectname, subdomai
             reject(error);
         } else {
             resolve(result);
+
         }
-    })
-})
+    });
+});
 
 export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();

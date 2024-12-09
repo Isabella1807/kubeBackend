@@ -108,8 +108,18 @@ export const projectController = {
         }
 
         try {
+            /*
+            get stack-id in sql via project-id
+            delete portainer stack with that stack-id
+            delete project in sql with the project-id
+            */
+
+            const dbProject = await getProjectByID(id);
+
+            console.log(dbProject)
+
             const deletedStack = await Portainer.delete(`/stacks/${id}?endpointId=5`)
-                .then(async (res) => {
+           /*     .then(async (res) => {
                     console.log(res)
                     console.log('JA TAK')
 
@@ -118,8 +128,19 @@ export const projectController = {
                 }).catch((err) => {
                     console.log(err)
                     console.log('is ogs')
-                })
+                })*/
 
+            if (!deletedStack) {
+                res.status(500).send('Could not delete stack in Portainer');
+                return;
+            }
+
+           /* console.log(deletedStack)
+
+            const stackId = deletedStack.data.Id;
+            await getProjectByID(stackID)
+            await deleteProjectByID(stackId)
+*/
             /*
             slet portainer stacken først, og så projectet i egen db ved delete project request
             - requested tager id på projectet i egen db - find derfra ud af hvilket stack id den hænger sammen med - slet stacked i portainer, og så slet eget project

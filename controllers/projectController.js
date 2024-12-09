@@ -4,6 +4,15 @@ import {getTemplateByID} from "../models/templateModel.js";
 
 export const projectController = {
     getAll: async (req, res) => {
+
+        /*
+        i get all projects request - hvis res.locals.user er lærer, returnér ALLE projekter - hvis res.locals.user er student, returnér kun projecter lavet af dén student
+        ved get all projects OG get project by id requests, find først projektet i egen db, så hent hvilken portainer stack den hører sammen med - returnér som ét samlet object (kun med det data man skal bruge. F.eks. stack status, create date. F.eks. ikke swarm id, og hvad der ellers er af ligegyldig data)
+
+        brug korrekte authentication middlewares til controllers - f.eks. at man skal være logget ind for at create eller delete projects
+        */
+
+
         try {
             const stacks = await Portainer.get(`/stacks`);
 
@@ -42,9 +51,6 @@ export const projectController = {
         }
 
         try {
-            //FETCH TEMPLATE BY ID OG SÆT TEMPLATE TEXT IND I STACKFILECONTENT
-            // OG SÅ TEMPLATEID FRA POSTMAN SKAL HENTES SOM STACKFILECONTENT ISTEDET FOR ID
-
             // Get template from db using Id
             let templateText = await getTemplateByID(templateId).then((template) => {
                 return template['templateText'];
@@ -55,8 +61,6 @@ export const projectController = {
                 res.status(404).send('Template not found');
                 return;
             }
-
-            // Her fra ved vi at vi har en template text fra db og alt er rart og dejligt!
 
             // Values to create stack in portainer
             const subDomainWp = subdomainName;
@@ -95,7 +99,7 @@ export const projectController = {
             res.sendStatus(200)
         } catch (error) {
             console.log(error)
-            console.log('SOME OTHER ERROR!!!')
+            console.log('Error creating project')
             res.status(500).send(error);
         }
     },
@@ -108,50 +112,17 @@ export const projectController = {
         }
 
         try {
-            /*
-            get stack-id in sql via project-id
-            delete portainer stack with that stack-id
-            delete project in sql with the project-id
-            */
-
             const dbProject = await getProjectByID(id);
+            const stackId = dbProject.stackId;
 
-            console.log(dbProject)
-
-            const deletedStack = await Portainer.delete(`/stacks/${id}?endpointId=5`)
-           /*     .then(async (res) => {
-                    console.log(res)
-                    console.log('JA TAK')
-
-                    //const stackId = deletedStack.data.Id;
-                    //await deleteProjectByID(stackId)
-                }).catch((err) => {
-                    console.log(err)
-                    console.log('is ogs')
-                })*/
-
+            const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
             if (!deletedStack) {
                 res.status(500).send('Could not delete stack in Portainer');
                 return;
             }
 
-           /* console.log(deletedStack)
+            await deleteProjectByID(id);
 
-            const stackId = deletedStack.data.Id;
-            await getProjectByID(stackID)
-            await deleteProjectByID(stackId)
-*/
-            /*
-            slet portainer stacken først, og så projectet i egen db ved delete project request
-            - requested tager id på projectet i egen db - find derfra ud af hvilket stack id den hænger sammen med - slet stacked i portainer, og så slet eget project
-
-            i get all projects request - hvis res.locals.user er lærer, returnér ALLE projekter - hvis res.locals.user er student, returnér kun projecter lavet af dén student
-            ved get all projects OG get project by id requests, find først projektet i egen db, så hent hvilken portainer stack den hører sammen med - returnér som ét samlet object (kun med det data man skal bruge. F.eks. stack status, create date. F.eks. ikke swarm id, og hvad der ellers er af ligegyldig data)
-
-            brug korrekte authentication middlewares til controllers - f.eks. at man skal være logget ind for at create eller delete projects
-            */
-
-            //await deleteProjectByID(id)
             res.sendStatus(200)
         } catch (error) {
             res.status(500).send(error)

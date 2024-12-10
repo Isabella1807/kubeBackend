@@ -13,7 +13,7 @@ export const projectController = {
     getAll: async (req, res) => {
         try {
 
-            if(res.locals.user.role.isFaculty || res.locals.user.role.isAdmin){
+            if (res.locals.user.role.isFaculty || res.locals.user.role.isAdmin) {
                 const projects = await getAllProjects();
                 res.json(projects);
                 return
@@ -132,14 +132,46 @@ export const projectController = {
 
 
     },
+    startProject: async (req, res) => {
+        const id = parseInt(req.params.id)
+
+        if (Number.isNaN(id)) {
+            res.status(400).send("id not a number")
+            return
+        }
+
+        res.status(418).send(`START PROJEKT OG ${id}`)
+    },
+    stopProject: async (req, res) => {
+        const id = parseInt(req.params.id)
+
+        if (Number.isNaN(id)) {
+            res.status(400).send("id not a number")
+            return
+        }
+
+        res.status(418).send(`STOP PROJEKT OG ${id}`)
+    },
+    restartProject: async (req, res) => {
+        const id = parseInt(req.params.id)
+
+        if (Number.isNaN(id)) {
+            res.status(400).send("id not a number")
+            return
+        }
+
+        res.status(418).send(`RESTART PROJEKT OG ${id}`)
+    },
+
+
     //////////////////////
     /*Why is it in here?*/
     //////////////////////
     login: async (req, res) => {
-        const { Username, Password } = req.body;
-        
+        const {Username, Password} = req.body;
+
         if (!Username || !Password) {
-            return res.status(400).json({ message: "Username and Password are required" });
+            return res.status(400).json({message: "Username and Password are required"});
         }
 
         try {
@@ -151,10 +183,10 @@ export const projectController = {
 
             // Hvis login er succesfuldt, send JWT token til frontend
             const token = response.data.jwt; // Antag, at du får et JWT-token tilbage
-            res.status(200).json({ token });
+            res.status(200).json({token});
         } catch (error) {
             console.error("Login failed:", error);
-            res.status(500).json({ message: "Failed to authenticate with Portainer" });
+            res.status(500).json({message: "Failed to authenticate with Portainer"});
         }
     }
 };

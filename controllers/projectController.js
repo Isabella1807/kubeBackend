@@ -1,26 +1,27 @@
-import {getAllProjects, getProjectByID, createProject, deleteProjectByID} from "../models/projectModel.js";
+import {
+    getAllProjects,
+    getProjectByID,
+    createProject,
+    deleteProjectByID,
+    getAllProjectsByUserID
+} from "../models/projectModel.js";
 import Portainer from "../Portainer.js"
 import {getTemplateByID} from "../models/templateModel.js";
 
 
 export const projectController = {
     getAll: async (req, res) => {
-
-        /*
-        i get all projects request - hvis res.locals.user er lærer, returnér ALLE projekter - hvis res.locals.user er student, returnér kun projecter lavet af dén student
-        ved get all projects OG get project by id requests, find først projektet i egen db, så hent hvilken portainer stack den hører sammen med - returnér som ét samlet object (kun med det data man skal bruge. F.eks. stack status, create date. F.eks. ikke swarm id, og hvad der ellers er af ligegyldig data)
-
-        brug korrekte authentication middlewares til controllers - f.eks. at man skal være logget ind for at create eller delete projects
-        */
-
-
         try {
-            const stacks = await Portainer.get(`/stacks`);
 
-            console.log(stacks.data);
+            if(res.locals.user.role.isFaculty || res.locals.user.role.isAdmin){
+                const projects = await getAllProjects();
+                res.json(projects);
+                return
+            }
 
-            const projects = await getAllProjects();
-            res.json(projects);
+            const studentProjects = await getAllProjectsByUserID(res.locals.user.userId);
+            res.json(studentProjects);
+
         } catch (error) {
             res.status(500).send(error);
         }

@@ -5,45 +5,37 @@ export const deserializeUser = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         console.log("No Authorization header found");
-        next(); // Gå videre, men brugeren er ikke autentificeret
-        return;
+        return next();
     }
 
     const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
     if (!token) {
         console.log("No token found in Authorization header");
-        next();
-        return;
+        return next();
     }
 
-    const userData = verifyToken(token); // Verify the token
+    const userData = verifyToken(token);
     if (!userData) {
         console.log("Invalid or expired token");
-        next(); // Proceed to the next middleware or route
-        return;
+        return next();
     }
 
-    console.log("Decoded user data from token:", userData);  // Debugging log
-
-    // Fetch user from the database based on user ID stored in the token
     fetchUserById(userData.userId, (error, result) => {
         if (error) {
-            console.error("Database error when fetching user:", error);
-            next();
-            return;
+            console.error("Database error:", error);
+            return next();
         }
 
-        if (result.length === 0) {
+        if (!result || result.length === 0) {
             console.log("User not found in database");
-            next();
-            return;
+            return next();
         }
 
-        const userObj = result[0];
-        res.locals.user = userObj;
-
-        // tilføj .isAdmin, .isStudent, .isTeacher til locals her, for at holde logikken ét sted, i stedet for at tjekke om "roleId === 3" i flere forskellige filer
-
+        const user = result[0];
+        // Tilføj roleId fra token til user-objektet
+        res.locals.user = { ...user, roleId: userData.roleId };
+        console.log("Deserialized User:", res.locals.user);
         next();
     });
 };
+

@@ -25,31 +25,33 @@ export const mustBeAdmin = (req, res, next) => {
     next();
 };
 
-
 export const mustBeFaculty = (req, res, next) => {
-    if (!res.locals.user) {
-        res.status(401).send('Must be logged in');
-        return;
+    const user = res.locals.user;
+
+    if (!user) {
+        return res.status(401).send('Must be logged in');
     }
 
-    if(res.locals.user.roleId !== 3){
-        next()
-        return;
+    if (user.roleId !== 1) {
+        console.log(`User roleId: ${user.roleId} - Access denied`);
+        return res.status(403).send("Must be faculty");
     }
 
-    res.status(403).send("Must be faculty");
-}
+    next();
+};
 
 export const mustBeStudent = (req, res, next) => {
-    if (!res.locals.user) {
-        res.status(401).send('Must be logged in');
-        return;
+    const user = res.locals.user;
+
+    if (!user) {
+        return res.status(401).send('Must be logged in');
     }
 
-    if(res.locals.user.roleId !== 3){
-        next()
-        return;
+    if (user.roleId !== 1) {
+        console.log(`User roleId: ${user.roleId} - Access denied`);
+        return res.status(403).send("Must be student");
     }
 
-    res.status(403).send("Must be faculty");
-}
+    next();
+};
+

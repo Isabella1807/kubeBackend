@@ -18,13 +18,16 @@ export const addUserFromCSV = async (req, res) => {
         const processRows = async () => {
             // check if all info is there 
             for (const row of rows) {
-                if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.teamName || !row.roleId) {
+                if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.roleId) {
                     console.error('Missing required field in row:', row);
                     continue;
                 }
                 try {
+                    console.log('got data:', req.body);
+                    const ownTeamName = req.body.teamName; 
+                    console.log('team name made', ownTeamName);
                     // finds the user or creates the team or user 
-                    const teamId = await getOrCreateTeam(row.teamName);
+                    const teamId = await getOrCreateTeam(ownTeamName);
                     const userData = {
                         uclMail: row.uclMail,
                         password: row.password,

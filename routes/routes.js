@@ -1,5 +1,5 @@
 import express from "express";
-import {showAllRoles} from "../controllers/roleController.js";
+import { showAllRoles } from "../controllers/roleController.js";
 
 import projectRoutes from "./projectRoutes.js";
 import loginRoutes from "./loginRoutes.js";
@@ -15,6 +15,6 @@ router.use("/projects", projectRoutes);
 router.use("/users", userRoutes);
 router.use("/teams", teamRoutes);
 router.use("/login", loginRoutes);
-router.use((req, res) => {res.status(404).send("route not found")})
+router.use((req, res) => { res.status(404).send("route not found") })
 
 export default router;

@@ -41,7 +41,9 @@ export const deserializeUser = (req, res, next) => {
 
         const userObj = result[0];
         res.locals.user = userObj;
-        console.log("User deserialized:", res.locals.user);
-        next();  // Proceed to the next middleware or route
+
+        // tilføj .isAdmin, .isStudent, .isTeacher til locals her, for at holde logikken ét sted, i stedet for at tjekke om "roleId === 3" i flere forskellige filer
+
+        next();
     });
 };

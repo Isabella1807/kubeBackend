@@ -27,10 +27,9 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
     })
 })
 
+export const createProject = (templateid, userid, stackId, projectname, subdomainname) => new Promise((resolve, reject) => {
 
-export const createProject = (templateid, userid, projectname, subdomainname) => new Promise((resolve, reject) => {
-
-    kubeDB.query(`INSERT INTO project (templateId, userId, projectName, subdomainName) VALUES (${templateid}, ${userid}, "${projectname}", "${subdomainname}")`, (error, result) => {
+    kubeDB.query(`INSERT INTO project (templateId, userId, stackId, projectName, subdomainName) VALUES (${templateid}, ${userid}, ${stackId}, "${projectname}", "${subdomainname}")`, (error, result) => {
         if (error) {
             reject(error);
         } else {

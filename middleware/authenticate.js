@@ -39,3 +39,17 @@ export const mustBeFaculty = (req, res, next) => {
 
     res.status(403).send("Must be faculty");
 }
+
+export const mustBeStudent = (req, res, next) => {
+    if (!res.locals.user) {
+        res.status(401).send('Must be logged in');
+        return;
+    }
+
+    if(res.locals.user.roleId !== 3){
+        next()
+        return;
+    }
+
+    res.status(403).send("Must be faculty");
+}

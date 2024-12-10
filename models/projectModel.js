@@ -65,4 +65,4 @@ export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
             }
         }
     })
-})
+});

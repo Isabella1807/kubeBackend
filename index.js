@@ -18,7 +18,6 @@ app.use(deserializeUser);
 
 // routes
 app.use(Router);
-app.use('/api', projectRoutes);
 
 // start server
 app.listen(port, () => {

@@ -29,7 +29,11 @@ export const deserializeUser = (req, res, next) => {
 
         res.locals.user = userObj;
 
-        // tilføj .isAdmin, .isStudent, .isTeacher til locals her, for at holde logikken ét sted, i stedet for at tjekke om "roleId === 3" i flere forskellige filer
+        res.locals.user.role = {
+            "isAdmin": userObj.roleId === 1,
+            "isFaculty": userObj.roleId === 2,
+            "isStudent": userObj.roleId === 3,
+        }
 
         next();
     });

@@ -31,11 +31,13 @@ export const fetchUserById = (userId, callback) => {
 export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
     if (!userMail) reject();
 
-    kubeDB.query(`SELECT password, userId FROM users WHERE uclMail = '${userMail}'`, (error, result) => {
+    // Opdater forespørgslen for at hente userId, password og roleId
+    const query = `SELECT password, userId, roleId FROM users WHERE uclMail = ?`;
+    kubeDB.query(query, [userMail], (error, result) => {
         if (error) {
             reject("Model get by ucl mail error");
         } else {
-            resolve(result[0]);
+            resolve(result[0]); // returnerer første bruger, da vi antager, at mailen er unik
         }
     })
 })

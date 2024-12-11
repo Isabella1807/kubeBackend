@@ -1,94 +1,56 @@
 import { parse } from 'csv-parse';
-import { Readable } from 'stream'; 
-import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById } from '../models/userModel.js';
-import kubeDB from '../Database.js';
+import { Readable } from 'stream';
+import { getOrCreateTeam } from '../models/teamModel.js';
+import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById, getUsersByTeamId } from '../models/userModel.js';
 
+// this function takes the csv file and does that users can be added to the database
 export const addUserFromCSV = async (req, res) => {
     try {
         const results = [];
-        const processedTeams = new Map();
-
-        const csvParser = parse({ 
+        const rows = [];
+        const csvParser = parse({
             columns: true,
             skip_empty_lines: true
         });
-
-        // query function 
-        const queryDB = (sql, params) => {
-            return new Promise((resolve, reject) => {
-                kubeDB.query(sql, params, (err, result) => {
-                    if (err) reject(err);
-                    else resolve(result);
-                });
-            });
-        };
-
-        // create team and getting it
-        const getOrCreateTeam = async (teamName) => {
-            // see if there is alreay a team with same name
-            if (processedTeams.has(teamName)) {
-                return processedTeams.get(teamName);
-            }
-
-            // see if the team is existing
-            const teamResult = await queryDB('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
-            
-            if (teamResult.length > 0) {
-                const teamId = teamResult[0].teamId;
-                processedTeams.set(teamName, teamId);
-                return teamId;
-            }
-
-            // if there isnt a team it will make one
-            const newTeam = await queryDB('INSERT INTO team (teamName) VALUES (?)', [teamName]);
-            const newTeamId = newTeam.insertId;
-            processedTeams.set(teamName, newTeamId);
-            return newTeamId;
-        };
-
-        // Function to create user
-        const createUser = async (userData) => {
-            try {
-                await queryDB('INSERT INTO users SET ?', userData);
-                results.push(userData);
-            } catch (err) {
-                console.error('Error creating user:', err);
-                throw err;
-            }
-        };
-
-        const rows = [];
+        // save the row in a array from the csv
         csvParser.on('data', (row) => rows.push(row));
-
+        // the function runs through the rows from the csv
         const processRows = async () => {
+            // check if all info is there 
             for (const row of rows) {
-                if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.teamName || !row.roleId) {
+                if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.roleId) {
                     console.error('Missing required field in row:', row);
                     continue;
                 }
-
                 try {
-                    const teamId = await getOrCreateTeam(row.teamName);
-                    await createUser({
+                    console.log('got data:', req.body);
+                    const ownTeamName = req.body.teamName; 
+                    console.log('team name made', ownTeamName);
+                    // finds the user or creates the team or user 
+                    const teamId = await getOrCreateTeam(ownTeamName);
+                    const userData = {
                         uclMail: row.uclMail,
                         password: row.password,
                         firstName: row.firstName,
                         lastName: row.lastName,
                         roleId: row.roleId,
                         teamId: teamId
-                    });
+                    };
+                    // create the user in the database 
+                    await createUser(userData);
+                    results.push(userData);
                 } catch (err) {
                     console.error('Error processing row:', err);
                 }
             }
         };
-
+        // reads the file 
         Readable.from(req.file.buffer.toString())
             .pipe(csvParser)
             .on('end', async () => {
                 try {
                     await processRows();
-                    res.status(200).json({ 
+                    res.status(200).json({
                         message: 'Users successfully added from CSV.',
                         usersAdded: results.length
                     });
@@ -107,6 +69,7 @@ export const addUserFromCSV = async (req, res) => {
         res.status(500).json({ error: 'Server error processing upload.' });
     }
 };
+
 
 // Controller to fetch a user by ID
 export const getUserById = (req, res) => {
@@ -174,20 +137,44 @@ export const updatePassword = (req, res) => {
 // Controller to delete a user by ID
 export const deleteUserByIdController = (req, res) => {
     const userId = req.params.id;
-
-    fetchUserById(userId, (err, user) => {
+    deleteUserById(userId, (err, result) => {
         if (err) {
-            return res.status(500).json({ error: "Error checking user existence" });
+            return res.status(500).json({ error: "Failed to delete user" });
         }
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        deleteUserById(userId, (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: "Failed to delete user" });
-            }
-            res.status(200).json({ message: "User deleted successfully" });
-        });
+        res.status(200).json({ message: "User deleted successfully" });
     });
+};
+
+// retrive members in the database
+export const getTeamMembers = async (req, res) => {
+    const teamId = req.params.teamId;
+    try {
+        const users = await getUsersByTeamId(teamId);
+        res.status(200).json({
+            message: "Team members retrieved successfully",
+            users: users
+        });
+    } catch (error) {
+        console.error("Error fetching team members:", error);
+        res.status(500).json({ error: "Failed to fetch team members" });
+    }
+};
+
+// function to make a single user in edit group
+export const createSingleUser = async (req, res) => {
+    try {
+        const userData = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            uclMail: req.body.uclMail,
+            roleId: req.body.roleId,
+            teamId: req.body.teamId,
+            password: 'DefaultPassword123!'
+        };
+        await createUser(userData);
+        res.status(200).json({ message: "User created successfully" });
+    } catch (err) {
+        console.error("Error creating user:", err);
+        res.status(500).json({ error: "Failed to create user" });
+    }
 };

@@ -1,23 +1,35 @@
-import { getAllTeams, getTeamById, createTeam, deleteTeamByID } from "../models/teamModel.js";
+import { getAllTeams, getTeamById, deleteTeamByID } from "../models/teamModel.js";
 
+// this for getting all team and then desceding - this is doin alphabetical order
 export const teamController = {
   getAll: async (request, response) => {
     try {
-      const teams = await getAllTeams();
+      const sortDirection = request.query.sort;
+      let teams;
+
+      if (sortDirection === 'desc') {
+        teams = await getAllTeamsSortedDesc();
+      } else {
+        teams = await getAllTeams();
+      }
+
       response.json(teams);
     } catch (error) {
       response.status(500).send(error);
     }
   },
-  // getById
+
+  // getById 
   getByID: async (request, response) => {
     try {
       const team = await getTeamById(request.params.id);
-      response.json(team); 
+      response.json(team);
     } catch (error) {
       response.status(500).send(error);
     }
   },
+
+  // create - it first checks if there is team with the same name / then it create a team
   create: async (req, res) => {
     const { teamName } = req.body;
 
@@ -33,6 +45,8 @@ export const teamController = {
       res.status(500).send(error);
     }
   },
+
+  // delete team by id
   delete: async (req, res) => {
     const id = parseInt(req.params.id);
 

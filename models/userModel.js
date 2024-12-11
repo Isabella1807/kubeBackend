@@ -27,6 +27,21 @@ export const fetchUserById = (userId, callback) => {
     });
 };
 
+//Used in loginController
+export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
+    if (!userMail) reject();
+
+    kubeDB.query(`SELECT password, userId FROM users WHERE uclMail = '${userMail}'`, (error, result) => {
+        if (error) {
+            reject("Model get by ucl mail error");
+        } else {
+            resolve(result[0]);
+        }
+    })
+})
+
+
+// Funktionen til at finde af brugerer på siden 
 // find the user on the page 
 export const fetchAllUsers = (callback) => {
     const sql = `SELECT users.userId, 
@@ -72,21 +87,22 @@ export const getUsersByTeamId = (teamId) => {
 
 
 // function to update password
-export const updateUserPasswordById = (userId, newPassword, callback) => {
-    const sql = `
-        UPDATE users
-        SET password = ?
-        WHERE userId = ?
-    `;
-    kubeDB.query(sql, [newPassword, userId], (err, result) => {
-        if (err) {
-            console.error("Error updating password:", err);
-            callback(err, null);
-        } else {
-            callback(null, result);
-        }
+export const updateUserPasswordById = async (userId, newPassword) => {
+    return new Promise((resolve, reject) => {
+        const query = `UPDATE users SET password = ? WHERE userId = ?`;
+
+        kubeDB.query(query, [newPassword, userId], (error, results) => {
+            if (error) {
+                console.error("Error updating password:", error);
+                reject(error);
+            } else {
+                console.log("Password updated successfully for userId:", userId);
+                resolve(results);
+            }
+        });
     });
 };
+
 
 // function to delete user by their id 
 export const deleteUserById = (userId, callback) => {

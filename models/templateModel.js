@@ -1,9 +1,5 @@
 import kubeDB from "../Database.js";
 
-
-
-
-
 // Funktion for at hente alle templates
 export const getAllTemplates = () => new Promise((resolve, reject) => {
     kubeDB.query('SELECT * FROM template', (error, result) => {
@@ -32,7 +28,7 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No template found with ID ${id}`);
             } else {
-                resolve(result);
+                resolve(result[0]);
             }
         }
     });

@@ -21,21 +21,23 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No project with ID ${id}`);
             } else {
-                resolve(result);
+                resolve(result[0]);
             }
         }
     })
 })
 
-export const createProject = (templateid, userid, projectname, subdomainname) => new Promise((resolve, reject) => {
-    kubeDB.query(`INSERT INTO project (templateId, userId, projectName, subdomainName) VALUES (${templateid}, ${userid}, "${projectname}", "${subdomainname}")`, (error, result) => {
+export const createProject = (templateid, userid, stackId, projectname, subdomainname) => new Promise((resolve, reject) => {
+
+    kubeDB.query(`INSERT INTO project (templateId, userId, stackId, projectName, subdomainName) VALUES (${templateid}, ${userid}, ${stackId}, "${projectname}", "${subdomainname}")`, (error, result) => {
         if (error) {
             reject(error);
         } else {
             resolve(result);
+
         }
-    })
-})
+    });
+});
 
 export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
@@ -51,4 +53,4 @@ export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
             }
         }
     })
-})
+});

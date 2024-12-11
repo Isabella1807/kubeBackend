@@ -1,25 +1,28 @@
-import kubeDB from "../Database.js"; // get the connection for the database
+import kubeDB from "../Database.js";
 
-
+// get all team
 export const getAllTeams = () => new Promise((resolve, reject) => {
-    kubeDB.query('SELECT * FROM team', (error, result) => {
-        if(error){
+    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount FROM team LEFT JOIN users ON team.teamId = users.teamId GROUP BY team.teamId, team.teamName`;
+    kubeDB.query(sql, (error, result) => {
+        if (error) {
             console.error("Error fetching all teams", error);
             reject("Failed to fetch all teams");
-        }else{
+        } else {
             resolve(result);
         }
-    })
+    });
 });
 
 // get by id
 export const getTeamById = (id) => new Promise((resolve, reject) => {
-    if(!id) {
+    if (!id) {
         reject("ID is required");
         return;
     }
-
-    kubeDB.query('SELECT * FROM team WHERE teamId = ?', [id], (error, result) => {
+    // this is query for getting details about team - here is loooking for how many users there are in a group 
+    const sql = `SELECT team.teamId,team.teamName, COUNT(users.userId) as memberCount  FROM team  LEFT JOIN users ON team.teamId = users.teamId  WHERE team.teamId = ?  GROUP BY team.teamId, team.teamName`;
+    // this is looking in our database to look for the team with the id we are looking for 
+    kubeDB.query(sql, [id], (error, result) => {
         if (error) {
             console.error(`Error fetching team with ID ${id}:`, error);
             reject("Failed to get team by Id");
@@ -27,34 +30,74 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No team found with ID ${id}`);
             } else {
+                // sends the information back 
                 resolve(result);
             }
         }
     });
 });
 
-export const createTeam = (teamName) => new  Promise ((resolve, reject) => {
-    kubeDB.query(`INSERT INTO team (teamName) VALUES ("${teamName}")`, (error, result) => {
-        if (error) {
-            reject(error);
-        } else {
-            resolve(result);
-        }
-    })
-})
+// check if there is a team if not create a new team 
+export const getOrCreateTeam = async (teamName) => {
+    try {
+        const [rows] = await kubeDB.promise().query('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
 
+        if (rows.length > 0) {
+            return rows[0].teamId;
+        }
+        const [result] = await kubeDB.promise().query('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+        return result.insertId;
+    } catch (err) {
+        console.error('Error in getOrCreateTeam:', err);
+        throw err;
+    }
+};
+
+// Delete Team by ID
 export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`DELETE FROM team WHERE teamId = ${id}`, (error, result) => {
+    kubeDB.query('DELETE FROM project WHERE userId IN (SELECT userId FROM users WHERE teamId = ?)', [id], (error) => {
         if (error) {
-            reject("Team delete by Id error");
-        } else {
-            if (result.affectedRows === 0) {
-                reject(`Team with id ${id} does not exist`);
-            } else {
-                resolve(result)
-            }
+            reject("Error deleting team projects");
+            return;
         }
-    })
-})
+
+        kubeDB.query('DELETE FROM users WHERE teamId = ?', [id], (error) => {
+            if (error) {
+                reject("Error deleting team users");
+                return;
+            }
+
+            kubeDB.query('DELETE FROM team WHERE teamId = ?', [id], (error, result) => {
+                if (error) {
+                    reject("Team delete by Id error");
+                } else {
+                    if (result.affectedRows === 0) {
+                        reject(`Team with id ${id} does not exist`);
+                    } else {
+                        resolve(result)
+                    }
+                }
+            });
+        });
+    });
+});
+
+
+// GetAllTeam and the fucktion for the alphabetical order
+export const getAllTeamsSortedDesc = () => new Promise((resolve, reject) => {
+    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount 
+                 FROM team 
+                 LEFT JOIN users ON team.teamId = users.teamId 
+                 GROUP BY team.teamId, team.teamName 
+                 ORDER BY teamName DESC`;
+    kubeDB.query(sql, (error, result) => {
+        if (error) {
+            console.error("Error getting sorted teams", error);
+            reject("Failed to doing sorted teams");
+        } else {
+            resolve(result);
+        }
+    });
+});

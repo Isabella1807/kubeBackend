@@ -1,5 +1,7 @@
 
 export const mustBeLoggedIn = (req, res, next) => {
+    console.log(res.locals)
+
     if (!res.locals.user) {
         console.log("User not found in res.locals");
         res.status(401).send('Must be logged in');

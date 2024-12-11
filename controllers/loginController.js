@@ -9,6 +9,7 @@ export const loginController = {
 
             console.log("Received Email:", userMail);
 
+            //TODO: Teachers have mail ending with @ucl.dk
             if (!userMail.endsWith("@edu.ucl.dk")) {
                 return res.status(403).send("Only emails ending with @edu.ucl.dk are allowed");
             }
@@ -20,7 +21,7 @@ export const loginController = {
             }
 
             // Generer token med userId og roleId
-            const token = generateToken({ userId: userData.userId, roleId: userData.roleId });
+            const token = generateToken({ userId: userData.userId });
             console.log("Generated Token:", token);
 
             // Returnér token og rolle til frontend

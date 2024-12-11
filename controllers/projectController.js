@@ -37,6 +37,13 @@ export const projectController = {
     create: async (req, res) => {
         const {templateId, projectName, subdomainName} = req.body;
 
+        const templateIdNum = parseInt(templateId)
+
+        if (Number.isNaN(templateIdNum)) {
+            res.status(400).send("template id not a number")
+            return
+        }
+
         if (typeof projectName !== 'string' || projectName.length === 0) {
             res.status(400).send("no project name")
             return
@@ -47,14 +54,9 @@ export const projectController = {
             return
         }
 
-        if (typeof templateId !== 'number') {
-            res.status(400).send("template id is not a number")
-            return
-        }
-
         try {
             // Get template from db using Id
-            let templateText = await getTemplateByID(templateId).then((template) => {
+            let templateText = await getTemplateByID(templateIdNum).then((template) => {
                 return template['templateText'];
             }).catch(() => {
                 return null;
@@ -81,12 +83,19 @@ export const projectController = {
                 .replace(/CHANGEME/g, websiteId)
 
             // Name cannot contain space, special character or be capitalized
-            const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
+            /*const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
                 "name": `${projectName}`,
                 "stackFileContent": templateText,
                 "swarmID": swarmId
-            }).then((stack) => stack).catch(() => null);
+            }).then((stack) => stack).catch(() => null);*/
+            /** TEMPORARY HARDCODED STACK UNTIL PORTAINER WORKS **/
+            const newStack = {
+                data: {
+                    Id: 12321,
+                }
+            }
+            /** REMOVE ABOVE WHEN PORTAINER WORKS **/
 
             if (!newStack) {
                 res.status(500).send('Could not create stack in Portainer');
@@ -96,9 +105,11 @@ export const projectController = {
             // Create new project in sql db
             const stackId = newStack.data.Id;
             const userId = res.locals.user.userId;
-            await createProject(templateId, userId, stackId, projectName, subdomainName);
+            const createdProjectInfo = await createProject(templateId, userId, stackId, projectName, subdomainName);
 
-            res.sendStatus(200)
+            const createdProject = await getProjectByID(createdProjectInfo.insertId);
+
+            res.status(200).json(createdProject);
         } catch (error) {
             console.log(error)
             console.log('Error creating project')
@@ -117,9 +128,14 @@ export const projectController = {
             const dbProject = await getProjectByID(id);
             const stackId = dbProject.stackId;
 
-            const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
+            /** TEMPORARY HARDCODED CHECK UNTIL PORTAINER WORKS **/
+            /*const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
             if (!deletedStack) {
                 res.status(500).send('Could not delete stack in Portainer');
+                return;
+            }*/
+            if (stackId !== 12321) {
+                res.status(418).send('Can only delete dummy projects until portainer works!')
                 return;
             }
 

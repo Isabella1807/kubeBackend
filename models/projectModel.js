@@ -2,7 +2,7 @@ import kubeDB from "../Database.js";
 
 
 export const getAllProjects = () => new Promise((resolve, reject) => {
-    kubeDB.query('SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, LastChangeDate, uclMail, firstName, lastName, teamName FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {
+    kubeDB.query('SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {
         if (error) {
             reject("Model get all error")
         } else {
@@ -14,7 +14,7 @@ export const getAllProjects = () => new Promise((resolve, reject) => {
 export const getAllProjectsByUserID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, LastChangeDate, uclMail, firstName, lastName, teamName FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.userId = ?`, [id], (error, result) => {
+    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.userId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model get by ID error");
         } else {
@@ -26,7 +26,7 @@ export const getAllProjectsByUserID = (id) => new Promise((resolve, reject) => {
 export const getProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`SELECT * FROM project WHERE projectId = ${id}`, (error, result) => {
+    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.projectId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model get by ID error");
         } else {
@@ -41,7 +41,7 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
 
 export const createProject = (templateid, userid, stackId, projectname, subdomainname) => new Promise((resolve, reject) => {
 
-    kubeDB.query(`INSERT INTO project (templateId, userId, stackId, projectName, subdomainName) VALUES (${templateid}, ${userid}, ${stackId}, "${projectname}", "${subdomainname}")`, (error, result) => {
+    kubeDB.query(`INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state) VALUES (${templateid}, ${userid}, ${stackId}, "${projectname}", "${subdomainname}", 1)`, (error, result) => {
         if (error) {
             reject(error);
         } else {

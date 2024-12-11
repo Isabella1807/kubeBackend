@@ -2,34 +2,44 @@ import { verifyToken } from "../utils/jwt.js";
 import { fetchUserById } from "../models/userModel.js";
 
 export const deserializeUser = (req, res, next) => {
+    console.log('A')
+
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        console.log("No Authorization header found");
         return next();
     }
+
+    console.log('B')
 
     const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
     if (!token) {
-        console.log("No token found in Authorization header");
         return next();
     }
+
+    console.log('C')
 
     const userData = verifyToken(token);
     if (!userData) {
-        console.log("Invalid or expired token");
         return next();
     }
 
+    console.log('D')
+
     fetchUserById(userData.userId, (error, result) => {
+
+        console.log('E')
+
         if (error) {
-            console.error("Database error:", error);
             return next();
         }
 
+        console.log('F')
+
         if (!result || result.length === 0) {
-            console.log("User not found in database");
             return next();
         }
+
+        console.log('G')
 
         const userObj = result[0];
         res.locals.user = userObj;
@@ -40,10 +50,14 @@ export const deserializeUser = (req, res, next) => {
             "isStudent": userObj.roleId === 3,
         }
 
-        const user = result[0];
+        console.log('#¤%#¤%#¤%')
+        console.log(res.locals)
+
+        // Redundant, removed
+        /*const user = result[0];
         // Tilføj roleId fra token til user-objektet
         res.locals.user = { ...user, roleId: userData.roleId };
-        console.log("Deserialized User:", res.locals.user);
+        console.log("Deserialized User:", res.locals.user);*/
         next();
     });
 };

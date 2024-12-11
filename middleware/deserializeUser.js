@@ -31,6 +31,15 @@ export const deserializeUser = (req, res, next) => {
             return next();
         }
 
+        const userObj = result[0];
+        res.locals.user = userObj;
+
+        res.locals.user.role = {
+            "isAdmin": userObj.roleId === 1,
+            "isFaculty": userObj.roleId === 2,
+            "isStudent": userObj.roleId === 3,
+        }
+
         const user = result[0];
         // Tilføj roleId fra token til user-objektet
         res.locals.user = { ...user, roleId: userData.roleId };

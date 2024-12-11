@@ -2,11 +2,23 @@ import kubeDB from "../Database.js";
 
 
 export const getAllProjects = () => new Promise((resolve, reject) => {
-    kubeDB.query('SELECT * FROM project', (error, result) => {
+    kubeDB.query('SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, LastChangeDate, uclMail, firstName, lastName, teamName FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {
         if (error) {
             reject("Model get all error")
         } else {
             resolve(result)
+        }
+    })
+})
+
+export const getAllProjectsByUserID = (id) => new Promise((resolve, reject) => {
+    if (!id) reject();
+
+    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, LastChangeDate, uclMail, firstName, lastName, teamName FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.userId = ?`, [id], (error, result) => {
+        if (error) {
+            reject("Model get by ID error");
+        } else {
+                resolve(result)
         }
     })
 })

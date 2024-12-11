@@ -18,7 +18,7 @@ export const getAllProjectsByUserID = (id) => new Promise((resolve, reject) => {
         if (error) {
             reject("Model get by ID error");
         } else {
-                resolve(result)
+            resolve(result)
         }
     })
 })
@@ -26,7 +26,7 @@ export const getAllProjectsByUserID = (id) => new Promise((resolve, reject) => {
 export const getProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.projectId = ?`, [id], (error, result) => {
+    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, stackId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.projectId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model get by ID error");
         } else {
@@ -40,8 +40,10 @@ export const getProjectByID = (id) => new Promise((resolve, reject) => {
 })
 
 export const createProject = (templateid, userid, stackId, projectname, subdomainname) => new Promise((resolve, reject) => {
+    const query = `INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state) VALUES (?, ?, ?, ?, ?, 1)`;
+    const values = [templateid, userid, stackId, projectname, subdomainname];
 
-    kubeDB.query(`INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state) VALUES (${templateid}, ${userid}, ${stackId}, "${projectname}", "${subdomainname}", 1)`, (error, result) => {
+    kubeDB.query(query, values, (error, result) => {
         if (error) {
             reject(error);
         } else {
@@ -54,7 +56,7 @@ export const createProject = (templateid, userid, stackId, projectname, subdomai
 export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`DELETE FROM project WHERE projectId = ${id}`, (error, result) => {
+    kubeDB.query(`DELETE FROM project WHERE projectId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model delete by ID error");
         } else {

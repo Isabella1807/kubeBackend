@@ -134,6 +134,7 @@ export const projectController = {
                 res.status(500).send('Could not delete stack in Portainer');
                 return;
             }*/
+            
             if (stackId !== 12321) {
                 res.status(418).send('Can only delete dummy projects until portainer works!')
                 return;

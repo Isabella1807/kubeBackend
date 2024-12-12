@@ -66,4 +66,19 @@ export const deleteTemplateById = (id) => new Promise((resolve, reject) => {
       }
     });
   });
+
+  export const updateTemplateById = (id, templateName, templateText) => {
+    return new Promise((resolve, reject) => {
+      const query = 'UPDATE template SET templateName = ?, templateText = ? WHERE templateId = ?';
+      kubeDB.query(query, [templateName, templateText, id], (err, result) => {
+        if (err) {
+          console.error("Error updating template:", err); // Log fejl
+          reject(err);
+        } else {
+          resolve(result); // Returnér resultatet
+        }
+      });
+    });
+  };
+  
   

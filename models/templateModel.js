@@ -33,3 +33,19 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
         }
     });
 });
+
+// Funktion til at oprette en ny template
+export const createTemplate = (templateName, templateText) => new Promise((resolve, reject) => {
+    const query = `INSERT INTO template (templateName, templateText) VALUES (?, ?)`;
+    const values = [templateName, templateText];
+  
+    kubeDB.query(query, values, (error, result) => {
+      if (error) {
+        console.error("Error creating template:", error);
+        reject("Failed to create template");
+      } else {
+        resolve(result.insertId); // Returnér den nye template ID
+      }
+    });
+  });
+  

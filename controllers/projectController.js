@@ -3,7 +3,7 @@ import {
     getProjectByID,
     createProject,
     deleteProjectByID,
-    getAllProjectsByUserID
+    getAllProjectsByUserID, setProjectStatusById
 } from "../models/projectModel.js";
 import Portainer from "../Portainer.js"
 import {getTemplateByID} from "../models/templateModel.js";
@@ -157,7 +157,8 @@ export const projectController = {
             return
         }
 
-        res.status(418).send(`START PROJEKT OG ${id}`)
+        await setProjectStatusById(id, 1)
+        res.status(200).send(`START PROJEKT OG ${id}`)
     },
     stopProject: async (req, res) => {
         const id = parseInt(req.params.id)
@@ -167,7 +168,7 @@ export const projectController = {
             return
         }
 
-
+        await setProjectStatusById(id, 0)
 
         res.status(200).send(`STOP PROJEKT OG ${id}`)
     },

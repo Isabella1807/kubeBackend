@@ -48,3 +48,22 @@ export const createTemplate = async (templateName, templateText) => {
         );
     });
 };
+
+// SLETTER
+
+// Funktion til at slette template ved ID
+export const deleteTemplateById = (id) => new Promise((resolve, reject) => {
+    const query = 'DELETE FROM template WHERE templateId = ?';
+  
+    kubeDB.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting template:", err); // Log fejl
+        reject(new Error("Database error"));
+      } else if (result.affectedRows === 0) {
+        resolve({ success: false }); // Returnér et flag for, at template ikke blev fundet
+      } else {
+        resolve({ success: true }); // Template blev slettet
+      }
+    });
+  });
+  

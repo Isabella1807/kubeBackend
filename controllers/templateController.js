@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { getAllTemplates, createTemplate } from "../models/templateModel.js";
+import { getAllTemplates, createTemplate, deleteTemplateById} from "../models/templateModel.js";
 
 export const templateController = {
   getAll: async (req, res) => {
@@ -74,6 +74,25 @@ export const templateController = {
   },
 
   delete: async (req, res) => {
-    // Din logik for at slette en template
-  },
+    const { user } = res.locals;
+    if (!user || user.roleId !== 1) {
+      return res.status(403).send("Access denied. Only admins can delete templates.");
+    }
+  
+    const templateId = req.params.id;
+    try {
+      const result = await deleteTemplateById(templateId);
+  
+      if (!result.success) {
+        return res.status(404).json({ message: "Template not found" });
+      }
+  
+      res.status(200).json({ message: "Template deleted successfully" });
+    } catch (error) {
+      res.status(500).json({
+        message: "Failed to delete template",
+        error: error.message,
+      });
+    }
+  },    
 };

@@ -1,4 +1,5 @@
 import kubeDB from "../Database.js";
+import yaml from "js-yaml";
 
 // Funktion for at hente alle templates
 export const getAllTemplates = () => new Promise((resolve, reject) => {
@@ -33,3 +34,51 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
         }
     });
 });
+
+
+export const createTemplate = async (templateName, templateText) => {
+    return new Promise((resolve, reject) => {
+        kubeDB.query(
+            'INSERT INTO template (templateName, templateText) VALUES (?, ?)',
+            [templateName, templateText],
+            (err, result) => {
+                if (err) reject(err);
+                else resolve(result.insertId);
+            }
+        );
+    });
+};
+
+// SLETTER
+
+// Funktion til at slette template ved ID
+export const deleteTemplateById = (id) => new Promise((resolve, reject) => {
+    const query = 'DELETE FROM template WHERE templateId = ?';
+  
+    kubeDB.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting template:", err); // Log fejl
+        reject(new Error("Database error"));
+      } else if (result.affectedRows === 0) {
+        resolve({ success: false }); // Returnér et flag for, at template ikke blev fundet
+      } else {
+        resolve({ success: true }); // Template blev slettet
+      }
+    });
+  });
+
+  export const updateTemplateById = (id, templateName, templateText) => {
+    return new Promise((resolve, reject) => {
+      const query = 'UPDATE template SET templateName = ?, templateText = ? WHERE templateId = ?';
+      kubeDB.query(query, [templateName, templateText, id], (err, result) => {
+        if (err) {
+          console.error("Error updating template:", err); // Log fejl
+          reject(err);
+        } else {
+          resolve(result); // Returnér resultatet
+        }
+      });
+    });
+  };
+  
+  

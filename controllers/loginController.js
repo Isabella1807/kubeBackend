@@ -25,7 +25,7 @@ export const loginController = {
             console.log("Generated Token:", token);
 
             // Returnér token og rolle til frontend
-            res.json({ token: token, role: userData.roleId });
+            res.json({ token: token, role: userData.roleId, userId: userData.userId });
         } catch (error) {
             console.error("Error during login:", error);
             res.status(500).send("An error occurred during login");

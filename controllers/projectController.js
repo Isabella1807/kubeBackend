@@ -167,7 +167,9 @@ export const projectController = {
             return
         }
 
-        res.status(418).send(`STOP PROJEKT OG ${id}`)
+
+
+        res.status(200).send(`STOP PROJEKT OG ${id}`)
     },
     restartProject: async (req, res) => {
         const id = parseInt(req.params.id)
@@ -184,7 +186,7 @@ export const projectController = {
     //////////////////////
     /*Why is it in here!?*/
     //////////////////////
-    login: async (req, res) => {
+    /*login: async (req, res) => {
         const {Username, Password} = req.body;
 
         if (!Username || !Password) {
@@ -205,5 +207,5 @@ export const projectController = {
             console.error("Login failed:", error);
             res.status(500).json({message: "Failed to authenticate with Portainer"});
         }
-    }
+    }*/
 };

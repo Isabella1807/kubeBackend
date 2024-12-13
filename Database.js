@@ -7,13 +7,4 @@ const kubeDB = mysql.createConnection({
     database: "kubeprojekt"
 });
 
-kubeDB.connect((error) => {
-    if (error) {
-        console.error('Database connection failed');
-
-    } else {
-        console.log('Connected to db');
-    }
-});
-
 export default kubeDB;

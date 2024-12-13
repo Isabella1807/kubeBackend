@@ -23,9 +23,7 @@ export const addUserFromCSV = async (req, res) => {
                     continue;
                 }
                 try {
-                    console.log('got data:', req.body);
                     const ownTeamName = req.body.teamName; 
-                    console.log('team name made', ownTeamName);
                     // finds the user or creates the team or user 
                     const teamId = await getOrCreateTeam(ownTeamName);
                     const userData = {
@@ -40,7 +38,6 @@ export const addUserFromCSV = async (req, res) => {
                     await createUser(userData);
                     results.push(userData);
                 } catch (err) {
-                    console.error('Error processing row:', err);
                 }
             }
         };
@@ -55,17 +52,14 @@ export const addUserFromCSV = async (req, res) => {
                         usersAdded: results.length
                     });
                 } catch (err) {
-                    console.error('Error processing CSV:', err);
                     res.status(500).json({ error: 'Error processing CSV file.' });
                 }
             })
             .on('error', (err) => {
-                console.error('CSV parsing error:', err);
                 res.status(500).json({ error: 'Error processing CSV file.' });
             });
 
     } catch (err) {
-        console.error('Error in CSV upload:', err);
         res.status(500).json({ error: 'Server error processing upload.' });
     }
 };
@@ -77,7 +71,6 @@ export const getUserById = (req, res) => {
 
     fetchUserById(userId, (err, result) => {
         if (err) {
-            console.error("Error while fetching user:", err);
             res.status(500).json({ error: "Failed to fetch user." });
         } else {
             if (result.length > 0) {
@@ -96,7 +89,6 @@ export const getUserById = (req, res) => {
 export const getAllUsers = (req, res) => {
     fetchAllUsers((err, result) => {
         if (err) {
-            console.error("Error while fetching users:", err);
             res.status(500).json({ error: "Failed to fetch users." });
         } else {
             if (result.length > 0) {
@@ -122,7 +114,6 @@ export const updatePassword = (req, res) => {
 
     updateUserPasswordById(userId, newPassword, (err, result) => {
         if (err) {
-            console.error("Error updating password:", err);
             res.status(500).json({ error: "Failed to update password." });
         } else {
             if (result.affectedRows > 0) {

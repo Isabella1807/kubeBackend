@@ -1,5 +1,4 @@
 import kubeDB from "../Database.js";
-import yaml from "js-yaml";
 
 // Funktion for at hente alle templates
 export const getAllTemplates = () => new Promise((resolve, reject) => {
@@ -50,8 +49,6 @@ export const createTemplate = async (templateName, templateText) => {
 };
 
 // SLETTER
-
-// Funktion til at slette template ved ID
 export const deleteTemplateById = (id) => new Promise((resolve, reject) => {
     const query = 'DELETE FROM template WHERE templateId = ?';
   
@@ -60,7 +57,7 @@ export const deleteTemplateById = (id) => new Promise((resolve, reject) => {
         console.error("Error deleting template:", err); // Log fejl
         reject(new Error("Database error"));
       } else if (result.affectedRows === 0) {
-        resolve({ success: false }); // Returnér et flag for, at template ikke blev fundet
+        resolve({ success: false }); 
       } else {
         resolve({ success: true }); // Template blev slettet
       }

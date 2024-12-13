@@ -19,6 +19,4 @@ app.use(deserializeUser);
 app.use(Router);
 
 // start server
-app.listen(port, () => {
-    console.log("server is running");
-})
+app.listen(port)

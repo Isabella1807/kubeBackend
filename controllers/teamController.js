@@ -19,7 +19,6 @@ export const teamController = {
     }
   },
 
-  // getById 
   getByID: async (request, response) => {
     try {
       const team = await getTeamById(request.params.id);
@@ -29,7 +28,6 @@ export const teamController = {
     }
   },
 
-  // create - it first checks if there is team with the same name / then it create a team
   create: async (req, res) => {
     const { teamName } = req.body;
 
@@ -46,7 +44,6 @@ export const teamController = {
     }
   },
 
-  // delete team by id
   delete: async (req, res) => {
     const id = parseInt(req.params.id);
 

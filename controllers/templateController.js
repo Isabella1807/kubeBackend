@@ -4,7 +4,7 @@ import { getAllTemplates, createTemplate, deleteTemplateById, getTemplateByID, u
 export const templateController = {
   getAll: async (req, res) => {
     try {
-      const template = await getAllTemplates(); // Din logik for at hente templates
+      const template = await getAllTemplates();
       res.json(template);
     } catch (error) {
       res.status(500).send(error);
@@ -13,13 +13,12 @@ export const templateController = {
   getByID: async (req, res) => {
     const { id } = req.params;
     try {
-      const template = await getTemplateByID(id); // Brug din model til at hente data
+      const template = await getTemplateByID(id);
       if (!template) {
         return res.status(404).json({ message: "Template not found" });
       }
-      res.json(template); // Returnér den fundne template
+      res.json(template); 
     } catch (error) {
-      console.error(`Error fetching template with ID ${id}:`, error);
       res.status(500).json({ message: "Failed to fetch template", error: error.message });
     }
   },
@@ -33,7 +32,6 @@ export const templateController = {
 
       const { templateName, templateText } = req.body;
 
-      // Validate file extension
       if (!/\.(yml|yaml)$/i.test(templateName)) {
         return res.status(400).json({
           error: 'Invalid File Type',
@@ -64,12 +62,12 @@ export const templateController = {
         });
       }
 
-      // Create the template if validations pass
       const newTemplateId = await createTemplate(templateName, templateText);
       res.status(201).json({
         message: "Template created successfully",
         templateId: newTemplateId
       });
+
     } catch (error) {
       res.status(500).json({
         message: "Failed to create template",
@@ -105,12 +103,10 @@ export const templateController = {
     const { templateName, templateText } = req.body;
     
     try {
-      // Valider, at templateName og templateText er tilstede
       if (!templateName || !templateText) {
         return res.status(400).json({ message: 'Template name and text are required' });
       }
 
-      // Opdater template i databasen
       const result = await updateTemplateById(id, templateName, templateText);
 
       if (result.affectedRows > 0) {

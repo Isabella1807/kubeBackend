@@ -83,19 +83,19 @@ export const projectController = {
                 .replace(/CHANGEME/g, websiteId)
 
             // Name cannot contain space, special character or be capitalized
-            /*const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
+            const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
                 "name": `${projectName}`,
                 "stackFileContent": templateText,
                 "swarmID": swarmId
-            }).then((stack) => stack).catch(() => null);*/
-            /** TEMPORARY HARDCODED STACK UNTIL PORTAINER WORKS **/
-            const newStack = {
+            }).then((stack) => stack).catch(() => null);
+
+            // temporary for when portainer goes down
+            /*const newStack = {
                 data: {
                     Id: 12321,
                 }
-            }
-            /** REMOVE ABOVE WHEN PORTAINER WORKS **/
+            }*/
 
             if (!newStack) {
                 res.status(500).send('Could not create stack in Portainer');
@@ -128,17 +128,17 @@ export const projectController = {
             const dbProject = await getProjectByID(id);
             const stackId = dbProject.stackId;
 
-            /** TEMPORARY HARDCODED CHECK UNTIL PORTAINER WORKS **/
-            /*const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
+            const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
             if (!deletedStack) {
                 res.status(500).send('Could not delete stack in Portainer');
                 return;
-            }*/
-            
-            if (stackId !== 12321) {
+            }
+
+            //For when portaioner goes down
+           /* if (stackId !== 12321) {
                 res.status(418).send('Can only delete dummy projects until portainer works!')
                 return;
-            }
+            }*/
 
             await deleteProjectByID(id);
 

@@ -7,6 +7,7 @@ const kubeDB = mysql.createConnection({
     database: "kubeprojekt"
 });
 
+// Do not delete, it starts the connection
 kubeDB.connect((error) => {
     if (error) {
         console.error('Database connection failed');

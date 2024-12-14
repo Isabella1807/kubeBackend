@@ -98,7 +98,6 @@ export const updateUserPasswordById = async (userId, newPassword) => {
                 console.error("Error updating password:", error);
                 reject(error);
             } else {
-                console.log("Password updated successfully for userId:", userId);
                 resolve(results);
             }
         });

@@ -13,15 +13,12 @@ export const getAllTeams = () => new Promise((resolve, reject) => {
     });
 });
 
-// get by id
 export const getTeamById = (id) => new Promise((resolve, reject) => {
     if (!id) {
         reject("ID is required");
         return;
     }
-    // this is query for getting details about team - here is loooking for how many users there are in a group 
     const sql = `SELECT team.teamId,team.teamName, COUNT(users.userId) as memberCount  FROM team  LEFT JOIN users ON team.teamId = users.teamId  WHERE team.teamId = ?  GROUP BY team.teamId, team.teamName`;
-    // this is looking in our database to look for the team with the id we are looking for 
     kubeDB.query(sql, [id], (error, result) => {
         if (error) {
             console.error(`Error fetching team with ID ${id}:`, error);
@@ -30,14 +27,12 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No team found with ID ${id}`);
             } else {
-                // sends the information back 
                 resolve(result);
             }
         }
     });
 });
 
-// check if there is a team if not create a new team 
 export const getOrCreateTeam = async (teamName) => {
     try {
         const [rows] = await kubeDB.promise().query('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
@@ -53,7 +48,6 @@ export const getOrCreateTeam = async (teamName) => {
     }
 };
 
-// Delete Team by ID
 export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
     if (!id) reject();
 
@@ -85,7 +79,6 @@ export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
 });
 
 
-// GetAllTeam and the fucktion for the alphabetical order
 export const getAllTeamsSortedDesc = () => new Promise((resolve, reject) => {
     const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount 
                  FROM team 

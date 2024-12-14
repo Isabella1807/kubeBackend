@@ -2,6 +2,7 @@ import { verifyToken } from "../utils/jwt.js";
 import { fetchUserById } from "../models/userModel.js";
 
 export const deserializeUser = (req, res, next) => {
+
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         return next();
@@ -9,9 +10,9 @@ export const deserializeUser = (req, res, next) => {
 
     const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
     if (!token) {
-        console.log("BEARER BEFORETOKEN REMEMBER")
         return next();
     }
+
 
     const userData = verifyToken(token);
     if (!userData) {
@@ -36,12 +37,6 @@ export const deserializeUser = (req, res, next) => {
             "isFaculty": userObj.roleId === 2,
             "isStudent": userObj.roleId === 3,
         }
-
-        // Redundant, removed
-        /*const user = result[0];
-        // Tilføj roleId fra token til user-objektet
-        res.locals.user = { ...user, roleId: userData.roleId };
-        console.log("Deserialized User:", res.locals.user);*/
         next();
     });
 };

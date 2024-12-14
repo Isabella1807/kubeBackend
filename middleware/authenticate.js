@@ -1,14 +1,8 @@
-
 export const mustBeLoggedIn = (req, res, next) => {
-    console.log(res.locals)
-
     if (!res.locals.user) {
-        console.log("User not found in res.locals");
         res.status(401).send('Must be logged in');
         return;
     }
-
-    console.log("User is logged in:", res.locals.user);
     next();
 };
 
@@ -20,7 +14,6 @@ export const mustBeAdmin = (req, res, next) => {
     }
 
     if (user.roleId !== 1) {
-        console.log(`User roleId: ${user.roleId} - Access denied`);
         return res.status(403).send("Must be admin");
     }
 
@@ -35,7 +28,6 @@ export const mustBeFaculty = (req, res, next) => {
     }
 
     if (user.roleId !== 1) {
-        console.log(`User roleId: ${user.roleId} - Access denied`);
         return res.status(403).send("Must be faculty");
     }
 
@@ -50,7 +42,6 @@ export const mustBeStudent = (req, res, next) => {
     }
 
     if (user.roleId !== 1) {
-        console.log(`User roleId: ${user.roleId} - Access denied`);
         return res.status(403).send("Must be student");
     }
 

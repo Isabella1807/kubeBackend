@@ -212,7 +212,7 @@ export const projectController = {
         try {
             const {stackId, state} = await getProjectByID(id);
 
-            if (state === 1) {
+            if (state === ProjectState.on) {
                 // if it is running, stop it first
                 await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
                 await setProjectStatusById(id, ProjectState.off)

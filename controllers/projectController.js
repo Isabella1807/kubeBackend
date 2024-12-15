@@ -10,18 +10,24 @@ import {
 import Portainer from "../Portainer.js"
 import {getTemplateByID} from "../models/templateModel.js";
 
+const ProjectState = {
+    on: 1,
+    off: 0
+}
 
 export const projectController = {
     getAll: async (req, res) => {
+        const user = res.locals.user;
+
         try {
 
-            if (res.locals.user.role.isFaculty || res.locals.user.role.isAdmin) {
+            if (user.role.isFaculty || user.role.isAdmin) {
                 const projects = await getAllProjects();
                 res.json(projects);
                 return
             }
 
-            const studentProjects = await getAllProjectsByUserID(res.locals.user.userId);
+            const studentProjects = await getAllProjectsByUserID(user.userId);
             res.json(studentProjects);
 
         } catch (error) {
@@ -95,7 +101,7 @@ export const projectController = {
             // Name cannot contain space, special character or be capitalized
             const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
-                "name": `${projectName}`,
+                "name": `${subdomainName}`,
                 "stackFileContent": templateText,
                 "swarmID": swarmId
             }).then((stack) => stack).catch(() => null);
@@ -173,7 +179,7 @@ export const projectController = {
             res.status(500).send('Could not delete stack in Portainer');
             return;
         }
-        await setProjectStatusById(id, 1)
+        await setProjectStatusById(id, ProjectState.on)
         res.status(200).send(`START PROJEKT OG ${id}`)
     },
     stopProject: async (req, res) => {
@@ -191,7 +197,7 @@ export const projectController = {
             res.status(500).send('Could not delete stack in Portainer');
             return;
         }
-        await setProjectStatusById(id, 0)
+        await setProjectStatusById(id, ProjectState.off)
 
         res.status(200).send(`STOP PROJEKT OG ${id}`)
     },
@@ -203,6 +209,25 @@ export const projectController = {
             return
         }
 
-        res.status(418).send(`RESTART PROJEKT OG ${id}`)
+        try {
+            const {stackId, state} = await getProjectByID(id);
+
+            if (state === 1) {
+                // if it is running, stop it first
+                await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
+                await setProjectStatusById(id, ProjectState.off)
+            }
+
+            // start it
+            await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
+            await setProjectStatusById(id, ProjectState.on)
+        } catch(e) {
+            res.status(500).send('Could not restart project');
+            return;
+        }
+
+        res.sendStatus(200);
     },
 };
+
+

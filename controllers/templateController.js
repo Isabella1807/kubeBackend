@@ -32,7 +32,7 @@ export const templateController = {
 
       const { templateName, templateText } = req.body;
 
-      if (!/\.(yml|yaml)$/i.test(templateName)) {
+      /*if (!/\.(yml|yaml)$/i.test(templateName)) {
         return res.status(400).json({
           error: 'Invalid File Type',
           message: 'Template name must end with .yml or .yaml'
@@ -60,7 +60,7 @@ export const templateController = {
           message: 'Invalid YAML format',
           details: yamlError.message
         });
-      }
+      }*/
 
       const newTemplateId = await createTemplate(templateName, templateText);
       res.status(201).json({

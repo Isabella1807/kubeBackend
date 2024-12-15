@@ -13,7 +13,7 @@ export const mustBeAdmin = (req, res, next) => {
         return res.status(401).send('Must be logged in');
     }
 
-    if (user.roleId !== 1) {
+    if (!user.role.isAdmin) {
         return res.status(403).send("Must be admin");
     }
 
@@ -27,24 +27,9 @@ export const mustBeFaculty = (req, res, next) => {
         return res.status(401).send('Must be logged in');
     }
 
-    if (user.roleId !== 1) {
+    if (!(user.role.isFaculty || user.role.isAdmin)) {
         return res.status(403).send("Must be faculty");
     }
 
     next();
 };
-
-export const mustBeStudent = (req, res, next) => {
-    const user = res.locals.user;
-
-    if (!user) {
-        return res.status(401).send('Must be logged in');
-    }
-
-    if (user.roleId !== 1) {
-        return res.status(403).send("Must be student");
-    }
-
-    next();
-};
-

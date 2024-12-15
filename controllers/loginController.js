@@ -42,7 +42,7 @@ export const loginController = {
             const token = generateToken({ userId: userData.userId });
 
             // Returnér token og rolle til frontend
-            res.json({ token: token, role: userData.roleId });
+            res.json({ token: token, role: userData.roleId, userId: userData.userId });
         } catch (error) {
             res.status(500).send("An error occurred during login");
         }

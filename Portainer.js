@@ -10,7 +10,6 @@ const Portainer = axios.create({
 
 export const setPortainerToken = (token) => {
     Portainer.defaults.headers.common["Authorization"] = token;
-    // Portainer.defaults.headers.common["Content-Type"] = 'multipart/form-data';
 };
 
 export default Portainer;

@@ -68,3 +68,27 @@ export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
         }
     })
 });
+
+
+export const setProjectStatusById = (id, status) => new Promise((resolve, reject) => {
+    if (!id) reject();
+
+    kubeDB.query(`UPDATE project SET state = ? WHERE projectId = ?`, [status, id], (error, result) => {
+        if (error) {
+            reject("error");
+        } else {
+            resolve("Result");
+        }
+    })
+})
+
+export const getProjectBySubdomain = (name) => new Promise((resolve, reject) => {
+    if (!name) reject();
+    kubeDB.query(`SELECT subdomainName project FROM project WHERE subdomainName = ?`, [name], (error, result) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve(result);
+        }
+    })
+})

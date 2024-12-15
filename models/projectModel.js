@@ -81,3 +81,14 @@ export const setProjectStatusById = (id, status) => new Promise((resolve, reject
         }
     })
 })
+
+export const getProjectBySubdomain = (name) => new Promise((resolve, reject) => {
+    if (!name) reject();
+    kubeDB.query(`SELECT subdomainName project FROM project WHERE subdomainName = ?`, [name], (error, result) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve(result);
+        }
+    })
+})

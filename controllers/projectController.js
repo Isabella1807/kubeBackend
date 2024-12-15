@@ -1,4 +1,12 @@
-import {getAllProjects, getProjectByID, createProject, deleteProjectByID, getAllProjectsByUserID, setProjectStatusById} from "../models/projectModel.js";
+import {
+    getAllProjects,
+    getProjectByID,
+    createProject,
+    deleteProjectByID,
+    getAllProjectsByUserID,
+    setProjectStatusById,
+    getProjectBySubdomain
+} from "../models/projectModel.js";
 import Portainer from "../Portainer.js"
 import {getTemplateByID} from "../models/templateModel.js";
 
@@ -43,8 +51,16 @@ export const projectController = {
             return
         }
 
+
         if (typeof subdomainName !== 'string' || subdomainName.length === 0) {
             res.status(400).send("no subdomain name")
+            return
+        }
+
+        const subdomainList = await getProjectBySubdomain(subdomainName)
+        console.log(subdomainList)
+        if (subdomainList.length >= 1){
+            res.status(400).send("subdomain name already exists")
             return
         }
 
@@ -105,7 +121,6 @@ export const projectController = {
 
             res.status(200).json(createdProject);
         } catch (error) {
-            console.log(error)
             console.log('Error creating project')
             res.status(500).send(error);
         }
@@ -151,6 +166,13 @@ export const projectController = {
             return
         }
 
+        const {stackId} = await getProjectByID(id);
+
+        const start = await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
+        if (!start) {
+            res.status(500).send('Could not delete stack in Portainer');
+            return;
+        }
         await setProjectStatusById(id, 1)
         res.status(200).send(`START PROJEKT OG ${id}`)
     },
@@ -162,6 +184,13 @@ export const projectController = {
             return
         }
 
+        const {stackId} = await getProjectByID(id);
+
+        const stop = await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
+        if (!stop) {
+            res.status(500).send('Could not delete stack in Portainer');
+            return;
+        }
         await setProjectStatusById(id, 0)
 
         res.status(200).send(`STOP PROJEKT OG ${id}`)

@@ -32,13 +32,6 @@ export const templateController = {
 
       const { templateName, templateText } = req.body;
 
-      if (!/\.(yml|yaml)$/i.test(templateName)) {
-        return res.status(400).json({
-          error: 'Invalid File Type',
-          message: 'Template name must end with .yml or .yaml'
-        });
-      }
-
       let parsedYaml;
       try {
         parsedYaml = yaml.load(templateText);
@@ -98,17 +91,37 @@ export const templateController = {
       });
     }
   }, 
+ 
   update: async (req, res) => {
     const { id } = req.params;
     const { templateName, templateText } = req.body;
-    
+  
     try {
-      if (!templateName || !templateText) {
-        return res.status(400).json({ message: 'Template name and text are required' });
+  
+      let parsedYaml;
+      try {
+        parsedYaml = yaml.load(templateText);
+        if (!parsedYaml || typeof parsedYaml !== 'object' || !parsedYaml.services || Object.keys(parsedYaml.services).length === 0) {
+          throw new Error('Invalid YAML format or missing services section');
+        }
+  
+        const invalidService = Object.entries(parsedYaml.services).find(([_, serviceConfig]) => !serviceConfig.image);
+        if (invalidService) {
+          return res.status(400).json({
+            error: 'Invalid Service Configuration',
+            message: 'Each service must have an image defined',
+          });
+        }
+      } catch (yamlError) {
+        return res.status(400).json({
+          error: 'YAML Parsing Error',
+          message: 'Invalid YAML format',
+          details: yamlError.message,
+        });
       }
 
       const result = await updateTemplateById(id, templateName, templateText);
-
+  
       if (result.affectedRows > 0) {
         res.status(200).json({ message: 'Template updated successfully' });
       } else {
@@ -117,5 +130,6 @@ export const templateController = {
     } catch (error) {
       res.status(500).json({ message: 'Failed to update template', error: error.message });
     }
-  },  
+  },
+  
 };

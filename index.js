@@ -28,7 +28,7 @@ const options = {
         openapi: "3.0.0",
         info: {
             title: "Kube Project API Documentation",
-            version: "0.1",
+            version: "1.0",
             description: "Welcome to the Kube API documentation! Here you can see some of the endpoints. This documentation is a work in progress."
         },
         servers: [
@@ -36,8 +36,20 @@ const options = {
                 url: "http://localhost:3000",
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: {
+            bearerAuth: []
+        },
     },
-    apis: ["./routes/*.js"], // Finds all files in routes folder ending with .js
+    apis: ["./**/*.yaml", "./routes/*.js"], // Finds all files in routes folder ending with .js
 }
 
 const spacs = swaggerjsdoc(options);

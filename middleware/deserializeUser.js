@@ -2,9 +2,6 @@ import { verifyToken } from "../utils/jwt.js";
 import { fetchUserById } from "../models/userModel.js";
 
 export const deserializeUser = (req, res, next) => {
-    console.log(req.body)
-    console.log(req.headers)
-
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         return next();

@@ -26,15 +26,174 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-      - name: userId
-        in: path
-        description: ID of the user you want to get.
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: userId
+          in: path
+          description: ID of the user you want to get.
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Success - got user
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /users/{userId}/password:
+    put:
+      tags:
+        - Users
+      summary: Change any users password
+      description: Must be logged in as faculty to change password
+      operationId: changeUserPassword
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user you want to change password of.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - newPassword
+              properties:
+                newPassword:
+                  type: string
+                  description: The new password.
+                  example: "newPassword"
+      responses:
+        '200':
+          description: Success - changed password
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /users/{delete}:
+    delete:
+      tags:
+        - Users
+      summary: Delete any user by ID
+      description: Must be logged in as faculty to delete user by ID
+      operationId: deleteUser
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user you want to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success - deleted user
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /users/new:
+    post:
+      tags:
+        - Users
+      summary: Create single user
+      description: Must be logged in as faculty to create single user.
+      operationId: createSingleUser
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - uclMail
+                - roleId
+                - teamId
+                - password
+              properties:
+                firstName:
+                  type: string
+                  description: firstname of user
+                  example: "Firstname"
+                lastName:
+                  type: string
+                  description: Lastname of user
+                  example: "Lastname"
+                uclMail:
+                  type: string
+                  description: UCL mail of user
+                  example: "uclMail"
+                roleId:
+                  type: integer
+                  description: role ID of user
+                  example: "3"
+                teamId:
+                  type: integer
+                  description: Team ID of user
+                  example: "5"
+                password:
+                  type: string
+                  description: Passwprd of user
+                  example: "password"
+      responses:
+        '200':
+          description: Success - created single user
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /users/team/{teamId}/members:
+    get:
+      tags:
+        - Users
+      summary: Get members in team by team ID
+      description: Get members in a team by team ID.
+      operationId: getTeamMembersById
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: teamId
+          in: path
+          description: ID of the team you want to get members of.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success - got team members
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /users/upload:
+    post:
+      tags:
+        - Users
+      summary: Create users with .csv file
+      description: Must be logged in as faculty to create users using .csv file.
+      operationId: createUsersByCsv
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The .csv file containing users
+                teamName:
+                  type: string
+                  description: Team name of the users
+      responses:
+        '200':
+          description: Success - created users
         '401':
           description: Unauthorized - Missing or invalid token

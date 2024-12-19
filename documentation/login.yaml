@@ -36,9 +36,9 @@ paths:
     put:
       tags:
         - Login
-      summary: Change password
-      description: To be able to change the password you must be logged in. Remember to use the new password in login if you change it.
-      operationId: changepassword
+      summary: Change your own password
+      description: To be able to change your password you must be logged in. Remember to use the new password in login if you change it.
+      operationId: changePassword
       security:
         - bearerAuth: []
       requestBody:

@@ -21,18 +21,13 @@ const userRouter = express.Router();
 userRouter.post('/upload', mustBeLoggedIn, mustBeFaculty, upload.single('file'), addUserFromCSV);
 
 // route to get user by ID
-//userRouter.get('/:id', mustBeLoggedIn, mustBeFaculty, getUserById);
+userRouter.get('/:id', mustBeLoggedIn, mustBeFaculty, getUserById);
 
 // route to get all users
-//userRouter.get('/', mustBeLoggedIn, mustBeFaculty, getAllUsers);
-
-//TODO: *** I AM HERE ***
+userRouter.get('/', mustBeLoggedIn, mustBeFaculty, getAllUsers);
 
 // route to update users password
 userRouter.put('/:id/password', mustBeLoggedIn, mustBeFaculty, updatePassword);
-
-// rote for deleting the user by their id 
-userRouter.delete('/:id', mustBeLoggedIn, mustBeFaculty, deleteUserByIdController);
 
 // the route for creating a single user in edit group
 userRouter.post('/new', mustBeFaculty, createSingleUser);

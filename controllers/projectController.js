@@ -63,6 +63,11 @@ export const projectController = {
             return
         }
 
+        if (subdomainName.indexOf(' ') !== -1) {
+            res.status(400).send("subdomain must not contain spaces")
+            return
+        }
+
         const subdomainList = await getProjectBySubdomain(subdomainName)
         console.log(subdomainList)
         if (subdomainList.length >= 1){

@@ -25,6 +25,8 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.11.3",
     "node": "^22.11.0",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }

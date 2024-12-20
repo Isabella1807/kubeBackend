@@ -5,6 +5,7 @@ import {requirePortainerAuth} from "../middleware/portainerConnection.js";
 import {STOP_REQUEST} from "../middleware/temp.js";
 
 const router = express.Router();
+
 router.get("/", mustBeLoggedIn, requirePortainerAuth, projectController.getAll)
 // router.get("/:id", projectController.getByID)
 router.post("/", mustBeLoggedIn, requirePortainerAuth, projectController.create)

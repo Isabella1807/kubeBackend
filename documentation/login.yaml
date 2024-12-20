@@ -1,0 +1,66 @@
+tags:
+  - name: Login
+    description: Everything about login
+paths:
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Login
+      description: To be able to login you must send a body containing a valid ucl mail and password. If you have changed the password, remember to use the new password.
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - uclMail
+                - password
+              properties:
+                uclMail:
+                  type: string
+                  description: The UCL email of the user
+                  example: "student@edu.ucl.dk"
+                password:
+                  type: string
+                  description: The password of the user
+                  example: "123"
+      responses:
+        '200':
+          description: success
+        '400':
+          description: error
+  /login/changepassword:
+    put:
+      tags:
+        - Login
+      summary: Change your own password
+      description: To be able to change your password you must be logged in. Remember to use the new password in login if you change it.
+      operationId: changePassword
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                  description: The old password you want to change.
+                  example: "123"
+                newPassword:
+                  type: string
+                  description: The new password you want,
+                  example: "NewPassword"
+      responses:
+        '200':
+          description: success
+        '400':
+          description: error

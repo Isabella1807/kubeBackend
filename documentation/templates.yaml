@@ -1,0 +1,113 @@
+tags:
+  - name: Templates
+    description: Everything about templates
+paths:
+  /templates:
+    get:
+      tags:
+        - Templates
+      summary: Get all templates
+      description: Get all templates
+      operationId: getAllTemplates
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Success - List of all templates
+        '401':
+          description: Unauthorized - Missing or invalid token
+    post:
+      tags:
+        - Templates
+      summary: Create new template
+      description: Must be logged in as admin to create new template. TemplateText must contain yaml text.
+      operationId: createTemplate
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - templateName
+                - templateText
+              properties:
+                templateName:
+                  type: string
+                  description: Template Name
+                  example: "TemplateName"
+                templateText:
+                  type: string
+                  description: Template Text
+                  example: "Must be Yaml Text"
+      responses:
+        '200':
+          description: Success - created template
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /templates/{templateId}:
+    get:
+      tags:
+        - Templates
+      summary: Get template by ID
+      description: Must be logged in as admin to get template by ID
+      operationId: getTemplateById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: templateId
+          in: path
+          description: ID of the template you want to get.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success - got template
+        '401':
+          description: Unauthorized - Missing or invalid token
+    delete:
+      tags:
+        - Templates
+      summary: Delete template by ID
+      description: Must be logged in as admin to delete template by ID
+      operationId: deleteTemplateById
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: templateId
+          in: path
+          description: ID of the template you want to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success - deleted template
+        '401':
+          description: Unauthorized - Missing or invalid token
+    put:
+      tags:
+        - Templates
+      summary: Update template by ID
+      description: Must be logged in as admin to update template by ID
+      operationId: updateTemplateById
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: templateId
+          in: path
+          description: ID of the template you want to update.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success - updated template
+        '401':
+          description: Unauthorized - Missing or invalid token

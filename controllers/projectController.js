@@ -185,7 +185,7 @@ export const projectController = {
             return;
         }
         await setProjectStatusById(id, ProjectState.on)
-        res.status(200).send(`START PROJEKT OG ${id}`)
+        res.status(200).send(`Started project with id ${id}`)
     },
     stopProject: async (req, res) => {
         const id = parseInt(req.params.id)
@@ -204,7 +204,7 @@ export const projectController = {
         }
         await setProjectStatusById(id, ProjectState.off)
 
-        res.status(200).send(`STOP PROJEKT OG ${id}`)
+        res.status(200).send(`Stopped project with id ${id}`)
     },
     restartProject: async (req, res) => {
         const id = parseInt(req.params.id)

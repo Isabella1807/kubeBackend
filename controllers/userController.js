@@ -104,7 +104,7 @@ export const getAllUsers = (req, res) => {
 };
 
 // Controller to update user password
-export const updatePassword = (req, res) => {
+export const updatePassword = async (req, res) => {
     const userId = req.params.id;
     const newPassword = req.body.password;
 
@@ -112,22 +112,22 @@ export const updatePassword = (req, res) => {
         return res.status(400).json({ message: "Password is required." });
     }
 
-    updateUserPasswordById(userId, newPassword, (err, result) => {
-        if (err) {
-            res.status(500).json({ error: "Failed to update password." });
+    try {
+        const result = await updateUserPasswordById(userId, newPassword);
+        if (result.affectedRows > 0) {
+            res.status(200).json({message: "Password updated successfully."});
         } else {
-            if (result.affectedRows > 0) {
-                res.status(200).json({ message: "Password updated successfully." });
-            } else {
-                res.status(404).json({ message: "User not found or no changes made." });
-            }
+            res.status(404).json({message: "User not found or no changes made."});
         }
-    });
+    } catch (error) {
+        res.status(500).json({error: "Failed to update password."});
+    }
 };
 
 // Controller to delete a user by ID
 export const deleteUserByIdController = (req, res) => {
     const userId = req.params.id;
+
     deleteUserById(userId, (err, result) => {
         if (err) {
             return res.status(500).json({ error: "Failed to delete user" });

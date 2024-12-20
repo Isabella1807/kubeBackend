@@ -38,42 +38,6 @@ paths:
           description: Success - got user
         '401':
           description: Unauthorized - Missing or invalid token
-  /users/{userId}/password:
-    put:
-      tags:
-        - Users
-      summary: Change any users password
-      description: Must be logged in as faculty to change password
-      operationId: changeUserPassword
-      security:
-        - bearerAuth: [ ]
-      parameters:
-        - name: userId
-          in: path
-          description: ID of the user you want to change password of.
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - newPassword
-              properties:
-                newPassword:
-                  type: string
-                  description: The new password.
-                  example: "newPassword"
-      responses:
-        '200':
-          description: Success - changed password
-        '401':
-          description: Unauthorized - Missing or invalid token
-  /users/{delete}:
     delete:
       tags:
         - Users
@@ -93,6 +57,42 @@ paths:
       responses:
         '200':
           description: Success - deleted user
+        '401':
+          description: Unauthorized - Missing or invalid token
+  /users/{userId}/password:
+    put:
+      tags:
+        - Users
+      summary: Change any users password
+      description: Must be logged in as faculty to change password
+      operationId: changeUserPassword
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user you want to change password of.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 40
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+                  description: The new password.
+                  example: "newPassword"
+      responses:
+        '200':
+          description: Success - changed password
         '401':
           description: Unauthorized - Missing or invalid token
   /users/new:

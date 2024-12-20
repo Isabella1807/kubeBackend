@@ -16,32 +16,6 @@ paths:
           description: Success - got teams
         '401':
           description: Unauthorized - Missing or invalid token
-    post:
-      tags:
-        - Teams
-      summary: Create new team
-      description: Must be logged in as faculty to create new team
-      operationId: createNewTeam
-      security:
-        - bearerAuth: [ ]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - teamName
-              properties:
-                teamName:
-                  type: string
-                  description: Name of the team you want to create.
-                  example: "teamName"
-      responses:
-        '200':
-          description: Success - created team
-        '401':
-          description: Unauthorized - Missing or invalid token
   /teams/{teamId}:
     get:
       tags:

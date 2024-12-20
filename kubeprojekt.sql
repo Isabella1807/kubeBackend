@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Vært: mysql
--- Genereringstid: 19. 12 2024 kl. 23:52:59
+-- Genereringstid: 20. 12 2024 kl. 10:06:56
 -- Serverversion: 8.4.2
 -- PHP-version: 8.2.24
 
@@ -131,7 +131,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`userId`, `uclMail`, `password`, `firstName`, `lastName`, `roleId`, `teamId`) VALUES
 (12, 'student@edu.ucl.dk', '123', 'StudentFirstName', 'StudentLastName', 3, 5),
 (13, 'teacher@ucl.dk', '123', 'TeacherFirstName', 'TeacherLastName', 2, 6),
-(14, 'admin@ucl.dk', '123', 'AdminFirstName', 'AdminLastName', 1, 7);
+(14, 'admin@ucl.dk', '123', 'AdminFirstName', 'AdminLastName', 1, 7),
+(40, 'test@edu.ucl.dk', 'OldPassword', 'test', 'test', 3, 5);
 
 --
 -- Begrænsninger for dumpede tabeller
@@ -191,7 +192,7 @@ ALTER TABLE `role`
 -- Tilføj AUTO_INCREMENT i tabel `team`
 --
 ALTER TABLE `team`
-  MODIFY `teamId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `teamId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Tilføj AUTO_INCREMENT i tabel `template`
@@ -203,7 +204,7 @@ ALTER TABLE `template`
 -- Tilføj AUTO_INCREMENT i tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `userId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- Begrænsninger for dumpede tabeller

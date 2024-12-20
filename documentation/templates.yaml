@@ -106,6 +106,24 @@ paths:
           schema:
             type: integer
             format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - templateName
+                - templateText
+              properties:
+                templateName:
+                  type: string
+                  description: Updated template name.
+                  example: "TemplateName"
+                templateText:
+                  type: string
+                  description: Updated template text.
+                  example: "Must be Yaml Text"
       responses:
         '200':
           description: Success - updated template

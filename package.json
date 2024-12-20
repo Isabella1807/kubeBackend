@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch documentation --ext js,json,yaml index.js"
+    "dev": "nodemon --ext js,json,yaml"
   },
   "keywords": [],
   "author": "",

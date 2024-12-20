@@ -5,8 +5,8 @@
 ### Remember to check this importnant info out! 
 Remember to add .env file in root
 
-Link to [Api dokumentation](http://localhost:3000/api-docs)
-
+Link to [Api dokumentation](http://localhost:3000/api-docs).
+You must be logged in to use most of the endpoints in the documentation. Login and paste the jwt token in the "authorize" top-right.
 Remember to run:
 > npm run install
 

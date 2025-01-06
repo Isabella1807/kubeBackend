@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --ext js,json,yaml"
+    "dev": "nodemon --ext js,json,yaml,ts --exec npx ts-node test.ts",
+    "start": "npx ts-node test.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "axios": "^1.7.8",
     "body-parser": "^1.20.3",
@@ -25,8 +25,14 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.11.3",
     "node": "^22.11.0",
-    "nodemon": "^3.1.7",
+    "nodemon": "^3.1.9",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }

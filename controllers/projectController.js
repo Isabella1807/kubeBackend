@@ -181,7 +181,7 @@ export const projectController = {
 
         const start = await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
         if (!start) {
-            res.status(500).send('Could not delete stack in Portainer');
+            res.status(500).send('Could not start stack in Portainer');
             return;
         }
         await setProjectStatusById(id, ProjectState.on)
@@ -199,7 +199,7 @@ export const projectController = {
 
         const stop = await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
         if (!stop) {
-            res.status(500).send('Could not delete stack in Portainer');
+            res.status(500).send('Could not stop stack in Portainer');
             return;
         }
         await setProjectStatusById(id, ProjectState.off)

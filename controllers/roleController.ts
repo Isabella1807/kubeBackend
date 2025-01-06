@@ -1,4 +1,4 @@
-import {getAllRoles} from "../models/roleModel.js";
+import {getAllRoles} from "../models/roleModel";
 
 export const showAllRoles = (req, res) => {
     getAllRoles((err, results) => {

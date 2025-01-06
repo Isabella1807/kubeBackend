@@ -1,7 +1,7 @@
 import express from "express";
-import { loginController } from "../controllers/loginController.js";
-import { mustBeLoggedIn } from "../middleware/authenticate.js";
-import { updateUserPasswordById } from "../models/userModel.js";
+import { loginController } from "../controllers/loginController";
+import { mustBeLoggedIn } from "../middleware/authenticate";
+import { updateUserPasswordById } from "../models/userModel";
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.post("/logout", mustBeLoggedIn, (req, res) => {
     }
 });
 
-router.put("/changepassword", mustBeLoggedIn, async (req, res) => {
+/*router.put("/changepassword", mustBeLoggedIn, async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
 
@@ -44,7 +44,7 @@ router.put("/changepassword", mustBeLoggedIn, async (req, res) => {
         console.error("Error during password change:", error);
         res.status(500).send("An error occurred during password change");
     }
-});
+});*/
 
 
 export default router;

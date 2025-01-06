@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import Router from './routes/routes.js'
-import { deserializeUser } from "./middleware/deserializeUser.js";
+import Router from './routes/routes'
+import { deserializeUser } from "./middleware/deserializeUser";
 import swaggerjsdoc from 'swagger-jsdoc';
 import swaggerui from 'swagger-ui-express';
 

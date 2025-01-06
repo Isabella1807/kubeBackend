@@ -1,4 +1,4 @@
-import Portainer, {setPortainerToken} from "../Portainer.js"
+import Portainer, {setPortainerToken} from "../Portainer"
 
 let timestampLastTokenRefresh = 0;
 

@@ -1,5 +1,5 @@
-import { verifyToken } from "../utils/jwt.js";
-import { fetchUserById } from "../models/userModel.js";
+import { verifyToken } from "../utils/jwt";
+import { fetchUserById } from "../models/userModel";
 
 export const deserializeUser = (req, res, next) => {
     const authHeader = req.headers.authorization;

@@ -1,4 +1,4 @@
-import kubeDB from "../Database.js";
+import kubeDB from "../Database";
 
 // Funktion for at hente alle templates
 export const getAllTemplates = () => new Promise((resolve, reject) => {
@@ -25,6 +25,7 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
             console.error(`Error fetching template with ID ${id}:`, error);  // Log fejlen for debugging
             reject("Model get by ID error");
         } else {
+            // @ts-ignore
             if (result.length === 0) {
                 reject(`No template found with ID ${id}`);
             } else {
@@ -42,6 +43,7 @@ export const createTemplate = async (templateName, templateText) => {
             [templateName, templateText],
             (err, result) => {
                 if (err) reject(err);
+                // @ts-ignore
                 else resolve(result.insertId);
             }
         );
@@ -56,6 +58,7 @@ export const deleteTemplateById = (id) => new Promise((resolve, reject) => {
       if (err) {
         console.error("Error deleting template:", err); // Log fejl
         reject(new Error("Database error"));
+          // @ts-ignore
       } else if (result.affectedRows === 0) {
         resolve({ success: false }); 
       } else {

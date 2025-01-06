@@ -1,4 +1,4 @@
-import kubeDB from "../Database.js";
+import kubeDB from "../Database";
 
 export const getAllRoles = (result) => {
     kubeDB.query("SELECT * FROM role", (err, results) => {

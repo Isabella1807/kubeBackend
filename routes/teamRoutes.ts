@@ -1,6 +1,6 @@
 import express from "express";
-import { teamController } from "../controllers/teamController.js";
-import {mustBeFaculty} from "../middleware/authenticate.js";
+import { teamController } from "../controllers/teamController.ts";
+import {mustBeFaculty} from "../middleware/authenticate.ts";
 
 const router = express.Router();
 router.get("/", mustBeFaculty, teamController.getAll);

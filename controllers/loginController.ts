@@ -1,5 +1,5 @@
-import { generateToken } from "../utils/jwt.js";
-import { getUserByMail } from "../models/userModel.js";
+import { generateToken } from "../utils/jwt";
+import { getUserByMail } from "../models/userModel";
 
 export const loginController = {
     loginUser: async (req, res) => {
@@ -22,7 +22,7 @@ export const loginController = {
                 return res.status(403).send("Invalid email domain");
             }
 
-            const userData = await getUserByMail(userMail);
+            const userData = await getUserByMail(userMail) as any;
 
             if (!userData || userPassword !== userData.password) {
                 return res.status(400).send("Wrong mail or password");

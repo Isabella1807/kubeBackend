@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse';
 import { Readable } from 'stream';
-import { getOrCreateTeam } from '../models/teamModel.js';
-import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById, getUsersByTeamId } from '../models/userModel.js';
+import { getOrCreateTeam } from '../models/teamModel';
+import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById, getUsersByTeamId } from '../models/userModel';
 
 // this function takes the csv file and does that users can be added to the database
 export const addUserFromCSV = async (req, res) => {

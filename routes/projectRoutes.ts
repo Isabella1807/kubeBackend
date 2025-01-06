@@ -1,8 +1,8 @@
 import express from "express";
-import {projectController} from "../controllers/projectController.js";
-import {mustBeLoggedIn} from "../middleware/authenticate.js";
-import {requirePortainerAuth} from "../middleware/portainerConnection.js";
-import {STOP_REQUEST} from "../middleware/temp.js";
+import {projectController} from "../controllers/projectController";
+import {mustBeLoggedIn} from "../middleware/authenticate";
+import {requirePortainerAuth} from "../middleware/portainerConnection";
+//import {STOP_REQUEST} from "../middleware/temp.ts";
 
 const router = express.Router();
 

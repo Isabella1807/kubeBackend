@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { getAllTemplates, createTemplate, deleteTemplateById, getTemplateByID, updateTemplateById} from "../models/templateModel.js";
+import { getAllTemplates, createTemplate, deleteTemplateById, getTemplateByID, updateTemplateById} from "../models/templateModel";
 
 export const templateController = {
   getAll: async (req, res) => {

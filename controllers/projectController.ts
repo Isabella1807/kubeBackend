@@ -6,9 +6,9 @@ import {
     getAllProjectsByUserID,
     setProjectStatusById,
     getProjectBySubdomain
-} from "../models/projectModel.js";
-import Portainer from "../Portainer.js"
-import {getTemplateByID} from "../models/templateModel.js";
+} from "../models/projectModel";
+import Portainer from "../Portainer"
+import {getTemplateByID} from "../models/templateModel";
 
 const ProjectState = {
     on: 1,
@@ -43,7 +43,7 @@ export const projectController = {
         }
     },
     create: async (req, res) => {
-        const {templateId, projectName, subdomainName} = req.body;
+        const {templateId, projectName, subdomainName}: {templateId: string, projectName: string, subdomainName: string} = req.body;
 
         const templateIdNum = parseInt(templateId)
 
@@ -69,7 +69,6 @@ export const projectController = {
         }
 
         const subdomainList = await getProjectBySubdomain(subdomainName)
-        console.log(subdomainList)
         if (subdomainList.length >= 1){
             res.status(400).send("subdomain name already exists")
             return
@@ -104,19 +103,19 @@ export const projectController = {
                 .replace(/CHANGEME/g, websiteId)
 
             // Name cannot contain space, special character or be capitalized
-            const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
+            /*const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
                 "name": `${subdomainName}`,
                 "stackFileContent": templateText,
                 "swarmID": swarmId
-            }).then((stack) => stack).catch(() => null);
+            }).then((stack) => stack).catch(() => null);*/
 
             // temporary for when portainer goes down
-            /*const newStack = {
+            const newStack = {
                 data: {
                     Id: 12321,
                 }
-            }*/
+            }
 
             if (!newStack) {
                 res.status(500).send('Could not create stack in Portainer');

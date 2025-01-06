@@ -1,4 +1,4 @@
-import { getAllTeams, getTeamById, deleteTeamByID } from "../models/teamModel.js";
+import { getAllTeams, getTeamById, deleteTeamByID } from "../models/teamModel";
 
 // this for getting all team and then desceding - this is doin alphabetical order
 export const teamController = {

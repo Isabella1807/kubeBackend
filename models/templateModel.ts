@@ -1,4 +1,5 @@
-import kubeDB from "../Database";
+import {kubeDB} from "../Database";
+import {BaseTemplate} from "../types/template";
 
 // Funktion for at hente alle templates
 export const getAllTemplates = () => new Promise((resolve, reject) => {
@@ -13,7 +14,7 @@ export const getAllTemplates = () => new Promise((resolve, reject) => {
 });
 
 // Funktion for at hente template by ID
-export const getTemplateByID = (id) => new Promise((resolve, reject) => {
+export const getTemplateByID = (id: number): Promise<BaseTemplate> => new Promise((resolve, reject) => {
     if (!id) {
         reject("ID is required");  // Returner en fejl, hvis ID ikke er angivet
         return;
@@ -29,6 +30,7 @@ export const getTemplateByID = (id) => new Promise((resolve, reject) => {
             if (result.length === 0) {
                 reject(`No template found with ID ${id}`);
             } else {
+                console.log(result[0])
                 resolve(result[0]);
             }
         }

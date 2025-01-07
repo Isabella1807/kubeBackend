@@ -10,6 +10,7 @@ import {
 import Portainer from "../Portainer"
 import {getTemplateByID} from "../models/templateModel";
 import {NewProjectBody, UserObject} from "../types/project";
+import {Request, Response} from "express";
 
 const ProjectState: {on: number; off: number} = {
     on: 1,
@@ -17,7 +18,7 @@ const ProjectState: {on: number; off: number} = {
 }
 
 export const projectController = {
-    getAll: async (req, res) => {
+    getAll: async (req: Request, res: Response) => {
         const user: UserObject = res.locals.user as UserObject;
 
         try {
@@ -35,15 +36,15 @@ export const projectController = {
             res.status(500).send(error);
         }
     },
-    getByID: async (req, res) => {
+    /*getByID: async (req: Request, res: Response) => {
         try {
             const project = await getProjectByID(req.params.id)
             res.json(project)
         } catch (error) {
             res.status(500).send(error);
         }
-    },
-    create: async (req, res) => {
+    },*/
+    create: async (req: Request, res: Response) => {
         const {templateId, projectName, subdomainName}= req.body as NewProjectBody;
 
         const templateIdNum = parseInt(templateId)
@@ -136,7 +137,7 @@ export const projectController = {
             res.status(500).send(error);
         }
     },
-    delete: async (req, res) => {
+    delete: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
 
         if (Number.isNaN(id)) {
@@ -169,7 +170,7 @@ export const projectController = {
 
 
     },
-    startProject: async (req, res) => {
+    startProject: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
 
         if (Number.isNaN(id)) {
@@ -187,7 +188,7 @@ export const projectController = {
         await setProjectStatusById(id, ProjectState.on)
         res.status(200).send(`Started project with id ${id}`)
     },
-    stopProject: async (req, res) => {
+    stopProject: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
 
         if (Number.isNaN(id)) {
@@ -206,7 +207,7 @@ export const projectController = {
 
         res.status(200).send(`Stopped project with id ${id}`)
     },
-    restartProject: async (req, res) => {
+    restartProject: async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
 
         if (Number.isNaN(id)) {

@@ -1,4 +1,4 @@
-import kubeDB from "../Database";
+import {kubeDB} from "../Database";
 
 // makes a new user in the database
 export const createUser = async (userData) => {

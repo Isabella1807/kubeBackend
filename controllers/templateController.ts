@@ -1,4 +1,4 @@
-import yaml from 'js-yaml';
+//import yaml from 'js-yaml';
 import { getAllTemplates, createTemplate, deleteTemplateById, getTemplateByID, updateTemplateById} from "../models/templateModel";
 
 export const templateController = {
@@ -85,7 +85,8 @@ export const templateController = {
     const templateId = req.params.id;
     try {
       const result = await deleteTemplateById(templateId);
-  
+
+      // @ts-ignore
       if (!result.success) {
         return res.status(404).json({ message: "Template not found" });
       }
@@ -109,6 +110,7 @@ export const templateController = {
 
       const result = await updateTemplateById(id, templateName, templateText);
 
+      // @ts-ignore
       if (result.affectedRows > 0) {
         res.status(200).json({ message: 'Template updated successfully' });
       } else {

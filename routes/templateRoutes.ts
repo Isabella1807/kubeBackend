@@ -1,6 +1,6 @@
 import express from "express";
-import { templateController } from "../controllers/templateController.ts";
-import {mustBeLoggedIn, mustBeAdmin} from "../middleware/authenticate.ts";
+import { templateController } from "../controllers/templateController";
+import {mustBeLoggedIn, mustBeAdmin} from "../middleware/authenticate";
 
 const router = express.Router();
 

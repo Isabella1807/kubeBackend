@@ -1,5 +1,5 @@
 import kubeDB from "../Database";
-import {BaseProject, ProjectWithStackId} from "../types/project";
+import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
 
 
 export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve, reject) => {
@@ -7,8 +7,7 @@ export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve
         if (error) {
             reject("Model get all error")
         } else {
-            // @ts-ignore
-            resolve(result)
+            resolve(result as BaseProject[])
         }
     })
 })
@@ -20,8 +19,7 @@ export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => ne
         if (error) {
             reject("Model get by ID error");
         } else {
-            // @ts-ignore
-            resolve(result)
+            resolve(result as BaseProject[])
         }
     })
 })
@@ -43,7 +41,7 @@ export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new P
     })
 })
 
-export const createProject = (templateid, userid, stackId, projectname, subdomainname): Promise<any> => new Promise((resolve, reject) => {
+export const createProject = (templateid: number, userid: number, stackId: number, projectname: string, subdomainname: string): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
     const query = `INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state) VALUES (?, ?, ?, ?, ?, 1)`;
     const values = [templateid, userid, stackId, projectname, subdomainname];
 
@@ -51,38 +49,38 @@ export const createProject = (templateid, userid, stackId, projectname, subdomai
         if (error) {
             reject(error);
         } else {
-            resolve(result);
+            resolve(result as ResultSetHeader);
 
         }
     });
 });
 
-export const deleteProjectByID = (id) => new Promise((resolve, reject) => {
+export const deleteProjectByID = (id:number): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
     if (!id) reject();
 
     kubeDB.query(`DELETE FROM project WHERE projectId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model delete by ID error");
         } else {
-            // @ts-ignore
-            if (result.affectedRows === 0) {
+            if ((result as ResultSetHeader).affectedRows === 0) {
                 reject(`Project with id ${id} does not exist`);
             } else {
-                resolve(result)
+                resolve(result as ResultSetHeader)
             }
         }
     })
 });
 
 
-export const setProjectStatusById = (id, status) => new Promise((resolve, reject) => {
+export const setProjectStatusById = (id: number, status: number): Promise<any> => new Promise((resolve, reject) => {
     if (!id) reject();
 
     kubeDB.query(`UPDATE project SET state = ? WHERE projectId = ?`, [status, id], (error, result) => {
         if (error) {
             reject("error");
         } else {
-            resolve("Result");
+            console.log(result)
+            resolve("success");
         }
     })
 })
@@ -93,8 +91,7 @@ export const getProjectBySubdomain = (name: string): Promise<BaseProject[]> => n
         if (error) {
             reject(error);
         } else {
-            // @ts-ignore
-            resolve(result);
+            resolve(result as BaseProject[]);
         }
     })
 })

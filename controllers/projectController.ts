@@ -125,7 +125,7 @@ export const projectController = {
             // Create new project in sql db
             const stackId = newStack.data.Id;
             const userId = res.locals.user.userId;
-            const createdProjectInfo = await createProject(templateId, userId, stackId, projectName, subdomainName);
+            const createdProjectInfo = await createProject(templateIdNum, userId, stackId, projectName, subdomainName);
 
             const createdProject = await getProjectByID(createdProjectInfo.insertId);
 
@@ -145,13 +145,13 @@ export const projectController = {
 
         try {
             const dbProject = await getProjectByID(id);
-            const stackId = dbProject.stackId;
+            //const stackId = dbProject.stackId;
 
-            const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
+            /*const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
             if (!deletedStack) {
                 res.status(500).send('Could not delete stack in Portainer');
                 return;
-            }
+            }*/
 
             //For when portaioner goes down
            /* if (stackId !== 12321) {
@@ -178,11 +178,11 @@ export const projectController = {
 
         const {stackId} = await getProjectByID(id);
 
-        const start = await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
-        if (!start) {
+        /*const start = await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)*/
+        /*if (!start) {
             res.status(500).send('Could not start stack in Portainer');
             return;
-        }
+        }*/
         await setProjectStatusById(id, ProjectState.on)
         res.status(200).send(`Started project with id ${id}`)
     },
@@ -194,13 +194,13 @@ export const projectController = {
             return
         }
 
-        const {stackId} = await getProjectByID(id);
+        //const {stackId} = await getProjectByID(id);
 
-        const stop = await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
+        /*const stop = await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
         if (!stop) {
             res.status(500).send('Could not stop stack in Portainer');
             return;
-        }
+        }*/
         await setProjectStatusById(id, ProjectState.off)
 
         res.status(200).send(`Stopped project with id ${id}`)

@@ -32,3 +32,21 @@ export interface ResultSetHeader {
     "warningStatus": number,
     "changedRows": number
 }
+
+export interface UserObject {
+    userId: number,
+    uclMail: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    roleId: number,
+    teamId: number,
+    role: { isAdmin: boolean, isFaculty: boolean, isStudent: boolean }
+}
+
+export interface NewProjectBody {
+    templateId: string,
+    projectName: string,
+    subdomainName: string
+}
+

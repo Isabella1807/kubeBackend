@@ -1,5 +1,5 @@
 import kubeDB from "../Database";
-import {models, seqDB} from "../SeqDB";
+import {models} from "./modelsDB/init-models";
 import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
 
 export const getAllProjects = async () => {

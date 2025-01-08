@@ -23,4 +23,4 @@ const initModels = () => {
     };
 }
 
-export default initModels;
+export const models = initModels();

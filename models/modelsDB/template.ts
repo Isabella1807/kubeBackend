@@ -1,4 +1,4 @@
-import {seqDB} from "../../SeqDB";
+import seqDB from "../../SeqDB";
 import { DataTypes } from 'sequelize';
 
 const Template = seqDB.define('template', {

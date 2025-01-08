@@ -19,6 +19,7 @@ const ProjectState: {on: number; off: number} = {
 
 export const projectController = {
     getAll: async (req: Request, res: Response) => {
+        console.log("WOMP WOMP ")
         const user: UserObject = res.locals.user as UserObject;
 
         try {

@@ -3,12 +3,19 @@ import {models} from "./modelsDB/init-models";
 import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
 
 export const getAllProjects = async () => {
-    return await models.project.findAll({
+    console.log('THIS WAS CALLED')
+    const a = await models.project.findAll({
         include: [
             { model: models.users, as: "user" },
             { model: models.template, as: "template" }
         ]
-    });
+    }).then((b) => {
+        console.log('TEEST?', b);
+    }).catch((c) => {
+        console.log('C!?!?!', c)
+    })
+    console.log('FOUNID PROJECTS:', a);
+    return a;
 };
 /*export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve, reject) => {
     kubeDB.query('SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {

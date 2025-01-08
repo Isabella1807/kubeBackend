@@ -1,5 +1,6 @@
 import seqDB from "../../SeqDB";
 import {DataTypes} from 'sequelize';
+import Project from "./project";
 
 const Role = seqDB.define('role', {
         roleId: {
@@ -14,9 +15,17 @@ const Role = seqDB.define('role', {
         }
     },
     {
-        tableName: "Role"
+        tableName: "role"
     }
 );
+
+/*Role.sync({force: true}).then(() => {
+    console.log('*** ROLE YES synced!')
+}).catch((e) => {
+    console.log('*!* ROLE error sync')
+    console.log(e)
+    console.log('===================')
+});*/
 
 export default Role;
 

@@ -4,8 +4,10 @@ import Router from './routes/routes'
 import { deserializeUser } from "./middleware/deserializeUser";
 import swaggerjsdoc from 'swagger-jsdoc';
 import swaggerui from 'swagger-ui-express';
+import "./database/connection";
 
 import dotenv from 'dotenv';
+import Role from "./database/models/Role";
 dotenv.config();
 
 const app = express();
@@ -64,3 +66,8 @@ app.use(Router);
 
 // start server
 app.listen(port)
+
+setTimeout(async () => {
+    console.log('CREATE DUMMY ROLE');
+    await Role.create({roleName: 'Hans Hansen'})
+}, 3000)

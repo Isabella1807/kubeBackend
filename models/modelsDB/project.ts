@@ -52,8 +52,14 @@ const Project = seqDB.define('project', {
         }
     },
     {
-        tableName: "Project"
+        tableName: "project"
     }
 );
+
+// Project.sync({force: true}).then(() => {
+//     console.log('*** PROJECT YES synced!')
+// }).catch(() => {
+//     console.log('*!* PROJECT error sync')
+// })
 
 export default Project;

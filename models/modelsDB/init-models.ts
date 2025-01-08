@@ -5,14 +5,18 @@ import template from "./template";
 import users from "./users";
 
 const initModels = () => {
-    project.belongsTo(template, {as: "template", foreignKey: "templateId"});
-    project.belongsTo(users, {as: "user", foreignKey: "userId"});
-    users.belongsTo(role, {as: "role", foreignKey: "roleId"});
-    users.belongsTo(team, {as: "team", foreignKey: "teamId"});
-    users.hasMany(project, {as: "projects", foreignKey: "userId"});
-    role.hasMany(users, {as: "users", foreignKey: "roleId"});
-    team.hasMany(users, {as: "users", foreignKey: "teamId"});
-    template.hasMany(project, {as: "projects", foreignKey: "templateId"});
+
+    // role.hasMany(users, {foreignKey: "roleId"});
+    users.belongsTo(role, {foreignKey: "roleId"});
+
+    // team.hasMany(users, {foreignKey: "teamId"});
+    users.belongsTo(team, {foreignKey: "teamId"});
+
+    // template.hasMany(project, {foreignKey: "templateId"});
+    project.belongsTo(template, {foreignKey: "templateId"});
+
+    // users.hasMany(project, {foreignKey: "userId"});
+    project.belongsTo(users, {foreignKey: "userId"});
 
     return {
         project,

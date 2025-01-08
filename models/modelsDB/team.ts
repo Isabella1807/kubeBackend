@@ -1,5 +1,6 @@
 import seqDB from "../../SeqDB";
 import {DataTypes} from 'sequelize';
+import Project from "./project";
 
 const Team = seqDB.define('team', {
         teamId: {
@@ -14,8 +15,14 @@ const Team = seqDB.define('team', {
         }
     },
     {
-        tableName: "Team"
+        tableName: "team"
     }
 );
+
+/*Team.sync({force: true}).then(() => {
+    console.log('*** TEAM YES synced!')
+}).catch(() => {
+    console.log('*!* TEAM error sync')
+})*/
 
 export default Team;

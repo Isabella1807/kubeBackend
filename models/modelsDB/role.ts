@@ -1,4 +1,4 @@
-import seqDB from "../../Database";
+import {seqDB} from "../../SeqDB";
 import {DataTypes} from 'sequelize';
 
 const Role = seqDB.define('role', {

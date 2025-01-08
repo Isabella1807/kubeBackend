@@ -1,3 +1,8 @@
+
+
+
+
+/*
 'use strict';
 
 const fs = require('fs');
@@ -41,3 +46,4 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+*/

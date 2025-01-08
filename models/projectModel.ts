@@ -1,8 +1,16 @@
 import kubeDB from "../Database";
+import {models, seqDB} from "../SeqDB";
 import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
 
-
-export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve, reject) => {
+export const getAllProjects = async () => {
+    return await models.project.findAll({
+        include: [
+            { model: models.users, as: "user" },
+            { model: models.template, as: "template" }
+        ]
+    });
+};
+/*export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve, reject) => {
     kubeDB.query('SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {
         if (error) {
             reject("Model get all error")
@@ -10,7 +18,7 @@ export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve
             resolve(result as BaseProject[])
         }
     })
-})
+})*/
 
 export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => new Promise((resolve, reject) => {
     if (!id) reject();

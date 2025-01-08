@@ -1,7 +1,7 @@
 import {Sequelize} from 'sequelize';
 import initModels from "./models/modelsDB/init-models";
 
-const seqDB = new Sequelize('kube2', 'root', 'root', {
+const seqDB: Sequelize = new Sequelize('kube2', 'root', 'root', {
     host: 'localhost',
     dialect: 'mysql'
 });
@@ -13,6 +13,6 @@ seqDB.authenticate().then(() => {
     console.error('Sequelize Database connection failed');
 })
 
-const models = initModels(seqDB);
+const models = initModels();
 
-export { seqDB, models };
+export {seqDB, models};

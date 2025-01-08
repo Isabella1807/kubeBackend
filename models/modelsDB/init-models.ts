@@ -1,3 +1,4 @@
+/*
 import project from "./project";
 import role from "./role";
 import team from "./team";
@@ -28,3 +29,4 @@ const initModels = () => {
 }
 
 export const models = initModels();
+*/

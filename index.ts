@@ -67,7 +67,7 @@ app.use(Router);
 // start server
 app.listen(port)
 
-setTimeout(async () => {
+/*setTimeout(async () => {
     console.log('CREATE DUMMY ROLE');
-    await Role.create({roleName: 'Hans Hansen'})
-}, 3000)
+    await Role.create({roleName: 'Jens Han sen'})
+}, 3000)*/

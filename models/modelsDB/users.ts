@@ -1,3 +1,4 @@
+/*
 import seqDB from "../../SeqDB";
 import {DataTypes} from 'sequelize';
 import Project from "./project";
@@ -47,10 +48,10 @@ const Users = seqDB.define('users', {
     }
 );
 
-/*Users.sync({force: true}).then(() => {
+/!*Users.sync({force: true}).then(() => {
     console.log('*** USERS YES synced!')
 }).catch(() => {
     console.log('*!* USERS error sync')
-})*/
+})*!/
 
-export default Users;
+export default Users;*/

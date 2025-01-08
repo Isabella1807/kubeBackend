@@ -1,3 +1,4 @@
+/*
 import seqDB from "../../SeqDB";
 import {DataTypes} from 'sequelize';
 import Project from "./project";
@@ -23,10 +24,10 @@ const Template = seqDB.define('template', {
     }
 );
 
-/*Template.sync({force: true}).then(() => {
+/!*Template.sync({force: true}).then(() => {
     console.log('*** TEMPLATE YES synced!')
 }).catch(() => {
     console.log('*!* TEMPLATE error sync')
-})*/
+})*!/
 
-export default Template;
+export default Template;*/

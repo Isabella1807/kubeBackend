@@ -1,3 +1,4 @@
+/*
 import seqDB from "../../SeqDB";
 import {DataTypes} from 'sequelize';
 import Project from "./project";
@@ -19,10 +20,10 @@ const Team = seqDB.define('team', {
     }
 );
 
-/*Team.sync({force: true}).then(() => {
+/!*Team.sync({force: true}).then(() => {
     console.log('*** TEAM YES synced!')
 }).catch(() => {
     console.log('*!* TEAM error sync')
-})*/
+})*!/
 
-export default Team;
+export default Team;*/

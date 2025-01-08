@@ -1,4 +1,4 @@
-import {kubeDB, SkubeDB} from "../Database";
+import kubeDB from "../Database";
 import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
 
 

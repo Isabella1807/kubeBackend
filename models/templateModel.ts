@@ -1,4 +1,4 @@
-import {kubeDB} from "../Database";
+import kubeDB from "../Database";
 import {BaseTemplate} from "../types/template";
 
 // Funktion for at hente alle templates

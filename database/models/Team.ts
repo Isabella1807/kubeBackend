@@ -16,23 +16,24 @@ import User from "./User";
     modelName: "Team",
     timestamps: false
 })
-class Team extends Model {
+class Team extends Model<Team> {
     @Column({
         primaryKey: true,
         type: DataType.INTEGER,
         autoIncrement: true,
         allowNull: false
     })
-    teamId!: number;
+    teamId?: number;
 
     @Column({
         type: DataType.STRING(50),
         allowNull: false
     })
-    teamName!: string;
+    teamName?: string;
 
     @HasMany(() => User)
-    users: User[];
+    users?: User[];
 
 }
-    export default Team;
+
+export default Team;

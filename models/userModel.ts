@@ -1,4 +1,6 @@
 import kubeDB from "../Database";
+import {BaseUser} from "../types/user";
+import User from "../database/models/User";
 
 // makes a new user in the database
 export const createUser = async (userData) => {
@@ -28,19 +30,30 @@ export const fetchUserById = (userId, callback) => {
 };
 
 //Used in loginController
-export const getUserByMail = (userMail) => new Promise((resolve, reject) => {
+export const getUserByMail = (userMail: string): Promise<BaseUser> => new Promise((resolve, reject) => {
     if (!userMail) reject();
 
+    User.findOne({
+        where: { uclMail: userMail },
+        attributes: ['password', 'userId', 'roleId']
+    }).then((user) => {
+        resolve(user.dataValues);
+    }).catch((err) => {
+        console.error('Error creating user:', err);
+        reject("Model get by ucl mail error");
+    })
+
     // Opdater forespørgslen for at hente userId, password og roleId
-    const query = `SELECT password, userId, roleId FROM users WHERE uclMail = ?`;
+    /*const query = `SELECT password, userId, roleId FROM users WHERE uclMail = ?`;
     kubeDB.query(query, [userMail], (error, result) => {
         if (error) {
             reject("Model get by ucl mail error");
         } else {
             resolve(result[0]); // returnerer første bruger, da vi antager, at mailen er unik
+            console.log(result[0])
         }
-    })
-})
+    })*/
+});
 
 
 // Funktionen til at finde af brugerer på siden 

@@ -8,6 +8,7 @@ export const teamController = {
       let teams;
 
       if (sortDirection === 'desc') {
+        // @ts-ignore
         teams = await getAllTeamsSortedDesc();
       } else {
         teams = await getAllTeams();
@@ -37,6 +38,7 @@ export const teamController = {
     }
 
     try {
+      // @ts-ignore
       await createTeam(teamName);
       res.sendStatus(200);
     } catch (error) {

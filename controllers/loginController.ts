@@ -22,7 +22,7 @@ export const loginController = {
                 return res.status(403).send("Invalid email domain");
             }
 
-            const userData = await getUserByMail(userMail) as any;
+            const userData = await getUserByMail(userMail);
 
             if (!userData || userPassword !== userData.password) {
                 return res.status(400).send("Wrong mail or password");

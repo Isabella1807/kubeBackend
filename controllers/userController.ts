@@ -114,6 +114,7 @@ export const updatePassword = async (req, res) => {
 
     try {
         const result = await updateUserPasswordById(userId, newPassword);
+        // @ts-ignore
         if (result.affectedRows > 0) {
             res.status(200).json({message: "Password updated successfully."});
         } else {

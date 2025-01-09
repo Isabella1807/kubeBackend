@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { mustBeLoggedIn, mustBeFaculty } from "../middleware/authenticate.ts";
+import { mustBeLoggedIn, mustBeFaculty } from "../middleware/authenticate";
 import {
     addUserFromCSV,
     getUserById,
@@ -9,7 +9,7 @@ import {
     deleteUserByIdController,
     getTeamMembers,
     createSingleUser
-} from '../controllers/userController.ts';
+} from '../controllers/userController';
 
 // save files in multer memory
 const storage = multer.memoryStorage();

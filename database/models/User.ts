@@ -3,9 +3,6 @@ import {
     Column,
     Model,
     DataType,
-    CreatedAt,
-    UpdatedAt,
-    BeforeCreate,
     HasMany,
     ForeignKey
 } from "sequelize-typescript";
@@ -68,7 +65,7 @@ class User extends Model
     lastName!: string;
 
     @HasMany(() => Project)
-    projects: Project[];
+    projects!: Project[];
 }
 
 export default User;

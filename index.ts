@@ -12,6 +12,7 @@ import User from "./database/models/User";
 import Role from "./database/models/Role";
 import Team from "./database/models/Team";
 import Project from "./database/models/Project";
+import {getUserByMail} from "./models/userModel";
 
 dotenv.config();
 
@@ -82,3 +83,11 @@ app.listen(port)
     state: 1,
     })
 }, 1000)*/
+
+setTimeout(async () => {
+    getUserByMail("student@edu.ucl.dk").then((res) => {
+        console.log(res);
+    }).catch((err) => {
+        console.log(err);
+    })
+}, 1000)

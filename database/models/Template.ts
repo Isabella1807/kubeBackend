@@ -40,7 +40,7 @@ class Template extends Model {
     templateName!: string;
 
     @HasMany(() => Project)
-    projects: Project[];
+    projects!: Project[];
 }
 
 export default Template;

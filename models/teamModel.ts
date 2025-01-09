@@ -24,6 +24,7 @@ export const getTeamById = (id) => new Promise((resolve, reject) => {
             console.error(`Error fetching team with ID ${id}:`, error);
             reject("Failed to get team by Id");
         } else {
+            // @ts-ignore
             if (result.length === 0) {
                 reject(`No team found with ID ${id}`);
             } else {
@@ -37,10 +38,12 @@ export const getOrCreateTeam = async (teamName) => {
     try {
         const [rows] = await kubeDB.promise().query('SELECT teamId FROM team WHERE teamName = ?', [teamName]);
 
+        // @ts-ignore
         if (rows.length > 0) {
             return rows[0].teamId;
         }
         const [result] = await kubeDB.promise().query('INSERT INTO team (teamName) VALUES (?)', [teamName]);
+        // @ts-ignore
         return result.insertId;
     } catch (err) {
         console.error('Error in getOrCreateTeam:', err);
@@ -67,6 +70,7 @@ export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
                 if (error) {
                     reject("Team delete by Id error");
                 } else {
+                    // @ts-ignore
                     if (result.affectedRows === 0) {
                         reject(`Team with id ${id} does not exist`);
                     } else {

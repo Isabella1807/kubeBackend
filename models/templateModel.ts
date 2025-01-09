@@ -1,5 +1,6 @@
 import kubeDB from "../Database";
 import {BaseTemplate} from "../types/template";
+import Template from "../database/models/Template";
 
 // Funktion for at hente alle templates
 export const getAllTemplates = () => new Promise((resolve, reject) => {
@@ -37,8 +38,18 @@ export const getTemplateByID = (id: number): Promise<BaseTemplate> => new Promis
     });
 });
 
+export const createTemplate = async (templateName: string, templateText: string) => {
+    return new Promise((resolve, reject) => {
+        Template.create({templateName: templateName, templateText: templateText}).then((result) => {
+            resolve(result)
+            console.log(result)
+        }).catch((error) => {
+            reject(error)
+        })
+    });
+};
 
-export const createTemplate = async (templateName, templateText) => {
+/*export const createTemplate = async (templateName, templateText) => {
     return new Promise((resolve, reject) => {
         kubeDB.query(
             'INSERT INTO template (templateName, templateText) VALUES (?, ?)',
@@ -50,7 +61,7 @@ export const createTemplate = async (templateName, templateText) => {
             }
         );
     });
-};
+};*/
 
 // SLETTER
 export const deleteTemplateById = (id) => new Promise((resolve, reject) => {

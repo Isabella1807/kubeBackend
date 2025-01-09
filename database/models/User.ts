@@ -10,6 +10,7 @@ import {
     ForeignKey
 } from "sequelize-typescript";
 import Role from "./Role";
+import Team from "./Team";
 
 @Table({
     tableName: "users",
@@ -20,19 +21,46 @@ class User extends Model {
         primaryKey: true,
         type: DataType.INTEGER,
         autoIncrement: true,
+        allowNull: false,
     })
     userId!: number;
 
-    @ForeignKey(() => Role)
     @Column({
-        type: DataType.INTEGER
+        type: DataType.STRING(250),
+        allowNull: false
     })
-    roleId!: number;
+    uclMail!: string;
+
+    @Column({
+        type: DataType.STRING(250),
+        allowNull: false
+    })
+    password!: string;
 
     @Column({
         type: DataType.STRING
     })
     firstName!: string;
+
+    @Column({
+        type: DataType.STRING(250),
+        allowNull: false
+    })
+    lastName!: string;
+
+    @ForeignKey(() => Role)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false
+    })
+    roleId!: number;
+
+    @ForeignKey(() => Team)
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false
+    })
+    teamId!: number;
 }
 
 export default User;

@@ -11,12 +11,16 @@ import {
 } from "sequelize-typescript";
 import Role from "./Role";
 import Team from "./Team";
+import Project from "./Project";
 
 @Table({
     tableName: "users",
     modelName: "User",
+    timestamps: false
 })
-class User extends Model {
+
+class User extends Model
+{
     @Column({
         primaryKey: true,
         type: DataType.INTEGER,
@@ -24,29 +28,6 @@ class User extends Model {
         allowNull: false,
     })
     userId!: number;
-
-    @Column({
-        type: DataType.STRING(250),
-        allowNull: false
-    })
-    uclMail!: string;
-
-    @Column({
-        type: DataType.STRING(250),
-        allowNull: false
-    })
-    password!: string;
-
-    @Column({
-        type: DataType.STRING
-    })
-    firstName!: string;
-
-    @Column({
-        type: DataType.STRING(250),
-        allowNull: false
-    })
-    lastName!: string;
 
     @ForeignKey(() => Role)
     @Column({
@@ -61,6 +42,33 @@ class User extends Model {
         allowNull: false
     })
     teamId!: number;
+
+    @Column({
+        type: DataType.STRING(250),
+        allowNull: false
+    })
+    uclMail!: string;
+
+    @Column({
+        type: DataType.STRING(250),
+        allowNull: false
+    })
+    password!: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: false
+    })
+    firstName!: string;
+
+    @Column({
+        type: DataType.STRING(250),
+        allowNull: false
+    })
+    lastName!: string;
+
+    @HasMany(() => Project)
+    projects: Project[];
 }
 
 export default User;

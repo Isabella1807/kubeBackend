@@ -11,11 +11,13 @@ class Role extends Model {
         primaryKey: true,
         type: DataType.INTEGER,
         autoIncrement: true,
+        allowNull: false
     })
     roleId!: number;
 
     @Column({
-        type: DataType.STRING
+        type: DataType.STRING,
+        allowNull: false
     })
     roleName!: string;
 

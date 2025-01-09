@@ -7,7 +7,12 @@ import swaggerui from 'swagger-ui-express';
 import "./database/connection";
 
 import dotenv from 'dotenv';
+import minDB from "./database/connection";
+import User from "./database/models/User";
 import Role from "./database/models/Role";
+import Team from "./database/models/Team";
+import Project from "./database/models/Project";
+
 dotenv.config();
 
 const app = express();
@@ -66,8 +71,14 @@ app.use(Router);
 
 // start server
 app.listen(port)
-
 /*setTimeout(async () => {
-    console.log('CREATE DUMMY ROLE');
-    await Role.create({roleName: 'Jens Han sen'})
-}, 3000)*/
+    await minDB.sync({ alter: true });
+    await Project.create({
+    templateId: 10,
+    userId: 1,
+    stackId: 121,
+    projectName: "Projectnavn lol1",
+    subdomainName: "subdomain",
+    state: 1,
+    })
+}, 1000)*/

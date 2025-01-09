@@ -12,7 +12,7 @@ export const addUserFromCSV = async (req, res) => {
             columns: true,
             skip_empty_lines: true
         });
-        // save the row in a array from the csv
+        // save the row in an array from the csv
         csvParser.on('data', (row) => rows.push(row));
         // the function runs through the rows from the csv
         const processRows = async () => {

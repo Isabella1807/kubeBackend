@@ -1,36 +1,30 @@
 import kubeDB from "../Database";
-import {BaseUser} from "../types/user";
+import {User as UserType, UserCreateData, UserWithPassword} from "../types/user";
 import User from "../database/models/User";
 
-// makes a new user in the database
-export const createUser = async (userData) => {
-    try {
-        const [result] = await kubeDB.promise().query('INSERT INTO users SET ?', userData);
-        return result;
-    } catch (err) {
-        console.error('Error creating user:', err);
-        throw err;
-    }
-};
 
-// function find user by id
-export const fetchUserById = (userId, callback) => {
-    const sql = `SELECT * FROM users WHERE userId = ?`;
-    const values = [userId];
+export const createUser = (userData: UserCreateData): Promise<UserCreateData> => new Promise((resolve, reject) => {
+    User.create({...userData}).then((result) => {
+        resolve(result.dataValues);
+    }).catch((err) => {
+        reject(err);
+    })
+});
 
-
-    kubeDB.query(sql, values, (err, result) => {
-        if (err) {
-            console.error("Database error:", err);
-            callback(err, null);
-        } else {
-            callback(null, result);
-        }
-    });
-};
+export const fetchUserById = (userId: number): Promise<UserType> => new Promise((resolve, reject) => {
+    User.findOne({
+        where:{userId: userId}
+    }).then((result) => {
+        console.log(result);
+        resolve(result.dataValues);
+    }).catch((err) => {
+        console.log(err);
+        reject(err);
+    })
+});
 
 //Used in loginController
-export const getUserByMail = (userMail: string): Promise<BaseUser> => new Promise((resolve, reject) => {
+export const getUserByMail = (userMail: string): Promise<UserWithPassword> => new Promise((resolve, reject) => {
     if (!userMail) reject();
 
     User.findOne({
@@ -42,17 +36,6 @@ export const getUserByMail = (userMail: string): Promise<BaseUser> => new Promis
         console.error('Error creating user:', err);
         reject("Model get by ucl mail error");
     })
-
-    // Opdater forespørgslen for at hente userId, password og roleId
-    /*const query = `SELECT password, userId, roleId FROM users WHERE uclMail = ?`;
-    kubeDB.query(query, [userMail], (error, result) => {
-        if (error) {
-            reject("Model get by ucl mail error");
-        } else {
-            resolve(result[0]); // returnerer første bruger, da vi antager, at mailen er unik
-            console.log(result[0])
-        }
-    })*/
 });
 
 

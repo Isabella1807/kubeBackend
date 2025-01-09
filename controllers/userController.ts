@@ -2,6 +2,7 @@ import { parse } from 'csv-parse';
 import { Readable } from 'stream';
 import { getOrCreateTeam } from '../models/teamModel';
 import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById, getUsersByTeamId } from '../models/userModel';
+import {Request, Response} from "express";
 
 // this function takes the csv file and does that users can be added to the database
 export const addUserFromCSV = async (req, res) => {
@@ -66,23 +67,18 @@ export const addUserFromCSV = async (req, res) => {
 
 
 // Controller to fetch a user by ID
-export const getUserById = (req, res) => {
-    const userId = req.params.id;
 
-    fetchUserById(userId, (err, result) => {
-        if (err) {
-            res.status(500).json({ error: "Failed to fetch user." });
-        } else {
-            if (result.length > 0) {
-                res.status(200).json({
-                    message: "User data retrieved successfully.",
-                    user: result[0],
-                });
-            } else {
-                res.status(404).json({ message: "User not found." });
-            }
-        }
-    });
+export const getUserById  = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
+
+    fetchUserById(userId).then((user) => {
+        res.status(200).json({
+            message: "User data retrieved successfully.",
+            user,
+        });
+    }).catch((err) => {
+        res.status(404).json({ message: "User not found." });
+    })
 };
 
 // Controller to fetch all users

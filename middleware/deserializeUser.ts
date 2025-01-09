@@ -18,25 +18,16 @@ export const deserializeUser = (req, res, next) => {
         return next();
     }
 
-    fetchUserById(userData.userId, (error, result) => {
-
-        if (error) {
-            return next();
-        }
-
-        if (!result || result.length === 0) {
-            return next();
-        }
-
-        const userObj = result[0];
-        res.locals.user = userObj;
-
+    fetchUserById(userData.userId).then(user => {
+        res.locals.user = user;
         res.locals.user.role = {
-            "isAdmin": userObj.roleId === 1,
-            "isFaculty": userObj.roleId === 2,
-            "isStudent": userObj.roleId === 3,
+            "isAdmin": user.roleId === 1,
+            "isFaculty": user.roleId === 2,
+            "isStudent": user.roleId === 3,
         }
         next();
-    });
+    }).catch((err) => {
+        next();
+    })
 };
 

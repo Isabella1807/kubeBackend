@@ -12,7 +12,15 @@ import User from "./database/models/User";
 import Role from "./database/models/Role";
 import Team from "./database/models/Team";
 import Project from "./database/models/Project";
-import {createUser, getUserByMail} from "./models/userModel";
+import {
+    createUser,
+    fetchAllUsers,
+    fetchUserById,
+    getUserByMail,
+    getUsersByTeamId,
+    updateUserPasswordById
+} from "./models/userModel";
+import {getUserById} from "./controllers/userController";
 
 dotenv.config();
 
@@ -85,14 +93,7 @@ app.listen(port)
 }, 1000)*/
 
 /*setTimeout(async () => {
-    createUser({
-        uclMail: "mymail",
-        password: "mypassword",
-        firstName: "myfirstName",
-        lastName: "mylastName",
-        roleId: 7,
-        teamId: 4
-    }).then((res) => {
+    updateUserPasswordById(1, "TESTER").then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {

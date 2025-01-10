@@ -1,7 +1,14 @@
-import { parse } from 'csv-parse';
-import { Readable } from 'stream';
-import { getOrCreateTeam } from '../models/teamModel';
-import { createUser, fetchUserById, fetchAllUsers, updateUserPasswordById, deleteUserById, getUsersByTeamId } from '../models/userModel';
+import {parse} from 'csv-parse';
+import {Readable} from 'stream';
+import {getOrCreateTeam} from '../models/teamModel';
+import {
+    createUser,
+    fetchUserById,
+    fetchAllUsers,
+    updateUserPasswordById,
+    deleteUserById,
+    getUsersByTeamId
+} from '../models/userModel';
 import {Request, Response} from "express";
 
 // this function takes the csv file and does that users can be added to the database
@@ -24,7 +31,7 @@ export const addUserFromCSV = async (req, res) => {
                     continue;
                 }
                 try {
-                    const ownTeamName = req.body.teamName; 
+                    const ownTeamName = req.body.teamName;
                     // finds the user or creates the team or user 
                     const teamId = await getOrCreateTeam(ownTeamName);
                     const userData = {
@@ -53,22 +60,22 @@ export const addUserFromCSV = async (req, res) => {
                         usersAdded: results.length
                     });
                 } catch (err) {
-                    res.status(500).json({ error: 'Error processing CSV file.' });
+                    res.status(500).json({error: 'Error processing CSV file.'});
                 }
             })
             .on('error', (err) => {
-                res.status(500).json({ error: 'Error processing CSV file.' });
+                res.status(500).json({error: 'Error processing CSV file.'});
             });
 
     } catch (err) {
-        res.status(500).json({ error: 'Server error processing upload.' });
+        res.status(500).json({error: 'Server error processing upload.'});
     }
 };
 
 
 // Controller to fetch a user by ID
 
-export const getUserById  = async (req: Request, res: Response) => {
+export const getUserById = (req: Request, res: Response) => {
     const userId = parseInt(req.params.id);
 
     fetchUserById(userId).then((user) => {
@@ -77,13 +84,23 @@ export const getUserById  = async (req: Request, res: Response) => {
             user,
         });
     }).catch((err) => {
-        res.status(404).json({ message: "User not found." });
+        res.status(404).json({message: "User not found."});
     })
 };
 
 // Controller to fetch all users
-export const getAllUsers = (req, res) => {
-    fetchAllUsers((err, result) => {
+export const getAllUsers = (req: Request, res: Response) => {
+    fetchAllUsers().then((users) => {
+        res.status(200).json({
+            message: "User data retrieved successfully.",
+            users,
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.status(404).json({message: "Users not found."});
+    })
+
+    /*((err, result) => {
         if (err) {
             res.status(500).json({ error: "Failed to fetch users." });
         } else {
@@ -96,46 +113,65 @@ export const getAllUsers = (req, res) => {
                 res.status(404).json({ message: "No users found." });
             }
         }
-    });
+    });*/
 };
 
 // Controller to update user password
-export const updatePassword = async (req, res) => {
-    const userId = req.params.id;
+export const updatePassword = (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
     const newPassword = req.body.password;
 
     if (!newPassword) {
-        return res.status(400).json({ message: "Password is required." });
+        res.status(400).json({message: "Password is required."});
+        return;
     }
 
-    try {
+    updateUserPasswordById(userId, newPassword).then((affectedItems) => {
+        res.status(200).json({
+            message: "Password updated successfully."
+        })
+    }).catch((err) => {
+        res.status(404).json({message: "User not found or no changes made."});
+    });
+
+    /*try {
         const result = await updateUserPasswordById(userId, newPassword);
         // @ts-ignore
-        if (result.affectedRows > 0) {
+        if (result > 0) {
             res.status(200).json({message: "Password updated successfully."});
         } else {
             res.status(404).json({message: "User not found or no changes made."});
         }
     } catch (error) {
         res.status(500).json({error: "Failed to update password."});
-    }
+    }*/
 };
 
 // Controller to delete a user by ID
-export const deleteUserByIdController = (req, res) => {
-    const userId = req.params.id;
+export const deleteUserByIdController = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
 
-    deleteUserById(userId, (err, result) => {
+    await deleteUserById(userId).then((user) => {
+        res.status(200).json({
+            message: "User deleted successfully.",
+            user,
+        });
+    }).catch((err) => {
+        res.status(404).json({message: "User not found."});
+    })
+}
+/*
+=> {
         if (err) {
-            return res.status(500).json({ error: "Failed to delete user" });
+            return res.status(500).json({error: "Failed to delete user"});
         }
-        res.status(200).json({ message: "User deleted successfully" });
+        res.status(200).json({message: "User deleted successfully"});
     });
-};
+};*/
 
 // retrive members in the database
-export const getTeamMembers = async (req, res) => {
-    const teamId = req.params.teamId;
+export const getTeamMembers = async (req: Request, res: Response) => {
+    const teamId = parseInt(req.params.teamId);
     try {
         const users = await getUsersByTeamId(teamId);
         res.status(200).json({
@@ -144,7 +180,7 @@ export const getTeamMembers = async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching team members:", error);
-        res.status(500).json({ error: "Failed to fetch team members" });
+        res.status(500).json({error: "Failed to fetch team members"});
     }
 };
 
@@ -160,9 +196,9 @@ export const createSingleUser = async (req, res) => {
             password: 'DefaultPassword123!'
         };
         await createUser(userData);
-        res.status(200).json({ message: "User created successfully" });
+        res.status(200).json({message: "User created successfully"});
     } catch (err) {
         console.error("Error creating user:", err);
-        res.status(500).json({ error: "Failed to create user" });
+        res.status(500).json({error: "Failed to create user"});
     }
 };

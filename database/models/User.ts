@@ -4,7 +4,8 @@ import {
     Model,
     DataType,
     HasMany,
-    ForeignKey
+    ForeignKey,
+    BelongsTo
 } from "sequelize-typescript";
 import Role from "./Role";
 import Team from "./Team";
@@ -66,6 +67,9 @@ class User extends Model
 
     @HasMany(() => Project)
     projects!: Project[];
+
+    @BelongsTo(() => Team)
+    team!: Team;
 }
 
 export default User;

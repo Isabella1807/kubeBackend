@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "noImplicitAny": false,
     "target": "es6",
     "sourceMap": true,
     "strict": false,

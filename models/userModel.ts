@@ -2,6 +2,7 @@ import kubeDB from "../Database";
 import {User as UserType, UserCreateData, UserWithPassword} from "../types/user";
 import User from "../database/models/User";
 import Team from "../database/models/Team";
+import {BaseTemplate} from "../types/template";
 
 
 export const createUser = (userData: UserCreateData): Promise<UserCreateData> => new Promise((resolve, reject) => {
@@ -16,8 +17,11 @@ export const fetchUserById = (userId: number): Promise<UserType> => new Promise(
     User.findOne({
         where: {userId: userId}
     }).then((result) => {
-        console.log(result);
-        resolve(result.dataValues);
+        if (result) {
+            resolve(result.dataValues);
+        } else {
+            reject("User not found");
+        }
     }).catch((err) => {
         console.log(err);
         reject(err);
@@ -31,8 +35,12 @@ export const getUserByMail = (userMail: string): Promise<UserWithPassword> => ne
     User.findOne({
         where: {uclMail: userMail},
         attributes: ['password', 'userId', 'roleId']
-    }).then((user) => {
-        resolve(user.dataValues);
+    }).then((result) => {
+        if (result) {
+            resolve(result.dataValues);
+        } else {
+            reject("User not found");
+        }
     }).catch((err) => {
         console.error('Error creating user:', err);
         reject("Model get by ucl mail error");
@@ -93,7 +101,11 @@ export const getUsersByTeamId = (teamId: number): Promise<User[]> => new Promise
         attributes: ['userId', 'uclMail', 'firstName', 'lastName', 'roleId'],
         raw: true
     }).then((result) => {
-        resolve(result)
+        if (result) {
+            resolve(result);
+        } else {
+            reject("User not found");
+        }
     }).catch((err) => {
         console.log(err)
         reject(err);
@@ -155,7 +167,7 @@ export const updateUserPasswordById = (userId: number, newPassword: string):Prom
 
 // function to delete user by their id
 
-export const deleteUserById = (userId: number) => new Promise((resolve, reject) => {
+export const deleteUserById = (userId: number):Promise<number> => new Promise((resolve, reject) => {
     User.destroy({
         where: {userId: userId}
     }).then((result) => {

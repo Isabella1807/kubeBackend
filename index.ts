@@ -13,7 +13,7 @@ import Role from "./database/models/Role";
 import Team from "./database/models/Team";
 import Project from "./database/models/Project";
 import {
-    createUser,
+    createUser, deleteUserById,
     fetchAllUsers,
     fetchUserById,
     getUserByMail,
@@ -21,6 +21,7 @@ import {
     updateUserPasswordById
 } from "./models/userModel";
 import {getUserById} from "./controllers/userController";
+import {deleteTemplateById, getAllTemplates, getTemplateByID, updateTemplateById} from "./models/templateModel";
 
 dotenv.config();
 
@@ -92,12 +93,13 @@ app.listen(port)
     })
 }, 1000)*/
 
-/*setTimeout(async () => {
-    updateUserPasswordById(1, "TESTER").then((res) => {
+
+setTimeout(async () => {
+    updateTemplateById(6, "wom", "womp").then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {
         console.log('ERRERERR')
         console.log(err);
     })
-}, 1000)*/
+}, 1000)

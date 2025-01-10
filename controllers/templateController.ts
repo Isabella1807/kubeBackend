@@ -1,8 +1,9 @@
 //import yaml from 'js-yaml';
 import { getAllTemplates, createTemplate, deleteTemplateById, getTemplateByID, updateTemplateById} from "../models/templateModel";
+import {Request, Response} from "express";
 
 export const templateController = {
-  getAll: async (req, res) => {
+  getAll: async (req: Request, res:Response) => {
     try {
       const template = await getAllTemplates();
       res.json(template);
@@ -15,7 +16,8 @@ export const templateController = {
     try {
       const template = await getTemplateByID(id);
       if (!template) {
-        return res.status(404).json({ message: "Template not found" });
+        res.status(404).json({ message: "Template not found" });
+        return
       }
       res.json(template); 
     } catch (error) {
@@ -23,11 +25,12 @@ export const templateController = {
     }
   },
 
-  create: async (req, res) => {
+  create: async (req:Request, res:Response) => {
     try {
       const { user } = res.locals;
       if (!user || user.roleId !== 1) {
-        return res.status(403).send("Access denied. Only admins can create templates.");
+        res.status(403).send("Access denied. Only admins can create templates.");
+        return
       }
 
       const { templateName, templateText } = req.body;
@@ -76,36 +79,40 @@ export const templateController = {
     }
   },
 
-  delete: async (req, res) => {
-    const { user } = res.locals;
+  delete: async (req: Request, res:Response) => {
+    const {user}= res.locals;
     if (!user || user.roleId !== 1) {
-      return res.status(403).send("Access denied. Only admins can delete templates.");
+      res.status(403).send("Access denied. Only admins can delete templates.");
+      return
     }
   
-    const templateId = req.params.id;
+    const templateId = parseInt(req.params.id);
     try {
       const result = await deleteTemplateById(templateId);
 
       // @ts-ignore
       if (!result.success) {
-        return res.status(404).json({ message: "Template not found" });
+        res.status(404).json({ message: "Template not found" });
+        return
       }
   
       res.status(200).json({ message: "Template deleted successfully" });
     } catch (error) {
       res.status(500).json({
         message: "Failed to delete template",
+        // @ts-ignore
         error: error.message,
       });
     }
   }, 
-  update: async (req, res) => {
-    const { id } = req.params;
+  update: async (req: Request, res: Response) => {
+    const id  = parseInt(req.params.id);
     const { templateName, templateText } = req.body;
     
     try {
       if (!templateName || !templateText) {
-        return res.status(400).json({ message: 'Template name and text are required' });
+        res.status(400).json({ message: 'Template name and text are required' });
+        return
       }
 
       const result = await updateTemplateById(id, templateName, templateText);

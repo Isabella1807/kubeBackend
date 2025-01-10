@@ -157,7 +157,7 @@ export const deleteUserByIdController = async (req: Request, res: Response) => {
             user,
         });
     }).catch((err) => {
-        res.status(404).json({message: "User not found."});
+        res.status(404).json({message: "User not found or no changes made."});
     })
 }
 /*

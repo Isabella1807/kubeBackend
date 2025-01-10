@@ -13,6 +13,7 @@ export const verifyToken = (token) => {
     try {
         return jwt.verify(token, process.env.TOKEN_SECRET);
     } catch (error) {
+        // @ts-ignore
         console.error("Error verifying token:", error.message);
         return false;
     }

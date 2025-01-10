@@ -22,6 +22,7 @@ import {
 } from "./models/userModel";
 import {getUserById} from "./controllers/userController";
 import {deleteTemplateById, getAllTemplates, getTemplateByID, updateTemplateById} from "./models/templateModel";
+import {getAllTeams} from "./models/teamModel";
 
 dotenv.config();
 
@@ -95,7 +96,7 @@ app.listen(port)
 
 
 setTimeout(async () => {
-    updateTemplateById(6, "wom", "womp").then((res) => {
+    getAllTeams().then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {

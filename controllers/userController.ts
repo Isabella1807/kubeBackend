@@ -1,6 +1,6 @@
 import {parse} from 'csv-parse';
 import {Readable} from 'stream';
-import {getOrCreateTeam} from '../models/teamModel';
+import {getOrCreateTeam} from "../models/teamModel";
 import {
     createUser,
     fetchUserById,

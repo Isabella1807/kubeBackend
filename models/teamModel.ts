@@ -1,7 +1,41 @@
 import kubeDB from "../Database";
+import Team from "../database/models/Team";
+import User from "../database/models/User";
+import {CountedTeam} from "../types/team";
+import {Sequelize} from 'sequelize';
 
 // get all team
-export const getAllTeams = () => new Promise((resolve, reject) => {
+
+export const getAllTeams = (): Promise<CountedTeam[]> => new Promise((resolve, reject) => {
+    Team.findAll({
+        attributes: [
+            'teamId',
+            'teamName',
+            //Counts amount of userId
+            [Sequelize.fn('COUNT', Sequelize.col('users.userId')), 'memberCount']
+        ],
+        //Makes relation between user and team and makes it possible to count users in team
+        include: [{
+            model: User,
+            attributes: []
+        }],
+        //Makes sure the result is divided based on teamId
+        group: ['Team.teamId'],
+    }).then((teamsWithMemberCounts) => {
+        resolve(
+            //Using map to return array of objects that INCLUDES memberCount, so typescript can see it
+            teamsWithMemberCounts.map(result => ({
+                ...result.dataValues
+            }))
+        );
+    }).catch((error) => {
+        console.error('Error fetching team member counts:', error);
+        reject(error);
+    })
+});
+
+
+/*export const getAllTeams = () => new Promise((resolve, reject) => {
     const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount FROM team LEFT JOIN users ON team.teamId = users.teamId GROUP BY team.teamId, team.teamName`;
     kubeDB.query(sql, (error, result) => {
         if (error) {
@@ -11,14 +45,18 @@ export const getAllTeams = () => new Promise((resolve, reject) => {
             resolve(result);
         }
     });
-});
+});*/
 
 export const getTeamById = (id) => new Promise((resolve, reject) => {
     if (!id) {
         reject("ID is required");
         return;
     }
-    const sql = `SELECT team.teamId,team.teamName, COUNT(users.userId) as memberCount  FROM team  LEFT JOIN users ON team.teamId = users.teamId  WHERE team.teamId = ?  GROUP BY team.teamId, team.teamName`;
+    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount
+                 FROM team
+                          LEFT JOIN users ON team.teamId = users.teamId
+                 WHERE team.teamId = ?
+                 GROUP BY team.teamId, team.teamName`;
     kubeDB.query(sql, [id], (error, result) => {
         if (error) {
             console.error(`Error fetching team with ID ${id}:`, error);
@@ -84,10 +122,10 @@ export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
 
 
 export const getAllTeamsSortedDesc = () => new Promise((resolve, reject) => {
-    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount 
-                 FROM team 
-                 LEFT JOIN users ON team.teamId = users.teamId 
-                 GROUP BY team.teamId, team.teamName 
+    const sql = `SELECT team.teamId, team.teamName, COUNT(users.userId) as memberCount
+                 FROM team
+                          LEFT JOIN users ON team.teamId = users.teamId
+                 GROUP BY team.teamId, team.teamName
                  ORDER BY teamName DESC`;
     kubeDB.query(sql, (error, result) => {
         if (error) {

@@ -3,7 +3,9 @@ import Team from "../database/models/Team";
 import User from "../database/models/User";
 import {BaseTeam, CountedTeam} from "../types/team";
 import {Sequelize} from 'sequelize';
+import minDB from "../database/connection";
 import {BaseTemplate} from "../types/template";
+import user from "../database/models/User";
 
 // get all team
 
@@ -104,8 +106,8 @@ export const getTeamById = (id: number): Promise<CountedTeam> => new Promise((re
 export const getOrCreateTeam = (teamName: string): Promise<BaseTeam["teamId"]> => new Promise(
     (resolve, reject) => {
         Team.findOrCreate({
-            where:{teamName:teamName},
-            defaults:{teamName:teamName},
+            where: {teamName: teamName},
+            defaults: {teamName: teamName},
             raw: true
         }).then((result) => {
             resolve(result[0].teamId)
@@ -131,35 +133,33 @@ export const getOrCreateTeam = (teamName: string): Promise<BaseTeam["teamId"]> =
     }
 };*/
 
-export const deleteTeamByID = (id) => new Promise((resolve, reject) => {
-    if (!id) reject();
+export const deleteTeamByID = (id: number) => new Promise(async (resolve, reject) => {
+    try {
+        const result = minDB.transaction(async deleteTeamTransaction => {
+            const userIdList = await User.findAll({
+                where: {teamId: id},
+                attributes: ["userId"],
+                raw: true
+            }).then((result) => {
+                return result.map((user) => user.userId)
+            })
 
-    kubeDB.query('DELETE FROM project WHERE userId IN (SELECT userId FROM users WHERE teamId = ?)', [id], (error) => {
-        if (error) {
-            reject("Error deleting team projects");
-            return;
-        }
+            //TODO: SLET PROJECTSSSS
 
-        kubeDB.query('DELETE FROM users WHERE teamId = ?', [id], (error) => {
-            if (error) {
-                reject("Error deleting team users");
-                return;
-            }
-
-            kubeDB.query('DELETE FROM team WHERE teamId = ?', [id], (error, result) => {
-                if (error) {
-                    reject("Team delete by Id error");
-                } else {
-                    // @ts-ignore
-                    if (result.affectedRows === 0) {
-                        reject(`Team with id ${id} does not exist`);
-                    } else {
-                        resolve(result)
-                    }
-                }
+            await User.destroy({
+                where: {userId: userIdList},
+                transaction: deleteTeamTransaction
             });
+
+            await Team.destroy({
+                where: {teamId: id},
+                transaction: deleteTeamTransaction
+            })
         });
-    });
+        resolve(true);
+    } catch (error) {
+        reject(error);
+    }
 });
 
 /*export const deleteTeamByID = (id) => new Promise((resolve, reject) => {

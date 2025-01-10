@@ -22,7 +22,7 @@ import {
 } from "./models/userModel";
 import {getUserById} from "./controllers/userController";
 import {deleteTemplateById, getAllTemplates, getTemplateByID, updateTemplateById} from "./models/templateModel";
-import {getAllTeams} from "./models/teamModel";
+import {getAllTeams, getOrCreateTeam, getTeamById} from "./models/teamModel";
 
 dotenv.config();
 
@@ -94,13 +94,12 @@ app.listen(port)
     })
 }, 1000)*/
 
-
-setTimeout(async () => {
-    getAllTeams().then((res) => {
+/*setTimeout(async () => {
+    getOrCreateTeam("hejsa").then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {
         console.log('ERRERERR')
         console.log(err);
     })
-}, 1000)
+}, 1000)*/

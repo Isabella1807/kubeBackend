@@ -1,5 +1,8 @@
-export interface CountedTeam {
+export interface BaseTeam {
     teamId: number,
-    teamName: string,
+    teamName: string
+}
+
+export interface CountedTeam extends BaseTeam {
     memberCount: number
 }

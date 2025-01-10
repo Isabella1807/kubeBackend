@@ -14,9 +14,7 @@ export const createUser = (userData: UserCreateData): Promise<UserCreateData> =>
 });
 
 export const fetchUserById = (userId: number): Promise<UserType> => new Promise((resolve, reject) => {
-    User.findOne({
-        where: {userId: userId}
-    }).then((result) => {
+    User.findByPk(userId).then((result) => {
         if (result) {
             resolve(result.dataValues);
         } else {

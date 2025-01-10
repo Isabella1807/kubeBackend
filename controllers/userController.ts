@@ -33,7 +33,7 @@ export const addUserFromCSV = async (req, res) => {
                 try {
                     const ownTeamName = req.body.teamName;
                     // finds the user or creates the team or user 
-                    const teamId = await getOrCreateTeam(ownTeamName);
+                    /*const teamId = await getOrCreateTeam(ownTeamName);
                     const userData = {
                         uclMail: row.uclMail,
                         password: row.password,
@@ -44,7 +44,7 @@ export const addUserFromCSV = async (req, res) => {
                     };
                     // create the user in the database 
                     await createUser(userData);
-                    results.push(userData);
+                    results.push(userData);*/
                 } catch (err) {
                 }
             }

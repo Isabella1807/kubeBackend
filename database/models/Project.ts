@@ -7,13 +7,14 @@ import {
     UpdatedAt,
     BeforeCreate,
     HasMany,
-    ForeignKey
+    ForeignKey, BelongsTo
 } from "sequelize-typescript";
 
 import {literal} from "sequelize";
 
 import User from "./User";
 import Template from "./Template"
+import Team from "./Team";
 
 @Table({
     tableName: "projects",
@@ -80,6 +81,9 @@ class Project extends Model {
         allowNull: false
     })
     state!: number;
+
+    @BelongsTo(() => User)
+    user!: User;
 }
 
 export default Project;

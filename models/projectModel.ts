@@ -1,48 +1,138 @@
 import kubeDB from "../Database";
 // import {models} from "./modelsDB/init-models";
 import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
+import Project from "../database/models/Project";
+import User from "../database/models/User";
+import Team from "../database/models/Team";
 
-/*export const getAllProjects = async () => {
-    console.log('THIS WAS CALLED')
-    const a = await models.project.findAll({
+
+export const getAllProjects = () => new Promise((resolve, reject) => {
+    Project.findAll({
+        attributes: [
+            'projectId',
+            'templateId',
+            'userId',
+            'projectName',
+            'createdDate',
+            'subdomainName',
+            'lastChangeDate',
+            "state"
+        ],
         include: [
-            { model: models.users, as: "user" },
-            { model: models.template, as: "template" }
+            {
+                model: User,
+                attributes: [
+                    'uclMail',
+                    'firstName',
+                    'lastName'
+                ],
+                include: [{
+                    model: Team,
+                    attributes: [
+                        "teamName"
+                    ]
+                }
+                ]
+            }
         ]
-    }).then((b) => {
-        console.log('TEEST?', b);
-    }).catch((c) => {
-        console.log('C!?!?!', c)
-    })
-    console.log('FOUNID PROJECTS:', a);
-    return a;
-};*/
-export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve, reject) => {
-    kubeDB.query('SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {
+    }).then(result => {
+        resolve(result.map((item) => {
+            const {user, ...restProject} = item.dataValues
+            const {team, ...restUser} = user.dataValues
+            return{
+                ...restProject,
+                ...restUser,
+                ...team.dataValues
+            };
+        }))
+    }).catch(error => {
+        reject(error);
+    });
+});
+
+/*export const getAllProjects = (): Promise<BaseProject[]> => new Promise((resolve, reject) => {
+    kubeDB.query('SELECT
+projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project
+LEFT JOIN users ON project.userId = users.userId
+LEFT JOIN team ON users.teamId = team.teamId;', (error, result) => {
+
         if (error) {
             reject("Model get all error")
         } else {
             resolve(result as BaseProject[])
         }
     })
-})
+})*/
 
 export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.userId = ?`, [id], (error, result) => {
+    Project.findAll({
+        where: {
+            userId: id
+        }
+    }).then(result => {
+        resolve(result.map((item) => {
+            const {user, ...restProject} = item.dataValues
+            const {team, ...restUser} = user.dataValues
+            return{
+                ...restProject,
+                ...restUser,
+                ...team.dataValues
+            };
+        }))
+    }).catch(error => {
+        reject(error);
+    });
+})
+
+/*export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => new Promise((resolve, reject) => {
+    if (!id) reject();
+
+    kubeDB.query(`SELECT projectId,
+                         templateId,
+                         project.userId AS userId,
+                         projectName,
+                         createdDate,
+                         subdomainName,
+                         lastChangeDate,
+                         uclMail,
+                         firstName,
+                         lastName,
+                         teamName,
+                         state
+                  FROM project
+                           LEFT JOIN users ON project.userId = users.userId
+                           LEFT JOIN team ON users.teamId = team.teamId
+                  WHERE project.userId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model get by ID error");
         } else {
             resolve(result as BaseProject[])
         }
     })
-})
+})*/
 
 export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`SELECT projectId, templateId, project.userId AS userId, stackId, projectName, createdDate, subdomainName, lastChangeDate, uclMail, firstName, lastName, teamName, state FROM project LEFT JOIN users ON project.userId = users.userId LEFT JOIN team ON users.teamId = team.teamId WHERE project.projectId = ?`, [id], (error, result) => {
+    kubeDB.query(`SELECT projectId,
+                         templateId,
+                         project.userId AS userId,
+                         stackId,
+                         projectName,
+                         createdDate,
+                         subdomainName,
+                         lastChangeDate,
+                         uclMail,
+                         firstName,
+                         lastName,
+                         teamName,
+                         state
+                  FROM project
+                           LEFT JOIN users ON project.userId = users.userId
+                           LEFT JOIN team ON users.teamId = team.teamId
+                  WHERE project.projectId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model get by ID error");
         } else {
@@ -57,7 +147,8 @@ export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new P
 })
 
 export const createProject = (templateid: number, userid: number, stackId: number, projectname: string, subdomainname: string): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
-    const query = `INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state) VALUES (?, ?, ?, ?, ?, 1)`;
+    const query = `INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state)
+                   VALUES (?, ?, ?, ?, ?, 1)`;
     const values = [templateid, userid, stackId, projectname, subdomainname];
 
     kubeDB.query(query, values, (error, result) => {
@@ -70,10 +161,12 @@ export const createProject = (templateid: number, userid: number, stackId: numbe
     });
 });
 
-export const deleteProjectByID = (id:number): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
+export const deleteProjectByID = (id: number): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`DELETE FROM project WHERE projectId = ?`, [id], (error, result) => {
+    kubeDB.query(`DELETE
+                  FROM project
+                  WHERE projectId = ?`, [id], (error, result) => {
         if (error) {
             reject("Model delete by ID error");
         } else {
@@ -90,7 +183,9 @@ export const deleteProjectByID = (id:number): Promise<ResultSetHeader> => new Pr
 export const setProjectStatusById = (id: number, status: number): Promise<any> => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    kubeDB.query(`UPDATE project SET state = ? WHERE projectId = ?`, [status, id], (error, result) => {
+    kubeDB.query(`UPDATE project
+                  SET state = ?
+                  WHERE projectId = ?`, [status, id], (error, result) => {
         if (error) {
             reject("error");
         } else {
@@ -102,7 +197,9 @@ export const setProjectStatusById = (id: number, status: number): Promise<any> =
 
 export const getProjectBySubdomain = (name: string): Promise<BaseProject[]> => new Promise((resolve, reject) => {
     if (!name) reject();
-    kubeDB.query(`SELECT subdomainName project FROM project WHERE subdomainName = ?`, [name], (error, result) => {
+    kubeDB.query(`SELECT subdomainName project
+                  FROM project
+                  WHERE subdomainName = ?`, [name], (error, result) => {
         if (error) {
             reject(error);
         } else {

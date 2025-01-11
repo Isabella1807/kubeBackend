@@ -7,8 +7,6 @@ import swaggerui from 'swagger-ui-express';
 import "./database/connection";
 
 import dotenv from 'dotenv';
-import {getProjectsBySubdomain, setProjectStatusById} from "./models/projectModel";
-import {ProjectState} from "./types/project";
 
 dotenv.config();
 
@@ -68,25 +66,13 @@ app.use(Router);
 
 // start server
 app.listen(port)
+
 /*setTimeout(async () => {
-    await minDB.sync({ alter: true });
-    await Project.create({
-    templateId: 10,
-    userId: 1,
-    stackId: 121,
-    projectName: "Projectnavn lol1",
-    subdomainName: "subdomain",
-    state: 1,
-    })
-}, 1000)*/
-
-
-setTimeout(async () => {
-    getProjectsBySubdomain("WOMP").then((res) => {
+    deleteTeamByID(8).then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {
         console.log('ERRERERR')
         console.log(err);
     })
-}, 1000)
+}, 1000)*/

@@ -136,7 +136,7 @@ export const getOrCreateTeam = (teamName: string): Promise<BaseTeam["teamId"]> =
 
 export const deleteTeamByID = (id: number) => new Promise(async (resolve, reject) => {
     try {
-        const result = minDB.transaction(async deleteTeamTransaction => {
+        await minDB.transaction(async deleteTeamTransaction => {
             const userIdList = await User.findAll({
                 where: {teamId: id},
                 attributes: ["userId"],
@@ -146,7 +146,7 @@ export const deleteTeamByID = (id: number) => new Promise(async (resolve, reject
             })
 
             await Project.destroy({
-                where: {projectId: id},
+                where: {userId: userIdList},
                 transaction: deleteTeamTransaction
             })
 

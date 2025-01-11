@@ -1,6 +1,6 @@
 import kubeDB from "../Database";
 // import {models} from "./modelsDB/init-models";
-import {BaseProject, ProjectWithStackId, ResultSetHeader} from "../types/project";
+import {BaseProject, CreateProjectBody, ProjectWithStackId, ResultSetHeader} from "../types/project";
 import Project from "../database/models/Project";
 import User from "../database/models/User";
 import Team from "../database/models/Team";
@@ -70,7 +70,34 @@ export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => ne
     Project.findAll({
         where: {
             userId: id
-        }
+        },
+        attributes: [
+            'projectId',
+            'templateId',
+            'userId',
+            'projectName',
+            'createdDate',
+            'subdomainName',
+            'lastChangeDate',
+            "state"
+        ],
+        include: [
+            {
+                model: User,
+                attributes: [
+                    'uclMail',
+                    'firstName',
+                    'lastName'
+                ],
+                include: [{
+                    model: Team,
+                    attributes: [
+                        "teamName"
+                    ]
+                }
+                ]
+            }
+        ]
     }).then(result => {
         resolve(result.map((item) => {
             const {user, ...restProject} = item.dataValues
@@ -116,6 +143,51 @@ export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => ne
 export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new Promise((resolve, reject) => {
     if (!id) reject();
 
+    Project.findByPk( id, {
+        attributes: [
+            'projectId',
+            'templateId',
+            'userId',
+            "stackId",
+            'projectName',
+            'createdDate',
+            'subdomainName',
+            'lastChangeDate',
+            "state"
+        ],
+        include: [
+            {
+                model: User,
+                attributes: [
+                    'uclMail',
+                    'firstName',
+                    'lastName'
+                ],
+                include: [{
+                    model: Team,
+                    attributes: [
+                        "teamName"
+                    ]
+                }
+                ]
+            }
+        ]
+    }).then(result => {
+        const {user, ...restProject} = result.dataValues
+        const {team, ...restUser} = user.dataValues
+        resolve({
+            ...restProject,
+            ...restUser,
+            ...team.dataValues
+        });
+    }).catch(error => {
+        reject(error);
+    });
+})
+
+/*export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new Promise((resolve, reject) => {
+    if (!id) reject();
+
     kubeDB.query(`SELECT projectId,
                          templateId,
                          project.userId AS userId,
@@ -144,9 +216,22 @@ export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new P
             }
         }
     })
-})
+})*/
 
-export const createProject = (templateid: number, userid: number, stackId: number, projectname: string, subdomainname: string): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
+export const createProject = (createParams: CreateProjectBody): Promise<BaseProject["projectId"]> => new Promise((resolve, reject) => {
+    //templateid, userid, stackId, projectname, subdomainname
+
+    Project.create({
+        ...createParams,
+        state: 1
+    }).then(result => {
+        resolve(result.dataValues.projectId)
+    }).catch(error => {
+        reject(error);
+    })
+});
+
+/*export const createProject = (templateid: number, userid: number, stackId: number, projectname: string, subdomainname: string): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
     const query = `INSERT INTO project (templateId, userId, stackId, projectName, subdomainName, state)
                    VALUES (?, ?, ?, ?, ?, 1)`;
     const values = [templateid, userid, stackId, projectname, subdomainname];
@@ -159,7 +244,7 @@ export const createProject = (templateid: number, userid: number, stackId: numbe
 
         }
     });
-});
+});*/
 
 export const deleteProjectByID = (id: number): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
     if (!id) reject();

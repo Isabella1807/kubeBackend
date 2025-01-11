@@ -50,3 +50,11 @@ export interface NewProjectBody {
     subdomainName: string
 }
 
+export interface CreateProjectBody {
+    templateId: number,
+    projectName: string,
+    subdomainName: string,
+    userId: number,
+    stackId: number,
+}
+

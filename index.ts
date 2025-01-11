@@ -23,7 +23,7 @@ import {
 import {getUserById} from "./controllers/userController";
 import {deleteTemplateById, getAllTemplates, getTemplateByID, updateTemplateById} from "./models/templateModel";
 import {deleteTeamByID, getAllTeams, getOrCreateTeam, getTeamById} from "./models/teamModel";
-import {getAllProjects, getAllProjectsByUserID} from "./models/projectModel";
+import {createProject, getAllProjects, getAllProjectsByUserID, getProjectByID} from "./models/projectModel";
 
 dotenv.config();
 
@@ -96,7 +96,7 @@ app.listen(port)
 }, 1000)*/
 
 setTimeout(async () => {
-    getAllProjectsByUserID(4).then((res) => {
+    createProject({templateId: 4, userId: 3, stackId: 123, projectName: "createdprject", subdomainName: "subdomainnamehih"}).then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {

@@ -60,7 +60,6 @@ export const projectController = {
             return
         }
 
-
         if (typeof subdomainName !== 'string' || subdomainName.length === 0) {
             res.status(400).send("no subdomain name")
             return
@@ -128,9 +127,9 @@ export const projectController = {
             // Create new project in sql db
             const stackId = newStack.data.Id;
             const userId = (res.locals.user as UserObject).userId;
-            const createdProjectInfo = await createProject(templateIdNum, userId, stackId, projectName, subdomainName);
+            const createdProjectId = await createProject({templateId: templateIdNum, userId: userId, stackId: stackId, projectName: projectName, subdomainName: subdomainName});
 
-            const createdProject = await getProjectByID(createdProjectInfo.insertId);
+            const createdProject = await getProjectByID(createdProjectId);
 
             res.status(200).json(createdProject);
         } catch (error) {

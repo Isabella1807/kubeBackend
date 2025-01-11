@@ -28,7 +28,6 @@ export const getAllTemplates = (): Promise<BaseTemplate[]> => new Promise((resol
 export const getTemplateByID = (id: number): Promise<BaseTemplate> => new Promise((resolve, reject) => {
     if (!id) {
         reject("ID is required");  // Returner en fejl, hvis ID ikke er angivet
-        return;
     }
 
     Template.findOne({

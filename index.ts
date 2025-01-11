@@ -7,6 +7,7 @@ import swaggerui from 'swagger-ui-express';
 import "./database/connection";
 
 import dotenv from 'dotenv';
+import {getUserByMail} from "./models/userModel";
 
 dotenv.config();
 
@@ -67,12 +68,12 @@ app.use(Router);
 // start server
 app.listen(port)
 
-/*setTimeout(async () => {
-    deleteTeamByID(8).then((res) => {
+setTimeout(async () => {
+    getUserByMail("student@edu.ucl.dk").then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {
         console.log('ERRERERR')
         console.log(err);
     })
-}, 1000)*/
+}, 1000)

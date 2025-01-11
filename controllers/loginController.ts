@@ -1,5 +1,6 @@
 import { generateToken } from "../utils/jwt";
 import { getUserByMail } from "../models/userModel";
+import {UserRoles} from "../types/user";
 
 export const loginController = {
     loginUser: async (req, res) => {
@@ -29,12 +30,12 @@ export const loginController = {
             }
 
             // Tjek rolle for studerende
-            if (userMail.endsWith("@edu.ucl.dk") && userData.roleId !== 3) {
+            if (userMail.endsWith("@edu.ucl.dk") && userData.roleId !== UserRoles.student) {
                 return res.status(403).send("Only students can use @edu.ucl.dk emails");
             }
 
             // Tjek rolle for fakultet og admin
-            if (userMail.endsWith("@ucl.dk") && ![1, 2].includes(userData.roleId)) {
+            if (userMail.endsWith("@ucl.dk") && ![UserRoles.admin, UserRoles.faculty].includes(userData.roleId)) {
                 return res.status(403).send("Only faculty or admin can use @ucl.dk emails");
             }
 

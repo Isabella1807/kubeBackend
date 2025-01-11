@@ -98,24 +98,24 @@ export const projectController = {
                 .replace(/CHANGEME/g, websiteId)
 
             // Name cannot contain space, special character or be capitalized
-            const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
+            /*const newStack = await Portainer.post(`/stacks/create/swarm/string?endpointId=5`, {
                 "fromAppTemplate": false,
                 "name": `${subdomainName}`,
                 "stackFileContent": templateText,
                 "swarmID": swarmId
-            }).then((stack) => stack).catch(() => null);
+            }).then((stack) => stack).catch(() => null);*/
 
             // temporary for when portainer goes down
-            /*const newStack = {
+            const newStack = {
                 data: {
                     Id: 12321,
                 }
-            }*/
+            }
 
-            if (!newStack) {
+            /*if (!newStack) {
                 res.status(500).send('Could not create stack in Portainer');
                 return;
-            }
+            }*/
 
             // Create new project in sql db
             const stackId = newStack.data.Id;
@@ -139,17 +139,17 @@ export const projectController = {
         }
 
         try {
-            const dbProject = await getProjectByID(id);
-            const stackId = dbProject.stackId;
+           // const dbProject = await getProjectByID(id);
+           //const stackId = dbProject.stackId;
 
-            const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
+            /*const deletedStack = await Portainer.delete(`/stacks/${stackId}?endpointId=5`)
             if (!deletedStack) {
                 res.status(500).send('Could not delete stack in Portainer');
                 return;
-            }
+            }*/
 
             //For when portaioner goes down
-           /* if (stackId !== 12321) {
+           /*if (stackId !== 12321) {
                 res.status(418).send('Can only delete dummy projects until portainer works!')
                 return;
             }*/
@@ -171,13 +171,13 @@ export const projectController = {
             return
         }
 
-        const {stackId} = await getProjectByID(id);
+        /*const {stackId} = await getProjectByID(id);
 
         const start = await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
         if (!start) {
             res.status(500).send('Could not start stack in Portainer');
             return;
-        }
+        }*/
         await setProjectStatusById({projectId: id, state: ProjectState.on})
         res.status(200).send(`Started project with id ${id}`)
     },
@@ -189,13 +189,13 @@ export const projectController = {
             return
         }
 
-        const {stackId} = await getProjectByID(id);
+        /*const {stackId} = await getProjectByID(id);
 
         const stop = await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
         if (!stop) {
             res.status(500).send('Could not stop stack in Portainer');
             return;
-        }
+        }*/
         await setProjectStatusById({projectId: id, state: ProjectState.off})
 
         res.status(200).send(`Stopped project with id ${id}`)

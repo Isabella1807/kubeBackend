@@ -16,3 +16,10 @@ export interface UserCreateData {
     "roleId": number,
     teamId: number,
 }
+
+
+export enum UserRoles {
+    admin = 5,
+    faculty = 6,
+    student = 7
+}

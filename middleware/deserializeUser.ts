@@ -1,5 +1,6 @@
 import { verifyToken } from "../utils/jwt";
 import { fetchUserById } from "../models/userModel";
+import {UserRoles} from "../types/user";
 
 export const deserializeUser = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -21,9 +22,9 @@ export const deserializeUser = (req, res, next) => {
     fetchUserById(userData.userId).then(user => {
         res.locals.user = user;
         res.locals.user.role = {
-            "isAdmin": user.roleId === 1,
-            "isFaculty": user.roleId === 2,
-            "isStudent": user.roleId === 3,
+            "isAdmin": UserRoles.admin,
+            "isFaculty": UserRoles.faculty,
+            "isStudent": UserRoles.student,
         }
         next();
     }).catch((err) => {

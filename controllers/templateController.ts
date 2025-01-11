@@ -1,6 +1,7 @@
 //import yaml from 'js-yaml';
 import { getAllTemplates, createTemplate, deleteTemplateById, getTemplateByID, updateTemplateById} from "../models/templateModel";
 import {Request, Response} from "express";
+import {UserRoles} from "../types/user";
 
 export const templateController = {
   getAll: async (req: Request, res:Response) => {
@@ -28,7 +29,7 @@ export const templateController = {
   create: async (req:Request, res:Response) => {
     try {
       const { user } = res.locals;
-      if (!user || user.roleId !== 1) {
+      if (!user || user.roleId !== UserRoles.admin) {
         res.status(403).send("Access denied. Only admins can create templates.");
         return
       }
@@ -81,7 +82,7 @@ export const templateController = {
 
   delete: async (req: Request, res:Response) => {
     const {user}= res.locals;
-    if (!user || user.roleId !== 1) {
+    if (!user || user.roleId !== UserRoles.admin) {
       res.status(403).send("Access denied. Only admins can delete templates.");
       return
     }

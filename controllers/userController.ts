@@ -12,7 +12,7 @@ import {
 import {Request, Response} from "express";
 
 // this function takes the csv file and does that users can be added to the database
-export const addUserFromCSV = async (req, res) => {
+export const addUserFromCSV = async (req: Request, res: Response) => {
     try {
         const results = [];
         const rows = [];
@@ -33,7 +33,7 @@ export const addUserFromCSV = async (req, res) => {
                 try {
                     const ownTeamName = req.body.teamName;
                     // finds the user or creates the team or user 
-                    /*const teamId = await getOrCreateTeam(ownTeamName);
+                    const teamId = await getOrCreateTeam(ownTeamName);
                     const userData = {
                         uclMail: row.uclMail,
                         password: row.password,
@@ -44,12 +44,13 @@ export const addUserFromCSV = async (req, res) => {
                     };
                     // create the user in the database 
                     await createUser(userData);
-                    results.push(userData);*/
+                    results.push(userData);
                 } catch (err) {
                 }
             }
         };
-        // reads the file 
+        // reads the file
+        //@ts-ignore
         Readable.from(req.file.buffer.toString())
             .pipe(csvParser)
             .on('end', async () => {

@@ -7,7 +7,8 @@ import swaggerui from 'swagger-ui-express';
 import "./database/connection";
 
 import dotenv from 'dotenv';
-import {getUserByMail} from "./models/userModel";
+import {createUser, getUserByMail} from "./models/userModel";
+import {updateTemplateById} from "./models/templateModel";
 
 dotenv.config();
 
@@ -68,12 +69,19 @@ app.use(Router);
 // start server
 app.listen(port)
 
-setTimeout(async () => {
-    getUserByMail("student@edu.ucl.dk").then((res) => {
+/*setTimeout(async () => {
+    createUser({
+        uclMail: "mail@edu.ucl.dk",
+        "password": "dfgsddrtrtersddg",
+        firstName: "gdf",
+        lastName: "gfdg",
+        "roleId": 7,
+        teamId: 11,
+    }).then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {
         console.log('ERRERERR')
         console.log(err);
     })
-}, 1000)
+}, 1000)*/

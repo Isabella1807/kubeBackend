@@ -91,8 +91,7 @@ export const templateController = {
     try {
       const result = await deleteTemplateById(templateId);
 
-      // @ts-ignore
-      if (!result.success) {
+      if (!result) {
         res.status(404).json({ message: "Template not found" });
         return
       }
@@ -118,11 +117,10 @@ export const templateController = {
 
       const result = await updateTemplateById(id, templateName, templateText);
 
-      // @ts-ignore
-      if (result.affectedRows > 0) {
+      if (result > 0) {
         res.status(200).json({ message: 'Template updated successfully' });
       } else {
-        res.status(404).json({ message: 'Template not found' });
+        res.status(404).json({ message: 'Template not found or updated' });
       }
     } catch (error) {
       res.status(500).json({ message: 'Failed to update template', error: error.message });

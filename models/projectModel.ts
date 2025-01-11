@@ -1,10 +1,14 @@
 import kubeDB from "../Database";
 // import {models} from "./modelsDB/init-models";
-import {BaseProject, CreateProjectBody, ProjectWithStackId, ResultSetHeader} from "../types/project";
+import {
+    BaseProject,
+    CreateProjectBody,
+    ProjectWithStackId,
+    UpdateProjectState
+} from "../types/project";
 import Project from "../database/models/Project";
 import User from "../database/models/User";
 import Team from "../database/models/Team";
-
 
 export const getAllProjects = () => new Promise((resolve, reject) => {
     Project.findAll({
@@ -39,7 +43,7 @@ export const getAllProjects = () => new Promise((resolve, reject) => {
         resolve(result.map((item) => {
             const {user, ...restProject} = item.dataValues
             const {team, ...restUser} = user.dataValues
-            return{
+            return {
                 ...restProject,
                 ...restUser,
                 ...team.dataValues
@@ -102,7 +106,7 @@ export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => ne
         resolve(result.map((item) => {
             const {user, ...restProject} = item.dataValues
             const {team, ...restUser} = user.dataValues
-            return{
+            return {
                 ...restProject,
                 ...restUser,
                 ...team.dataValues
@@ -143,7 +147,7 @@ export const getAllProjectsByUserID = (id: number): Promise<BaseProject[]> => ne
 export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new Promise((resolve, reject) => {
     if (!id) reject();
 
-    Project.findByPk( id, {
+    Project.findByPk(id, {
         attributes: [
             'projectId',
             'templateId',
@@ -219,8 +223,6 @@ export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new P
 })*/
 
 export const createProject = (createParams: CreateProjectBody): Promise<BaseProject["projectId"]> => new Promise((resolve, reject) => {
-    //templateid, userid, stackId, projectname, subdomainname
-
     Project.create({
         ...createParams,
         state: 1
@@ -246,7 +248,19 @@ export const createProject = (createParams: CreateProjectBody): Promise<BaseProj
     });
 });*/
 
-export const deleteProjectByID = (id: number): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
+export const deleteProjectByID = (id: number): Promise<number> => new Promise((resolve, reject) => {
+    if (!id) reject();
+
+    Project.destroy({
+        where: {projectId: id}
+    }).then(result => {
+        resolve(result)
+    }).catch(error => {
+        reject(error);
+    })
+});
+
+/*export const deleteProjectByID = (id: number): Promise<ResultSetHeader> => new Promise((resolve, reject) => {
     if (!id) reject();
 
     kubeDB.query(`DELETE
@@ -262,10 +276,24 @@ export const deleteProjectByID = (id: number): Promise<ResultSetHeader> => new P
             }
         }
     })
-});
+});*/
 
+export const setProjectStatusById = (updateParams: UpdateProjectState): Promise<number> => new Promise((resolve, reject) => {
+    Project.update({
+            state: updateParams.state
+        }, {
+            where: {
+                projectId: updateParams.projectId
+            }
+        }
+    ).then(result => {
+        resolve(result[0])
+    }).catch(error => {
+        reject(error + " error");
+    })
+})
 
-export const setProjectStatusById = (id: number, status: number): Promise<any> => new Promise((resolve, reject) => {
+/*export const setProjectStatusById = (id: number, status: number): Promise<any> => new Promise((resolve, reject) => {
     if (!id) reject();
 
     kubeDB.query(`UPDATE project
@@ -278,9 +306,22 @@ export const setProjectStatusById = (id: number, status: number): Promise<any> =
             resolve("success");
         }
     })
+})*/
+
+export const getProjectsBySubdomain = (subdomainname: string): Promise<BaseProject["projectId"][]> => new Promise((resolve, reject) => {
+    if (!subdomainname) reject();
+
+    Project.findAll({
+        where: {subdomainName: subdomainname}
+    }).then(result => {
+        resolve(result.map(item => item.dataValues.projectId))
+    }).catch(error => {
+        reject(error);
+    })
+
 })
 
-export const getProjectBySubdomain = (name: string): Promise<BaseProject[]> => new Promise((resolve, reject) => {
+/*export const getProjectBySubdomain = (name: string): Promise<BaseProject[]> => new Promise((resolve, reject) => {
     if (!name) reject();
     kubeDB.query(`SELECT subdomainName project
                   FROM project
@@ -291,4 +332,4 @@ export const getProjectBySubdomain = (name: string): Promise<BaseProject[]> => n
             resolve(result as BaseProject[]);
         }
     })
-})
+})*/

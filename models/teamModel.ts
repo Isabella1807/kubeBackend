@@ -6,6 +6,7 @@ import {Sequelize} from 'sequelize';
 import minDB from "../database/connection";
 import {BaseTemplate} from "../types/template";
 import user from "../database/models/User";
+import Project from "../database/models/Project";
 
 // get all team
 
@@ -144,7 +145,10 @@ export const deleteTeamByID = (id: number) => new Promise(async (resolve, reject
                 return result.map((user) => user.userId)
             })
 
-            //TODO: SLET PROJECTSSSS
+            await Project.destroy({
+                where: {projectId: id},
+                transaction: deleteTeamTransaction
+            })
 
             await User.destroy({
                 where: {userId: userIdList},

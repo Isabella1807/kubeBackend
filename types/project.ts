@@ -18,19 +18,9 @@ export interface ProjectWithStackId extends BaseProject {
     stackId: number,
 }
 
-enum ProjectState {
+export enum ProjectState {
     on = 1,
     off = 0
-}
-
-export interface ResultSetHeader {
-    "fieldCount": number,
-    "affectedRows": number,
-    "insertId": number,
-    "info": string,
-    "serverStatus": number,
-    "warningStatus": number,
-    "changedRows": number
 }
 
 export interface UserObject {
@@ -56,5 +46,10 @@ export interface CreateProjectBody {
     subdomainName: string,
     userId: number,
     stackId: number,
+}
+
+export interface UpdateProjectState {
+    projectId: number,
+    state: ProjectState
 }
 

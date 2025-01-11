@@ -1,29 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import Router from './routes/routes'
-import { deserializeUser } from "./middleware/deserializeUser";
+import {deserializeUser} from "./middleware/deserializeUser";
 import swaggerjsdoc from 'swagger-jsdoc';
 import swaggerui from 'swagger-ui-express';
 import "./database/connection";
 
 import dotenv from 'dotenv';
-import minDB from "./database/connection";
-import User from "./database/models/User";
-import Role from "./database/models/Role";
-import Team from "./database/models/Team";
-import Project from "./database/models/Project";
-import {
-    createUser, deleteUserById,
-    fetchAllUsers,
-    fetchUserById,
-    getUserByMail,
-    getUsersByTeamId,
-    updateUserPasswordById
-} from "./models/userModel";
-import {getUserById} from "./controllers/userController";
-import {deleteTemplateById, getAllTemplates, getTemplateByID, updateTemplateById} from "./models/templateModel";
-import {deleteTeamByID, getAllTeams, getOrCreateTeam, getTeamById} from "./models/teamModel";
-import {createProject, getAllProjects, getAllProjectsByUserID, getProjectByID} from "./models/projectModel";
+import {getProjectsBySubdomain, setProjectStatusById} from "./models/projectModel";
+import {ProjectState} from "./types/project";
 
 dotenv.config();
 
@@ -95,8 +80,9 @@ app.listen(port)
     })
 }, 1000)*/
 
+
 setTimeout(async () => {
-    createProject({templateId: 4, userId: 3, stackId: 123, projectName: "createdprject", subdomainName: "subdomainnamehih"}).then((res) => {
+    getProjectsBySubdomain("WOMP").then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {

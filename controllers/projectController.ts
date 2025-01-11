@@ -5,25 +5,18 @@ import {
     deleteProjectByID,
     getAllProjectsByUserID,
     setProjectStatusById,
-    getProjectBySubdomain
+    getProjectsBySubdomain
 } from "../models/projectModel";
 import Portainer from "../Portainer"
 import {getTemplateByID} from "../models/templateModel";
-import {NewProjectBody, UserObject} from "../types/project";
+import {NewProjectBody, ProjectState, UserObject} from "../types/project";
 import {Request, Response} from "express";
-
-const ProjectState: {on: number; off: number} = {
-    on: 1,
-    off: 0
-}
 
 export const projectController = {
     getAll: async (req: Request, res: Response) => {
-        console.log("WOMP WOMP ")
         const user: UserObject = res.locals.user as UserObject;
 
         try {
-
             if (user.role.isFaculty || user.role.isAdmin) {
                 const projects = await getAllProjects();
                 res.json(projects);
@@ -70,7 +63,7 @@ export const projectController = {
             return
         }
 
-        const subdomainList = await getProjectBySubdomain(subdomainName)
+        const subdomainList = await getProjectsBySubdomain(subdomainName)
         if (subdomainList.length >= 1){
             res.status(400).send("subdomain name already exists")
             return
@@ -185,7 +178,7 @@ export const projectController = {
             res.status(500).send('Could not start stack in Portainer');
             return;
         }
-        await setProjectStatusById(id, ProjectState.on)
+        await setProjectStatusById({projectId: id, state: ProjectState.on})
         res.status(200).send(`Started project with id ${id}`)
     },
     stopProject: async (req: Request, res: Response) => {
@@ -203,7 +196,7 @@ export const projectController = {
             res.status(500).send('Could not stop stack in Portainer');
             return;
         }
-        await setProjectStatusById(id, ProjectState.off)
+        await setProjectStatusById({projectId: id, state: ProjectState.off})
 
         res.status(200).send(`Stopped project with id ${id}`)
     },
@@ -221,12 +214,12 @@ export const projectController = {
             if (state === ProjectState.on) {
                 // if it is running, stop it first
                 await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
-                await setProjectStatusById(id, ProjectState.off)
+                await setProjectStatusById({projectId: id, state: ProjectState.off})
             }
 
             // start it
             await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
-            await setProjectStatusById(id, ProjectState.on)
+            await setProjectStatusById({projectId: id, state: ProjectState.on})
         } catch(e) {
             res.status(500).send('Could not restart project');
             return;

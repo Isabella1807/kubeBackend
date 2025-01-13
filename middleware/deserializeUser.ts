@@ -2,6 +2,7 @@ import { verifyToken } from "../utils/jwt";
 import { fetchUserById } from "../models/userModel";
 import {UserRoles} from "../types/user";
 
+//@ts-ignore
 export const deserializeUser = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {

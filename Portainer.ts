@@ -7,7 +7,7 @@ dotenv.config()
 const Portainer = axios.create({
     baseURL: process.env.PORTAINER_BASEURL,
 });
-
+//@ts-ignore
 export const setPortainerToken = (token) => {
     Portainer.defaults.headers.common["Authorization"] = token;
 };

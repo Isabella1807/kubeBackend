@@ -177,6 +177,7 @@ export const getProjectByID = (id: number): Promise<ProjectWithStackId> => new P
             }
         ]
     }).then(result => {
+        //@ts-ignore
         const {user, ...restProject} = result.dataValues
         const {team, ...restUser} = user.dataValues
         resolve({

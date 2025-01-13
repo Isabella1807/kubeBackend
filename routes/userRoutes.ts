@@ -1,4 +1,5 @@
 import express from 'express';
+//@ts-ignore
 import multer from 'multer';
 import { mustBeLoggedIn, mustBeFaculty } from "../middleware/authenticate";
 import {

@@ -72,6 +72,7 @@ export const getTeamById = (id: number): Promise<CountedTeam> => new Promise((re
         //Makes sure the result is divided based on teamId
         group: ['Team.teamId'],
     }).then((result) => {
+        //@ts-ignore
         resolve(result.dataValues)
     }).catch((error) => {
         console.error('Error fetching team member counts:', error);

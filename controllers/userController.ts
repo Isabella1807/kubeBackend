@@ -15,6 +15,7 @@ import {Request, Response} from "express";
 export const addUserFromCSV = async (req: Request, res: Response) => {
     try {
         const results = [];
+        //@ts-ignore
         const rows = [];
         const csvParser = parse({
             columns: true,
@@ -24,7 +25,8 @@ export const addUserFromCSV = async (req: Request, res: Response) => {
         csvParser.on('data', (row) => rows.push(row));
         // the function runs through the rows from the csv
         const processRows = async () => {
-            // check if all info is there 
+            // check if all info is there
+            //@ts-ignore
             for (const row of rows) {
                 if (!row.uclMail || !row.password || !row.firstName || !row.lastName || !row.roleId) {
                     console.error('Missing required field in row:', row);
@@ -186,6 +188,7 @@ export const getTeamMembers = async (req: Request, res: Response) => {
 };
 
 // function to make a single user in edit group
+//@ts-ignore
 export const createSingleUser = async (req, res) => {
     try {
         const userData = {

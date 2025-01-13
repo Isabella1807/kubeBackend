@@ -12,6 +12,7 @@ export const templateController = {
       res.status(500).send(error);
     }
   },
+  //@ts-ignore
   getByID: async (req, res) => {
     const { id } = req.params;
     try {
@@ -22,6 +23,7 @@ export const templateController = {
       }
       res.json(template); 
     } catch (error) {
+      //@ts-ignore
       res.status(500).json({ message: "Failed to fetch template", error: error.message });
     }
   },
@@ -75,6 +77,7 @@ export const templateController = {
     } catch (error) {
       res.status(500).json({
         message: "Failed to create template",
+        //@ts-ignore
         error: error.message
       });
     }
@@ -123,6 +126,7 @@ export const templateController = {
         res.status(404).json({ message: 'Template not found or updated' });
       }
     } catch (error) {
+      //@ts-ignore
       res.status(500).json({ message: 'Failed to update template', error: error.message });
     }
   },  

@@ -2,6 +2,7 @@ import Portainer, {setPortainerToken} from "../Portainer"
 
 let timestampLastTokenRefresh = 0;
 
+//@ts-ignore
 export const requirePortainerAuth = async (req, res, next) => {
 
     const secondsSinceLastRefresh = (Date.now() - timestampLastTokenRefresh) / 1000;

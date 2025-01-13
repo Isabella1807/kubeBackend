@@ -3,6 +3,7 @@ import { getUserByMail } from "../models/userModel";
 import {UserRoles} from "../types/user";
 
 export const loginController = {
+    //@ts-ignore
     loginUser: async (req, res) => {
         try {
             const userMail = req.body.uclMail;

@@ -1,3 +1,4 @@
+//@ts-ignore
 export const mustBeLoggedIn = (req, res, next) => {
     if (!res.locals.user) {
         res.status(401).send('Must be logged in');
@@ -6,6 +7,7 @@ export const mustBeLoggedIn = (req, res, next) => {
     next();
 };
 
+//@ts-ignore
 export const mustBeAdmin = (req, res, next) => {
     const user = res.locals.user;
 
@@ -20,6 +22,7 @@ export const mustBeAdmin = (req, res, next) => {
     next();
 };
 
+//@ts-ignore
 export const mustBeFaculty = (req, res, next) => {
     const user = res.locals.user;
 

@@ -2,6 +2,7 @@ import { getAllTeams, getTeamById, deleteTeamByID } from "../models/teamModel";
 
 // this for getting all team and then desceding - this is doin alphabetical order
 export const teamController = {
+  //@ts-ignore
   getAll: async (request, response) => {
     try {
       const sortDirection = request.query.sort;
@@ -20,6 +21,7 @@ export const teamController = {
     }
   },
 
+  //@ts-ignore
   getByID: async (request, response) => {
     try {
       const team = await getTeamById(request.params.id);
@@ -29,6 +31,7 @@ export const teamController = {
     }
   },
 
+  //@ts-ignore
   create: async (req, res) => {
     const { teamName } = req.body;
 
@@ -46,6 +49,7 @@ export const teamController = {
     }
   },
 
+  //@ts-ignore
   delete: async (req, res) => {
     const id = parseInt(req.params.id);
 

@@ -209,6 +209,7 @@ export const projectController = {
         }
 
         try {
+            //@ts-ignore
             const {stackId, state} = await getProjectByID(id);
 
             if (state === ProjectState.on) {

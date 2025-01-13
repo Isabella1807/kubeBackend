@@ -9,6 +9,7 @@ import "./database/connection";
 import dotenv from 'dotenv';
 import {createUser, getUserByMail} from "./models/userModel";
 import {updateTemplateById} from "./models/templateModel";
+import {getProjectByID} from "./models/projectModel";
 
 dotenv.config();
 
@@ -70,14 +71,7 @@ app.use(Router);
 app.listen(port)
 
 /*setTimeout(async () => {
-    createUser({
-        uclMail: "mail@edu.ucl.dk",
-        "password": "dfgsddrtrtersddg",
-        firstName: "gdf",
-        lastName: "gfdg",
-        "roleId": 7,
-        teamId: 11,
-    }).then((res) => {
+    getProjectByID(3).then((res) => {
         console.log("REEEES")
         console.log(res);
     }).catch((err) => {

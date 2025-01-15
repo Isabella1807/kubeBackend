@@ -6,6 +6,7 @@ import { updateUserPasswordById } from "../models/userModel";
 const router = express.Router();
 
 router.post("/",loginController.loginUser);
+
 router.post("/logout", mustBeLoggedIn, (req, res) => {
     try {
         res.status(200).send("Logged out successfully");

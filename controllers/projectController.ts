@@ -15,6 +15,7 @@ import {Request, Response} from "express";
 export const projectController = {
     getAll: async (req: Request, res: Response) => {
         const user: UserObject = res.locals.user as UserObject;
+        console.log(res.locals)
 
         try {
             if (user.role.isFaculty || user.role.isAdmin) {
@@ -214,12 +215,12 @@ export const projectController = {
 
             if (state === ProjectState.on) {
                 // if it is running, stop it first
-                await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
+                //await Portainer.post(`/stacks/${stackId}/stop?endpointId=5`)
                 await setProjectStatusById({projectId: id, state: ProjectState.off})
             }
 
             // start it
-            await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
+            //await Portainer.post(`/stacks/${stackId}/start?endpointId=5`)
             await setProjectStatusById({projectId: id, state: ProjectState.on})
         } catch(e) {
             res.status(500).send('Could not restart project');

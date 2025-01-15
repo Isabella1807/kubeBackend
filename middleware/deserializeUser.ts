@@ -20,12 +20,13 @@ export const deserializeUser = (req, res, next) => {
         return next();
     }
 
-    fetchUserById(userData.userId).then(user => {
+    fetchUserById(userData.userId)
+        .then(user => {
         res.locals.user = user;
         res.locals.user.role = {
-            "isAdmin": UserRoles.admin,
-            "isFaculty": UserRoles.faculty,
-            "isStudent": UserRoles.student,
+            "isAdmin": UserRoles.admin === user.roleId,
+            "isFaculty": UserRoles.faculty === user.roleId,
+            "isStudent": UserRoles.student === user.roleId,
         }
         next();
     }).catch((err) => {

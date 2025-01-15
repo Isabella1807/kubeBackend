@@ -1,12 +1,16 @@
 import Portainer, {setPortainerToken} from "../Portainer"
+import {portainerIncluded} from "../constants";
 
 let timestampLastTokenRefresh = 0;
 
 //@ts-ignore
 export const requirePortainerAuth = async (req, res, next) => {
 
-   /* next()
-    return*/
+    if (!portainerIncluded) {
+        next()
+        return
+    }
+
     const secondsSinceLastRefresh = (Date.now() - timestampLastTokenRefresh) / 1000;
     // Don't refresh portainer token if it is less than 30 minutes since it was created.
     // Just continue to controller / next middleware
